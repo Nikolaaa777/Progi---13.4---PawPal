@@ -1,0 +1,175 @@
+:root {
+	--text: #111;
+	--muted: #5b6472;
+	--brand: #0b79f7;
+}
+
+body {
+	margin: 0;
+	background: #789fed;
+	color: var(--text);
+}
+
+.nav-wrap {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: #fff;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.nav {
+	width: 100%;
+	height: 76px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 32px;
+}
+.nav-left {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.nav-right {
+	display: flex;
+	align-items: center;
+	gap: 40px;
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+}
+.brand-logo {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+	border-radius: 60px;
+	background-color: #0b79f7;
+}
+.brand span {
+	font-size: 22px;
+	font-weight: 700;
+	color: #111;
+}
+
+.nav-pills {
+	display: flex;
+	gap: 40px;
+	margin: 0;
+	align-items: center;
+}
+.nav-pills a,
+.pill {
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	color: #111 !important;
+	background: none !important;
+	border: none !important;
+	box-shadow: none !important;
+	text-decoration: none !important;
+	padding: 0 !important;
+	transition: color 0.2s ease !important;
+}
+
+.nav-pills a:hover,
+.pill:hover {
+	color: #4f8efc !important;
+}
+
+.pill[aria-current="page"] {
+	color: #111 !important;
+}
+
+.nav-icons {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+.icon {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 20px;
+	color: #333;
+}
+.icon:hover {
+	color: var(--brand);
+}
+
+.hero {
+	max-width: 1200px;
+	margin: 64px auto;
+	padding: 0 32px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
+	gap: 48px;
+}
+.hero-art {
+	height: 420px;
+	border-radius: 24px;
+	background: #f1f3f6;
+}
+.hero-copy h1 {
+	font-size: 56px;
+	line-height: 1.05;
+	margin: 0 0 16px;
+	font-weight: 800;
+}
+.hero-copy p {
+	margin: 0 0 28px;
+	color: var(--muted);
+	font-size: 18px;
+}
+.hero-actions {
+	display: flex;
+	gap: 14px;
+}
+.btn-primary {
+	padding: 14px 22px;
+	border-radius: 10px;
+	background: #111;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 600;
+}
+.btn-primary:hover {
+	opacity: 0.9;
+}
+.btn-ghost {
+	padding: 14px 20px;
+	border-radius: 10px;
+	border: 1px solid #e5e7eb;
+	text-decoration: none;
+	color: #111;
+	font-weight: 600;
+}
+.btn-ghost:hover {
+	background: #f7f8fa;
+}
+
+@media (max-width: 900px) {
+	.nav {
+		height: 68px;
+		padding: 0 20px;
+	}
+	.nav-pills {
+		display: none;
+	}
+	.hero {
+		grid-template-columns: 1fr;
+		gap: 28px;
+		margin: 36px auto;
+	}
+	.hero-art {
+		height: 240px;
+	}
+	.hero-copy h1 {
+		font-size: 36px;
+	}
+}
