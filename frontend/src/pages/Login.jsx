@@ -1,36 +1,65 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../api/client";
 
 export default function Login() {
-	function handleLogin(e) {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [err, setErr] = useState("");
+	const nav = useNavigate();
+
+	async function handleLogin(e) {
 		e.preventDefault();
-		alert("Log in clicked!");
+		setErr("");
+		try {
+			await api.login(email, password);
+			nav("/");
+		} catch {
+			setErr("Neispravni podaci za prijavu.");
+		}
 	}
 
-	function handleGoogleLogin() {
-		alert("Google Sign-In clicked!");
+	async function handleGoogleLogin() {
+		try {
+			const url = await api.googleLoginUrl();
+			window.location.href = url;
+		} catch {
+			setErr("Google prijava trenutno nije dostupna.");
+		}
 	}
 
 	return (
-		<div className="page">
+		<div className="auth-page">
 			<div className="card">
 				<img src="/logo.png" alt="logo" className="logo" />
-
-				<input type="email" placeholder="Email" />
-				<input type="password" placeholder="Password" />
-
-				<button onClick={handleLogin}>Log in</button>
-
+				<form onSubmit={handleLogin}>
+					<input
+						type="email"
+						placeholder="Email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+					/>
+					<input
+						type="password"
+						placeholder="Password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+					/>
+					{err && <p style={{ color: "crimson" }}>{err}</p>}
+					<button type="submit">Log in</button>
+				</form>
 				<button type="button" className="google" onClick={handleGoogleLogin}>
 					<img
-						src="https://developers.google.com/identity/images/g-logo.png"
-						alt="Google logo"
-						width="20"
-						height="20"
+						src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+						alt="Google"
+						className="google-icon"
 					/>
 					Sign in with Google
 				</button>
 
-				<div className="links-bottom">
+				<div className="links-bottom auth-links">
 					<a href="#">Forgot your password?</a>
 					<p>
 						Don’t have an account?{" "}

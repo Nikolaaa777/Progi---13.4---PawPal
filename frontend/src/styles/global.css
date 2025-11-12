@@ -80,7 +80,7 @@ a {
 	margin-top: 10px;
 	color: #fff;
 	font-size: 10.5px;
-	gap: 9px;
+	gap: 3px;
 }
 .links-bottom a {
 	color: #fff;
@@ -148,4 +148,64 @@ a {
 	background: #5196e4;
 	color: #ffffff;
 	box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.auth-page {
+	min-height: 100vh;
+	background: #1677ff;
+	display: grid;
+	place-items: center;
+}
+
+.auth-page .card {
+	width: 330px;
+	align-items: center;
+	gap: 10px;
+}
+
+.auth-page .card form,
+.auth-page .card form input,
+.auth-page .card form button,
+.auth-links {
+	width: 330px;
+}
+
+.auth-page .card form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.auth-page button {
+	max-width: none;
+}
+
+.auth-links {
+	text-align: left;
+	margin-top: 1px;
+	font-size: 12px;
+	line-height: 1.3;
+}
+.auth-links a,
+.auth-links p {
+	display: inline;
+	margin: 4px 0 0;
+}
+
+.auth-page input {
+	background: #ffffff;
+	border: 1px solid #0078ff;
+	color: #053b63;
+}
+
+.google {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.google-icon {
+	width: 22px;
+	height: 22px;
 }

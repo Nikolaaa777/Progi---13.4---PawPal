@@ -85,6 +85,14 @@ body {
 	color: #111 !important;
 }
 
+.user-icon {
+	width: 35px;
+	height: 35px;
+	margin-left: 10px;
+	cursor: pointer;
+	border-radius: 15px;
+}
+
 .nav-icons {
 	display: flex;
 	align-items: center;

@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
 import "../styles/home.css";
 
 export default function Navbar() {
+	const nav = useNavigate();
+
 	return (
 		<header className="nav-wrap">
 			<div className="nav">
@@ -26,6 +28,13 @@ export default function Navbar() {
 						<NavLink to="/kontakt" className="pill">
 							Kontakt
 						</NavLink>
+
+						<img
+							src="/korisnik.png"
+							alt="Korisnik"
+							className="user-icon"
+							onClick={() => nav("/login")}
+						/>
 					</nav>
 				</div>
 			</div>

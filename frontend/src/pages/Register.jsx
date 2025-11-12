@@ -1,35 +1,94 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { api } from "../api/client";
 
 export default function Register() {
-	const [role, setRole] = useState("owner"); // owner | walker
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [role, setRole] = useState("vlasnik");
+	const [err, setErr] = useState("");
+	const nav = useNavigate();
+
+	async function onSubmit(e) {
+		e.preventDefault();
+		setErr("");
+		try {
+			await api.register({
+				email,
+				first_name: firstName,
+				last_name: lastName,
+				password,
+			});
+			nav("/login");
+		} catch {
+			setErr("Registracija nije uspjela.");
+		}
+	}
 
 	return (
-		<div className="page">
+		<div className="auth-page">
 			<div className="card">
 				<img src="/logo.png" alt="logo" className="logo" />
-				<input type="text" placeholder="Full Name" />
-				<input type="email" placeholder="Email" />
-				<input type="text" placeholder="Username" />
-				<input type="password" placeholder="Password" />
+				<form onSubmit={onSubmit}>
+					<input
+						type="text"
+						placeholder="First Name"
+						value={firstName}
+						onChange={(e) => setFirstName(e.target.value)}
+						required
+					/>
+					<input
+						type="text"
+						placeholder="Last Name"
+						value={lastName}
+						onChange={(e) => setLastName(e.target.value)}
+						required
+					/>
+					<input
+						type="email"
+						placeholder="Email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+					/>
+					<input
+						type="password"
+						placeholder="Password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+					/>
 
-				<div className="role-group">
-					<button
-						type="button"
-						className={`role-btn ${role === "owner" ? "active" : ""}`}
-						onClick={() => setRole("owner")}
-					>
-						Vlasnik
-					</button>
-					<button
-						type="button"
-						className={`role-btn ${role === "walker" ? "active" : ""}`}
-						onClick={() => setRole("walker")}
-					>
-						Šetač
-					</button>
-				</div>
+					<div className="role-group">
+						<button
+							type="button"
+							className={`role-btn ${role === "vlasnik" ? "active" : ""}`}
+							onClick={() => setRole("vlasnik")}
+						>
+							Vlasnik
+						</button>
+						<button
+							type="button"
+							className={`role-btn ${role === "setac" ? "active" : ""}`}
+							onClick={() => setRole("setac")}
+						>
+							Šetač
+						</button>
+					</div>
 
-				<button>Sign up</button>
+					{err && <p style={{ color: "crimson" }}>{err}</p>}
+					<button type="submit">Sign up</button>
+					<button type="button" className="google">
+						<img
+							src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+							alt="Google logo"
+							className="google-icon"
+						/>
+						Sign up with Google
+					</button>
+				</form>
 
 				<p className="legal">
 					By signing up, you agree to our <a href="#">Terms</a>,{" "}
