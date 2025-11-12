@@ -7,13 +7,18 @@ export default function Register() {
 	const [lastName, setLastName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [role, setRole] = useState("vlasnik");
+	const [role, setRole] = useState(null);
 	const [err, setErr] = useState("");
 	const nav = useNavigate();
 
 	async function onSubmit(e) {
 		e.preventDefault();
 		setErr("");
+		if (!role) {
+			setErr("Odaberi ulogu (Vlasnik ili Šetač).");
+			return;
+		}
+
 		try {
 			const isWalker = role === "setac";
 
