@@ -16,7 +16,7 @@ export default function Navbar() {
 				</div>
 				<div className="nav-right">
 					<nav className="nav-pills" aria-label="Glavna navigacija">
-						<NavLink to="/" end className="pill">
+						<NavLink to="/novosti" end className="pill">
 							Novosti
 						</NavLink>
 						<NavLink to="/setnje" className="pill">

@@ -15,15 +15,28 @@ export default function Register() {
 		e.preventDefault();
 		setErr("");
 		try {
+			const isWalker = role === "setac";
+
 			await api.register({
 				email,
 				first_name: firstName,
 				last_name: lastName,
 				password,
+				is_walker: isWalker,
 			});
+
 			nav("/login");
 		} catch {
 			setErr("Registracija nije uspjela.");
+		}
+	}
+
+	async function handleGoogleLogin() {
+		try {
+			const url = await api.googleLoginUrl();
+			window.location.href = url;
+		} catch {
+			setErr("Google prijava trenutno nije dostupna.");
 		}
 	}
 
@@ -80,7 +93,7 @@ export default function Register() {
 
 					{err && <p style={{ color: "crimson" }}>{err}</p>}
 					<button type="submit">Sign up</button>
-					<button type="button" className="google">
+					<button type="button" className="google" onClick={handleGoogleLogin}>
 						<img
 							src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
 							alt="Google logo"

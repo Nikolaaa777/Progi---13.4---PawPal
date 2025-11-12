@@ -37,14 +37,19 @@ export const api = {
 	me: () => get("/api/auth/me/"),
 	login: (email, password) => post("/api/auth/login/", { email, password }),
 	logout: () => post("/api/auth/logout/", {}),
-	register: ({ email, first_name, last_name, password }) =>
-		post("/api/auth/register/", { email, first_name, last_name, password }),
+	register: ({ email, first_name, last_name, password, is_walker }) =>
+		post("/api/auth/register/", {
+			email,
+			first_name,
+			last_name,
+			password,
+			is_walker,
+		}),
 	googleLoginUrl: async () => {
 		await ensureCsrf();
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
 			credentials: "include",
 		});
-		// očekujemo JSON { url: "..." } — ako backend radi redirect, samo location.href = res.url
 		try {
 			const { url } = await res.json();
 			return url;
