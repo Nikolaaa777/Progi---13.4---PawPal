@@ -10,6 +10,7 @@ from .serializers import RegisterSerializer, LoginSerializer
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from .models import Profile 
 
 
 
@@ -93,12 +94,18 @@ def logout_view(request):
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user
-    return Response({
-        "id": user.id,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-    }, status=status.HTTP_200_OK)
+    profile = getattr(user, "profile", None)
+
+    return Response(
+        {
+            "id": user.id,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "has_notifications_on": getattr(profile, "has_notifications_on", False),
+        },
+        status=status.HTTP_200_OK,
+    )
 
 @extend_schema(
     responses={200: OpenApiResponse(description="Google login URL")}
