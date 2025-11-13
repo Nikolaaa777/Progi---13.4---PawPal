@@ -71,14 +71,14 @@ WSGI_APPLICATION = "pawpal_backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "pawpal_db",
-        "USER": "pawpal_user",
-        "PASSWORD": "jaka_lozinka",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-        "OPTIONS": {"options": "-c search_path=pawpal,public"},
+        "NAME": os.environ.get("DB_NAME", "pawpal_db"),
+        "USER": os.environ.get("DB_USER", "pawpal_user"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -95,6 +95,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
     "http://127.0.0.1:8000"]
