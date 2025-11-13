@@ -7,7 +7,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer, LoginSerializer
+<<<<<<< HEAD
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample
+=======
+from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+>>>>>>> 53ec9db (Popravljen Logout)
 
 
 
@@ -77,16 +83,27 @@ def login_view(request):
     return Response({"success": 1, "message": "Logged in."})
 
 
+<<<<<<< HEAD
 @extend_schema(responses={200: OpenApiResponse(description='Logged out.')})
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  
 def logout_view(request):
     logout(request)
     return Response({"success": 1, "message": "Logged out."})
+=======
+@csrf_exempt
+@extend_schema(responses={200: OpenApiResponse(description='Logged out.')})
+@api_view(["POST"])
+@permission_classes([AllowAny])  
+def logout_view(request):
+    logout(request)
+    return Response({"message": "Logged out"}, status=status.HTTP_200_OK)
+>>>>>>> 53ec9db (Popravljen Logout)
 
 
 @extend_schema(responses={200: OpenApiResponse(description='Current user info')})
 @api_view(["GET"])
+<<<<<<< HEAD
 @permission_classes([AllowAny])  # ili IsAuthenticated i onda ne vraćaš authenticated=False
 def me(request):
     u = request.user
@@ -104,6 +121,17 @@ def me(request):
         }
     })
 
+=======
+@permission_classes([IsAuthenticated])
+def me(request):
+    user = request.user
+    return Response({
+        "id": user.id,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }, status=status.HTTP_200_OK)
+>>>>>>> 53ec9db (Popravljen Logout)
 
 @extend_schema(
     responses={200: OpenApiResponse(description="Google login URL")}
