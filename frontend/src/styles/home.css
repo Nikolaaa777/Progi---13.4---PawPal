@@ -109,6 +109,10 @@ body {
 	height: 18px;
 	display: block;
 }
+.bell-icon.bell-on svg {
+	transform: scale(1.05);
+	filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.8));
+}
 
 .avatar-wrap {
 	position: relative;

@@ -7,6 +7,7 @@ import "../styles/home.css";
 export default function Navbar() {
 	const nav = useNavigate();
 	const [user, setUser] = useState(null);
+	const [notifOn, setNotifOn] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef(null);
 	const avatarRef = useRef(null);
@@ -14,8 +15,16 @@ export default function Navbar() {
 	useEffect(() => {
 		api
 			.me()
-			.then(setUser)
-			.catch(() => setUser(null));
+			.then((u) => {
+				setUser(u);
+				if (typeof u.has_notifications_on === "boolean") {
+					setNotifOn(u.has_notifications_on);
+				}
+			})
+			.catch(() => {
+				setUser(null);
+				setNotifOn(false);
+			});
 	}, []);
 
 	useEffect(() => {
@@ -51,12 +60,28 @@ export default function Navbar() {
 			nav("/login");
 			return;
 		}
+
 		try {
-			const res = await Notification.requestPermission();
-			if (res !== "granted") alert("Obavijesti su onemogućene u pregledniku.");
-			else alert("Pretplata na obavijesti je uključena.");
-		} catch {
-			alert("Preglednik ne podržava obavijesti.");
+			if (!notifOn) {
+				const perm = await Notification.requestPermission();
+				if (perm !== "granted") {
+					alert("Obavijesti su onemogućene u pregledniku.");
+					return;
+				}
+			}
+
+			const data = await api.toggleNotifications();
+			const on = !!data.has_notifications_on;
+			setNotifOn(on);
+
+			if (on) {
+				alert("Obavijesti su uključene.");
+			} else {
+				alert("Obavijesti su isključene.");
+			}
+		} catch (err) {
+			console.error(err);
+			alert("Došlo je do greške pri spremanju obavijesti.");
 		}
 	}
 
@@ -86,8 +111,10 @@ export default function Navbar() {
 						</NavLink>
 
 						<button
-							className="icon-btn bell-icon"
-							aria-label="Pretplati se na obavijesti"
+							className={`icon-btn bell-icon ${notifOn ? "bell-on" : ""}`}
+							aria-label={
+								notifOn ? "Isključi obavijesti" : "Uključi obavijesti"
+							}
 							onClick={handleBell}
 						>
 							<svg
