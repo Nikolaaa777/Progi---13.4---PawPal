@@ -37,8 +37,12 @@ export default function Navbar() {
 	async function handleLogout() {
 		try {
 			await api.logout();
-		} catch {}
-		window.location.href = "/";
+			setUser(null);
+		} catch (err) {
+			console.error("Logout failed", err);
+		} finally {
+			window.location.href = "/";
+		}
 	}
 
 	async function handleBell() {
