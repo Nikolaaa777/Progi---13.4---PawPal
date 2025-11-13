@@ -96,7 +96,7 @@ export default function Navbar() {
 				</div>
 
 				<div className="nav-right">
-					<nav className="nav-pills" aria-label="Glavna navigacija">
+					<nav className="nav-pills">
 						<NavLink to="/novosti" className="pill">
 							Novosti
 						</NavLink>
@@ -117,7 +117,12 @@ export default function Navbar() {
 							}
 							onClick={handleBell}
 						>
-							<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+							<svg
+								width="22"
+								height="22"
+								viewBox="0 0 24 24"
+								aria-hidden="true"
+							>
 								<path d="M12 2a6 6 0 0 0-6 6v3.586l-1.707 1.707A1 1 0 0 0 5 15h14a1 1 0 0 0 .707-1.707L18 11.586V8a6 6 0 0 0-6-6zm0 20a3 3 0 0 0 2.995-2.824L15 19h-6a3 3 0 0 0 2.824 2.995L12 22z" />
 							</svg>
 						</button>
@@ -139,19 +144,35 @@ export default function Navbar() {
 
 							{menuOpen && (
 								<div ref={menuRef} className="user-menu" role="menu">
-									<button className="menu-item" role="menuitem" onClick={() => nav("/profile")}>
+									<button
+										className="menu-item"
+										role="menuitem"
+										onClick={() => nav("/profile")}
+									>
 										<span>Profile</span>
 									</button>
-									<button className="menu-item" role="menuitem" onClick={() => nav("/settings")}>
+									<button
+										className="menu-item"
+										role="menuitem"
+										onClick={() => nav("/settings")}
+									>
 										<span>Settings</span>
 									</button>
 									<div className="menu-divider" role="separator" />
 									{!user ? (
-										<button className="menu-item" role="menuitem" onClick={() => nav("/login")}>
+										<button
+											className="menu-item"
+											role="menuitem"
+											onClick={() => nav("/login")}
+										>
 											<span>Log in</span>
 										</button>
 									) : (
-										<button className="menu-item danger" role="menuitem" onClick={handleLogout}>
+										<button
+											className="menu-item danger"
+											role="menuitem"
+											onClick={handleLogout}
+										>
 											<span>Logout</span>
 										</button>
 									)}

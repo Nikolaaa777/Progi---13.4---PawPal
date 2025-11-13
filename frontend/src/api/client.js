@@ -45,10 +45,7 @@ export const api = {
 			password,
 			is_walker,
 		}),
-<<<<<<< HEAD
-=======
 	toggleNotifications: () => post("/api/notifications/toggle/", {}),
->>>>>>> frontend
 	googleLoginUrl: async () => {
 		await ensureCsrf();
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {

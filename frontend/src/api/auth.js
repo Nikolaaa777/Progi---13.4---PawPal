@@ -48,16 +48,6 @@ export async function me() {
 }
 
 export async function logout() {
-<<<<<<< HEAD
-  const csrftoken = getCookie("csrftoken");
-  const res = await fetch(`${API}/api/auth/logout/`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "X-CSRFToken": csrftoken },
-  });
-  return res.json();
-}
-=======
   const res = await fetch(`${API}/api/auth/logout/`, {
     method: "POST",
     credentials: "include",
@@ -69,4 +59,3 @@ export async function logout() {
     return {};
   }
 }
->>>>>>> frontend
