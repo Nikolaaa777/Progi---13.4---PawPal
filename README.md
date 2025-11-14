@@ -1,23 +1,90 @@
-# Programsko inženjerstvo
-
+# PawPal
 # LIVE DEMO: [PawPal](https://pawpal-front.onrender.com/) 
 (Server radi sporije nakon vremena neaktivnosti, tako da molim imajte strpljenja na početku.)
 
-# Opis projekta
-PawPal je web-platforma koja povezuje vlasnike pasa s pouzdanim šetačima u njihovoj blizini. Cilj projekta je olakšati vlasnicima pronalazak provjerenih šetača, omogućiti jednostavnu rezervaciju termina, plaćanje i komunikaciju.
+## Pregled projekta
 
-# Funkcijski zahtjevi
+**PawPal** je web aplikacija koja povezuje vlasnike pasa sa pouzdanim šetačima te pojednostavljuje organizaciju šetnji, nadzor nad raspoloživosti i komunikaciju između korisnika. Platforma omogućava vlasnicima lako pronalaženje šetača prema lokaciji, cijeni, raspoloživosti i ocjenama, dok šetači mogu upravljati svojim uslugama, terminima i ponudama. Administratori nadziru rad sustava, korisnike i aktivnosti kako bi osigurali kvalitetno iskustvo za sve uključene.
 
+Platforma je razvijena kao timski projekt u sklopu kolegija *Programsko inženjerstvo* na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. Projekt kombinira moderne tehnologije iz područja web razvoja, upravljanja podacima i DevOps praksi te naglasak stavlja na sigurnost, skalabilnost i jednostavnost korištenja.
 
-# Tehnologije
+---
 
+## Motivacija
 
-# Članovi tima 
+Briga o psima često zahtijeva pomoć, osobito kod vlasnika s užurbanim rasporedom ili dugim radnim danima. Istovremeno, sve je više ljudi koji traže fleksibilan posao, dodatnu zaradu ili jednostavno uživaju u šetnji pasa. Međutim, povezivanje ove dvije skupine najčešće se odvija preko privatnih preporuka, raznih grupa i nesigurnih oglasnika, što može biti nepouzdano i neučinkovito.
 
+**PawPal** uvodi moderan, strukturiran i transparentan sustav koji olakšava dogovor i komunikaciju te stvara sigurnije okruženje za vlasnike, šetače i same pse. Razvoj ove platforme omogućio je timu da nauči kako dizajnirati cjelovite sustave, povezati backend i frontend tehnologije, osmisliti korisničke tokove te implementirati autentifikaciju i autorizaciju.
 
+---
 
-# Kontribucije
+## Problem koji rješavamo
 
+Današnji vlasnici pasa često se suočavaju s nekoliko izazova:
+
+- teško je pronaći provjerenog i dostupnog šetača u blizini,
+- komunikacija između vlasnika i šetača često se odvija na različitim platformama,
+- ne postoji standardizirani način ocjenjivanja i povratnih informacija,
+- terminima se upravlja ručno i nesigurno,
+- nema jedinstvenog mjesta za pregled šetnji, povijesti i dogovora.
+
+**PawPal** rješava ove probleme kroz:
+
+- centraliziranu bazu šetača s detaljnim profilima,
+- jasno definirane raspoložive termine,
+- sustav rezervacija u stvarnom vremenu,
+- jednostavnu komunikaciju,
+- transparentne recenzije i ocjene,
+- mogućnost praćenja obavljenih šetnji.
+
+Platforma tako stvara siguran, brz i učinkovit način povezivanja vlasnika i šetača.
+
+---
+
+## Ključne funkcionalnosti
+
+### 1. Korisničke uloge i interakcije
+
+### Vlasnici pasa mogu:
+- pregledavati i filtrirati šetače prema lokaciji, cijeni i ocjenama,
+- rezervirati termine šetnje,
+- primati obavijesti o potvrdi ili promjeni termina,
+- pregledati izvještaje nakon šetnji,
+- ocjenjivati i recenzirati šetače.
+
+### Šetači mogu:
+- kreirati i uređivati svoj profil,
+- dodavati dostupne termine i cijene usluga,
+- prihvaćati ili odbijati rezervacije,
+- voditi evidenciju obavljenih šetnji,
+- pratiti svoje prihode i povratne informacije korisnika.
+
+### Administratori mogu:
+- upravljati korisnicima (blokiranje, brisanje, pregledi aktivnosti),
+- pregledavati rezervacije i prijavljeni sadržaj,
+- moderirati recenzije i komunikaciju,
+- nadzirati stabilnost sustava.
+
+---
+
+## Dodatne mogućnosti
+
+- **Sustav preporuka šetača**: korisnicima se prikazuju najrelevantniji šetači prema ocjenama, blizini i povijesnim preferencijama.
+- **Praćenje šetnje**: šetač može označiti početak i kraj šetnje, a sustav bilježi trajanje i osnovne podatke.
+- **Unutarnja komunikacija**: vlasnik i šetač mogu razmjenjivati poruke vezane uz šetnju.
+- **Višestruki psi**: vlasnik može rezervirati šetnju za jednog ili više pasa istovremeno.
+
+---
+
+## Članovi tima
+- **Nikola Ivković**
+- **Alan Miljak** 
+- **Antonio Stjepić**
+- **Bruno Cavor**
+- **Zvonimir Schönwald**
+- **Vid Veselko** 
+
+---
 
 
 # 📝 Kodeks ponašanja [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
