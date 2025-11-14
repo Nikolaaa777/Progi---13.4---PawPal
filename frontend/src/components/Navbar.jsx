@@ -7,7 +7,6 @@ import "../styles/home.css";
 
 export default function Navbar({ user, setUser }) {
 	const nav = useNavigate();
-	const location = useLocation();
 	const [notifOn, setNotifOn] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef(null);
