@@ -1,78 +1,24 @@
-const API = import.meta.env.VITE_API_BASE_URL;
+import { api, ensureCsrf } from "./client";
 
-// globalna varijabla u modulu
-let csrfToken = null;
+// Stari interface koji koriste tvoje komponente,
+// ali sva prava logika (CSRF, URL-ovi) je u client.js.
 
-// DOHVAT CSRF TOKENA IZ /api/auth/csrf/
 export async function initCsrf() {
-  const res = await fetch(`${API}/api/auth/csrf/`, {
-    method: "GET",
-    credentials: "include",
-  });
-  const data = await res.json();
-  csrfToken = data.csrfToken;
+  await ensureCsrf();
 }
 
-// helper – pobrini se da imamo token prije POST-a
-async function ensureCsrfToken() {
-  if (!csrfToken) {
-    await initCsrf();
-  }
-}
-
-export async function registerUser({ email, first_name, last_name, password, is_walker }) {
-  await ensureCsrfToken();
-
-  const res = await fetch(`${API}/api/auth/register/`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify({ email, first_name, last_name, password, is_walker }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-  if (res.status !== 201) throw new Error(data?.message || JSON.stringify(data));
-  return data;
+export async function registerUser(args) {
+  return api.register(args);
 }
 
 export async function login(email, password) {
-  await ensureCsrfToken();
-
-  const res = await fetch(`${API}/api/auth/login/`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data?.message || "Login failed");
-  return data;
+  return api.login(email, password);
 }
 
 export async function me() {
-  const res = await fetch(`${API}/api/auth/me/`, {
-    method: "GET",
-    credentials: "include",
-  });
-  return res.json();
+  return api.me();
 }
 
 export async function logout() {
-  const res = await fetch(`${API}/api/auth/logout/`, {
-    method: "POST",
-    credentials: "include",
-  });
-
-  try {
-    return await res.json();
-  } catch {
-    return {};
-  }
+  return api.logout();
 }
