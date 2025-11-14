@@ -1,4 +1,8 @@
-const BASE = "";
+//const BASE = "";
+//DODANE SLJEDECE DVIJE LINIJE UMJESTO PRVE
+const BASE = import.meta.env.VITE_API_BASE_URL || "";
+console.log("API BASE =", BASE);
+
 const json = (res) => {
 	if (!res.ok) throw res;
 	return res.json().catch(() => ({}));
