@@ -1,53 +1,66 @@
-// const BASE = "";
 const BASE = import.meta.env.VITE_API_BASE_URL || "";
 console.log("API BASE =", BASE);
 
-const json = (res) => {
-  if (!res.ok) throw res;
-  return res.json().catch(() => ({}));
-};
-
-// CSRF token u modulu
+// store CSRF token in module variable
 let csrfToken = null;
 
-// dohvat CSRF-a (isto kao u auth.js, ali za ovaj modul)
+// fetch CSRF token from backend if we don't have it yet
 export async function ensureCsrf() {
   if (csrfToken) return;
 
-  const res = await fetch(`${BASE}/api/auth/csrf/`, { credentials: "include" });
+  const res = await fetch(`${BASE}/api/auth/csrf/`, {
+    method: "GET",
+    credentials: "include",
+  });
+
   const data = await res.json().catch(() => ({}));
   csrfToken = data.csrfToken;
 }
 
-async function post(path, body) {
-  await ensureCsrf(); // osiguraj token
-
-  const res = await fetch(`${BASE}${path}`, {
-    method: "POST",
+// generic helper for JSON responses
+async function jsonFetch(url, options = {}) {
+  const res = await fetch(url, {
     credentials: "include",
+    ...options,
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw { status: res.status, data };
+  }
+
+  return data;
+}
+
+// POST helper that automatically attaches CSRF header
+async function post(path, body = {}) {
+  await ensureCsrf();
+
+  return jsonFetch(`${BASE}${path}`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify(body),
   });
-
-  return json(res);
 }
 
+// GET helper (no CSRF header needed)
 async function get(path) {
-  // za GET nije nužan CSRF, ali neće škoditi ako ostavimo
-  await ensureCsrf();
-  return json(await fetch(`${BASE}${path}`, { credentials: "include" }));
+  return jsonFetch(`${BASE}${path}`, {
+    method: "GET",
+  });
 }
 
 export const api = {
+  // vrati user objekt ili null
   me: async () => {
     const data = await get("/api/auth/me/");
     return data.authenticated ? data.user : null;
   },
-  login: (email, password) => post("/api/auth/login/", { email, password }),
-  logout: () => post("/api/auth/logout/", {}),
+
   register: ({ email, first_name, last_name, password, is_walker }) =>
     post("/api/auth/register/", {
       email,
@@ -56,7 +69,21 @@ export const api = {
       password,
       is_walker,
     }),
-  toggleNotifications: () => post("/api/notifications/toggle/", {}),
+
+  login: (email, password) =>
+    post("/api/auth/login/", { email, password }),
+
+  // logout je CSRF-exempt na backendu, zato bez CSRF headera
+  logout: async () => {
+    try {
+      return await jsonFetch(`${BASE}/api/auth/logout/`, {
+        method: "POST",
+      });
+    } catch (err) {
+      return err.data || {};
+    }
+  },
+
   googleLoginUrl: async () => {
     await ensureCsrf();
     const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
