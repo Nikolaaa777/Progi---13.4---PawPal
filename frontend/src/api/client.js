@@ -1,6 +1,6 @@
 // src/api/client.js
 
-// baza URL-a prema backendu (Render)
+// URL backend API-ja (mora biti https://progi-13-4-pawpal.onrender.com u cloudu)
 const BASE = import.meta.env.VITE_API_BASE_URL || "";
 console.log("API BASE =", BASE);
 
@@ -8,30 +8,41 @@ console.log("API BASE =", BASE);
 async function json(res) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    // ovdje možeš dodatno logirati ako želiš
+    console.error("API error", res.status, data);
     throw data;
   }
   return data;
 }
 
-// CSRF token držimo u JS varijabli (ne u cookieju)
+// ---------------- CSRF ----------------
+
 let csrfToken = null;
 
-// 1) dohvat CSRF tokena iz /api/auth/csrf/
+// Dohvati CSRF token iz /api/auth/csrf/
 export async function ensureCsrf() {
-  if (csrfToken) return; // već smo ga dohvatili
+  if (csrfToken) return; // već ga imamo
+
+  console.log("Fetching CSRF from", `${BASE}/api/auth/csrf/`);
 
   const res = await fetch(`${BASE}/api/auth/csrf/`, {
     method: "GET",
     credentials: "include",
   });
-  const data = await res.json();
+
+  if (!res.ok) {
+    console.error("CSRF fetch failed:", res.status);
+    throw new Error("CSRF failed");
+  }
+
+  const data = await res.json().catch(() => ({}));
   csrfToken = data.csrfToken;
+  console.log("CSRF token set:", csrfToken ? "OK" : "MISSING");
 }
 
-// 2) helper za POST s CSRF headerom
+// ---------------- helperi ----------------
+
 async function post(path, body) {
-  await ensureCsrf(); // pobrini se da imamo token
+  await ensureCsrf();
 
   const res = await fetch(`${BASE}${path}`, {
     method: "POST",
@@ -46,7 +57,6 @@ async function post(path, body) {
   return json(res);
 }
 
-// 3) helper za GET (bez CSRF, nije potreban)
 async function get(path) {
   const res = await fetch(`${BASE}${path}`, {
     method: "GET",
@@ -55,15 +65,15 @@ async function get(path) {
   return json(res);
 }
 
-// 4) public API koji koristiš po appu
+// ---------------- public API ----------------
+
 export const api = {
-  // /api/auth/me/ -> vrati user objekt ili null
+  // /api/auth/me/ -> user ili null
   me: async () => {
     const data = await get("/api/auth/me/");
     return data.authenticated ? data.user : null;
   },
 
-  // register
   register: ({ email, first_name, last_name, password, is_walker }) =>
     post("/api/auth/register/", {
       email,
@@ -73,11 +83,10 @@ export const api = {
       is_walker,
     }),
 
-  // login
   login: (email, password) =>
     post("/api/auth/login/", { email, password }),
 
-  // logout – bez CSRF, backend ima @csrf_exempt
+  // logout: backend je @csrf_exempt, zato bez CSRF-a
   logout: async () => {
     const res = await fetch(`${BASE}/api/auth/logout/`, {
       method: "POST",
@@ -86,10 +95,6 @@ export const api = {
     return res.json().catch(() => ({}));
   },
 
-  // primjer za nešto drugo, ostavi ako koristiš
-  toggleNotifications: () => post("/api/notifications/toggle/", {}),
-
-  // Google login URL helper
   googleLoginUrl: async () => {
     await ensureCsrf();
     const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
