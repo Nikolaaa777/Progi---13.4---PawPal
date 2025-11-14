@@ -167,8 +167,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # gdje se vraća nakon Google login-a
-LOGIN_REDIRECT_URL = "http://localhost:5173/"
-LOGOUT_REDIRECT_URL = "http://localhost:5173/"
+LOGIN_REDIRECT_URL = "https://pawpal-front.onrender.com/"
+LOGOUT_REDIRECT_URL = "https://pawpal-front.onrender.com/"
 
 LOGGING = {
     "version": 1,
