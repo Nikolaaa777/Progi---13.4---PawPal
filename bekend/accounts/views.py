@@ -10,7 +10,7 @@ from .serializers import RegisterSerializer, LoginSerializer
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+from .models import Profile 
 
 
 @extend_schema(responses={200: OpenApiResponse(description='CSRF token')})
@@ -117,7 +117,9 @@ def google_login_url(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def toggle_notifications(request):
-    profile = request.user.profile
+    # osiguraj da profil SIGURNO postoji (i za Google i za stare user-e)
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
     profile.has_notifications_on = not profile.has_notifications_on
     profile.save()
 
