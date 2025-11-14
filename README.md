@@ -1,5 +1,5 @@
 # PawPal
-# LIVE DEMO: [PawPal](https://pawpal-front.onrender.com/) 
+## LIVE DEMO: [PawPal](https://pawpal-front.onrender.com/) 
 *(Server radi sporije nakon vremena neaktivnosti, tako da molim imajte strpljenja na početku.)*
 
 ## Pregled projekta
