@@ -38,7 +38,10 @@ async function get(path) {
 }
 
 export const api = {
-	me: () => get("/api/auth/me/"),
+  me: async () => {
+    const data = await get("/api/auth/me/");
+    return data.authenticated ? data.user : null;
+  },
 	login: (email, password) => post("/api/auth/login/", { email, password }),
 	logout: () => post("/api/auth/logout/", {}),
 	register: ({ email, first_name, last_name, password, is_walker }) =>
