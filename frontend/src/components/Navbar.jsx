@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import logo from "/logo.png";
 import { api } from "../api/client";
 import "../styles/home.css";
 
+
 export default function Navbar() {
 	const nav = useNavigate();
+	const location = useLocation();
 	const [user, setUser] = useState(null);
 	const [notifOn, setNotifOn] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -25,7 +27,7 @@ export default function Navbar() {
 				setUser(null);
 				setNotifOn(false);
 			});
-	}, []);
+	}, [location.pathname]);
 
 	useEffect(() => {
 		function onDocClick(e) {
