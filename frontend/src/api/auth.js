@@ -1,39 +1,56 @@
 const API = import.meta.env.VITE_API_BASE_URL;
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
+// globalna varijabla u modulu
+let csrfToken = null;
 
+// DOHVAT CSRF TOKENA IZ /api/auth/csrf/
 export async function initCsrf() {
-  await fetch(`${API}/api/auth/csrf/`, {
+  const res = await fetch(`${API}/api/auth/csrf/`, {
     method: "GET",
     credentials: "include",
   });
+  const data = await res.json();
+  csrfToken = data.csrfToken;
+}
+
+// helper – pobrini se da imamo token prije POST-a
+async function ensureCsrfToken() {
+  if (!csrfToken) {
+    await initCsrf();
+  }
 }
 
 export async function registerUser({ email, first_name, last_name, password, is_walker }) {
-  const csrftoken = getCookie("csrftoken");
+  await ensureCsrfToken();
+
   const res = await fetch(`${API}/api/auth/register/`, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
+    },
     body: JSON.stringify({ email, first_name, last_name, password, is_walker }),
   });
+
   const data = await res.json().catch(() => ({}));
   if (res.status !== 201) throw new Error(data?.message || JSON.stringify(data));
   return data;
 }
 
 export async function login(email, password) {
-  const csrftoken = getCookie("csrftoken");
+  await ensureCsrfToken();
+
   const res = await fetch(`${API}/api/auth/login/`, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json", "X-CSRFToken": csrftoken },
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
+    },
     body: JSON.stringify({ email, password }),
   });
+
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.message || "Login failed");
   return data;
