@@ -112,4 +112,3 @@ logout: async () => {
     return post("/api/notifications/toggle/", {});  
   },
 };
-};
