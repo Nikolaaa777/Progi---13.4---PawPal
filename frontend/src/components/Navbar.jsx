@@ -1,33 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "/logo.png";
 import { api } from "../api/client";
 import "../styles/home.css";
 
 
-export default function Navbar() {
+export default function Navbar({ user, setUser }) {
 	const nav = useNavigate();
 	const location = useLocation();
-	const [user, setUser] = useState(null);
 	const [notifOn, setNotifOn] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef(null);
 	const avatarRef = useRef(null);
 
-	useEffect(() => {
-		api
-			.me()
-			.then((u) => {
-				setUser(u);
-				if (typeof u.has_notifications_on === "boolean") {
-					setNotifOn(u.has_notifications_on);
-				}
-			})
-			.catch(() => {
-				setUser(null);
-				setNotifOn(false);
-			});
-	}, [location.pathname]);
+useEffect(() => {
+  if (user && typeof user.has_notifications_on === "boolean") {
+    setNotifOn(user.has_notifications_on);
+  } else {
+    setNotifOn(false);
+  }
+}, [user]);
 
 	useEffect(() => {
 		function onDocClick(e) {
