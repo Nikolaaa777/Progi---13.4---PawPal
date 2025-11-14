@@ -55,10 +55,19 @@ async function get(path) {
 
 export const api = {
   // vrati user objekt ili null
-  me: async () => {
+me: async () => {
+  try {
     const data = await get("/api/auth/me/");
-    return data.authenticated ? data.user : null;
-  },
+    // backend vraća direktno user objekt: { id, email, first_name, last_name, ... }
+    return data;
+  } catch (err) {
+    // ako je 401/403, znači da nema ulogiranog usera
+    if (err.status === 401 || err.status === 403) {
+      return null;
+    }
+    throw err;
+  }
+},
 
   register: ({ email, first_name, last_name, password, is_walker }) =>
     post("/api/auth/register/", {
