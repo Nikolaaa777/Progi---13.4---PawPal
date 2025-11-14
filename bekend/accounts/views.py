@@ -93,11 +93,14 @@ def logout_view(request):
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user
+    profile, _ = Profile.objects.get_or_create(user=user)
     return Response({
         "id": user.id,
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "is_walker": profile.is_walker,
+        "has_notifications_on": profile.has_notifications_on,
     }, status=status.HTTP_200_OK)
 
 @extend_schema(
