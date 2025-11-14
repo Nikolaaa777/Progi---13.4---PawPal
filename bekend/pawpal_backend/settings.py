@@ -106,7 +106,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
-    "http://127.0.0.1:8000", "progi-13-4-pawpal.onrender.com", "https://pawpal-front.onrender.com","pawpal-front.onrender.com",]
+    "http://127.0.0.1:8000", "progi-13-4-pawpal.onrender.com", "https://progi-13-4-pawpal.onrender.com", "https://pawpal-front.onrender.com","pawpal-front.onrender.com",]
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 
