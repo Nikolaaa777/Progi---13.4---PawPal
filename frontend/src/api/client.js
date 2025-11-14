@@ -56,18 +56,23 @@ async function get(path) {
 export const api = {
   // vrati user objekt ili null
 me: async () => {
-  try {
-    const data = await get("/api/auth/me/");
-    // backend vraća direktno user objekt: { id, email, first_name, last_name, ... }
-    return data;
-  } catch (err) {
-    // ako je 401/403, znači da nema ulogiranog usera
-    if (err.status === 401 || err.status === 403) {
-      return null;
-    }
-    throw err;
+  const data = await get("/api/auth/me/");
+  console.log("api.me response:", data);
+
+  // slučaj 1: backend vraća { authenticated: true/false, user: {...} | null }
+  if (typeof data.authenticated !== "undefined") {
+    return data.authenticated ? data.user : null;
   }
+
+  // slučaj 2: backend vraća direktno user objekt { id, email, ... }
+  if (data && (data.id || data.email)) {
+    return data;
+  }
+
+  // u svim ostalim slučajevima tretiraj kao nelogiranog
+  return null;
 },
+
 
   register: ({ email, first_name, last_name, password, is_walker }) =>
     post("/api/auth/register/", {
