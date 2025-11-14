@@ -46,6 +46,8 @@ async function post(path, body = {}) {
   });
 }
 
+
+
 // GET helper (no CSRF header needed)
 async function get(path) {
   return jsonFetch(`${BASE}${path}`, {
@@ -106,4 +108,8 @@ logout: async () => {
       return res.url;
     }
   },
+  toggleNotifications: async () => {
+    return post("/api/notifications/toggle/", {});  
+  },
+};
 };
