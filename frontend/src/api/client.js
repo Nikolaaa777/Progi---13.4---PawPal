@@ -16,7 +16,7 @@ export async function ensureCsrf() {
   csrfToken = data.csrfToken;
 }
 
-// generic helper for JSON responses
+
 async function jsonFetch(url, options = {}) {
   const res = await fetch(url, {
     credentials: "include",
@@ -32,7 +32,7 @@ async function jsonFetch(url, options = {}) {
   return data;
 }
 
-// POST helper that automatically attaches CSRF header
+
 async function post(path, body = {}) {
   await ensureCsrf();
 
@@ -48,7 +48,7 @@ async function post(path, body = {}) {
 
 
 
-// GET helper (no CSRF header needed)
+
 async function get(path) {
   return jsonFetch(`${BASE}${path}`, {
     method: "GET",
