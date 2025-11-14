@@ -50,15 +50,17 @@ Platforma tako stvara siguran, brz i učinkovit način povezivanja vlasnika i š
 - rezervirati termine šetnje,
 - primati obavijesti o potvrdi ili promjeni termina,
 - pregledati izvještaje nakon šetnji,
-- ocjenjivati i recenzirati šetače.
+- ocjenjivati i recenzirati šetače
+- komunicirati sa vlasnicima 
 
 ### Šetači mogu:
 - kreirati i uređivati svoj profil,
 - dodavati dostupne termine i cijene usluga,
 - prihvaćati ili odbijati rezervacije,
 - voditi evidenciju obavljenih šetnji,
-- pratiti svoje prihode i povratne informacije korisnika.
-
+- pratiti svoje prihode i povratne informacije korisnika
+- komunicirati sa šetačima
+  
 ### Administratori mogu:
 - upravljati korisnicima (blokiranje, brisanje, pregledi aktivnosti),
 - pregledavati rezervacije i prijavljeni sadržaj,
