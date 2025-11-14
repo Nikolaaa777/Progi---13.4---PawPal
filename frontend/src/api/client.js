@@ -86,16 +86,13 @@ me: async () => {
   login: (email, password) =>
     post("/api/auth/login/", { email, password }),
 
-  // logout je CSRF-exempt na backendu, zato bez CSRF headera
-  logout: async () => {
-    try {
-      return await jsonFetch(`${BASE}/api/auth/logout/`, {
-        method: "POST",
-      });
-    } catch (err) {
-      return err.data || {};
-    }
-  },
+logout: async () => {
+  try {
+    return await post("/api/auth/logout/", {});
+  } catch (err) {
+    return err.data || {};
+  }
+},
 
   googleLoginUrl: async () => {
     await ensureCsrf();
