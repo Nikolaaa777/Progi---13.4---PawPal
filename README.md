@@ -1,6 +1,7 @@
 # Programsko inženjerstvo
 
-# LIVE DEMO: [PawPal](https://pawpal-front.onrender.com/) (Server radi sporije nakon vremena neaktivnosti, tako da molim imajte strpljenja na početku.)
+# LIVE DEMO: [PawPal](https://pawpal-front.onrender.com/) 
+(Server radi sporije nakon vremena neaktivnosti, tako da molim imajte strpljenja na početku.)
 
 # Opis projekta
 PawPal je web-platforma koja povezuje vlasnike pasa s pouzdanim šetačima u njihovoj blizini. Cilj projekta je olakšati vlasnicima pronalazak provjerenih šetača, omogućiti jednostavnu rezervaciju termina, plaćanje i komunikaciju.
