@@ -1,13 +1,10 @@
 const BASE = import.meta.env.VITE_API_BASE_URL || "";
 console.log("API BASE =", BASE);
 
-// store CSRF token in module variable
 let csrfToken = null;
 
-// fetch CSRF token from backend if we don't have it yet
 export async function ensureCsrf() {
-  if (csrfToken) return;
-
+  // UVIJEK osvježi CSRF token prije POST-a
   const res = await fetch(`${BASE}/api/auth/csrf/`, {
     method: "GET",
     credentials: "include",
