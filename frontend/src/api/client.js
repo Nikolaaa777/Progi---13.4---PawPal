@@ -5,7 +5,7 @@ let csrfToken = null;
 
 export async function ensureCsrf() {
   // UVIJEK osvježi CSRF token prije POST-a
-  const res = await fetch(`${BASE}/auth/csrf/`, {
+  const res = await fetch(`${BASE}/api/auth/csrf/`, {
     method: "GET",
     credentials: "include",
   });
@@ -54,12 +54,12 @@ async function get(path) {
 export const api = {
   // vrati user objekt ili null
   me: async () => {
-    const data = await get("/auth/me/");
+    const data = await get("/api/auth/me/");
     return data.authenticated ? data.user : null;
   },
 
   register: ({ email, first_name, last_name, password, is_walker }) =>
-    post("/auth/register/", {
+    post("/api/auth/register/", {
       email,
       first_name,
       last_name,
@@ -68,12 +68,12 @@ export const api = {
     }),
 
   login: (email, password) =>
-    post("/auth/login/", { email, password }),
+    post("/api/auth/login/", { email, password }),
 
   // logout je CSRF-exempt na backendu, zato bez CSRF headera
   logout: async () => {
     try {
-      return await jsonFetch(`${BASE}/auth/logout/`, {
+      return await jsonFetch(`${BASE}/api/auth/logout/`, {
         method: "POST",
       });
     } catch (err) {
@@ -83,7 +83,7 @@ export const api = {
 
   googleLoginUrl: async () => {
     await ensureCsrf();
-    const res = await fetch(`${BASE}/auth/google/login-url/`, {
+    const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
       credentials: "include",
     });
     try {
