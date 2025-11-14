@@ -1,10 +1,10 @@
 import Navbar from "../components/Navbar";
 import "../styles/home.css";
 
-export default function Home() {
+export default function Home({ user, setUser }) {
 	return (
 		<>
-			<Navbar />
+			<Navbar user={user} setUser={setUser} />
 			<section className="hero">
 				<div className="hero-art">
 					<img src="/hero-dog.png" alt="Šetnja psa" className="hero-img" />
