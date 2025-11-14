@@ -1,7 +1,5 @@
 import { api, ensureCsrf } from "./client";
 
-// Stari interface koji koriste tvoje komponente,
-// ali sva prava logika (CSRF, URL-ovi) je u client.js.
 
 export async function initCsrf() {
   await ensureCsrf();
@@ -22,3 +20,4 @@ export async function me() {
 export async function logout() {
   return api.logout();
 }
+
