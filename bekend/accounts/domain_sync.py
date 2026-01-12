@@ -94,7 +94,7 @@ def _normalize_email(email: str) -> str:
 
 def _slug_username(base: str) -> str:
     """
-    usernameSetac u tvojoj bazi je varchar(20) NOT NULL.
+    usernameSetac u bazi je varchar(20) NOT NULL.
     Dozvolimo samo [a-z0-9_], ostalo maknemo.
     """
     base = (base or "").strip().lower()
@@ -169,7 +169,7 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
         changed = False
 
         # Ako je setac već postojao, a usernameSetac je prazan (ne bi smio biti),
-        # ili ga želiš dopuniti:
+        # ili ga želimo dopuniti:
         if not setac.usernameSetac:
             # mora biti unikatan
             setac.usernameSetac = _generate_unique_username(email_norm.split("@")[0])
