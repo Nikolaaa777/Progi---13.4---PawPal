@@ -11,6 +11,48 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.email} | walker={self.is_walker} | notif={self.has_notifications_on}"
+    
+
+class Vlasnik(models.Model):
+    idVlasnik = models.BigAutoField(primary_key=True, db_column="idVlasnik")
+    emailVlasnik = models.CharField(max_length=50, db_column="emailVlasnik")
+    telefonVlasnik = models.CharField(max_length=15, null=True, blank=True, db_column="telefonVlasnik")
+    idPretplate = models.BigIntegerField(null=True, blank=True, db_column="idPretplate")
+    imeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="imeVlasnik")
+    prezimeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="prezimeVlasnik")
+    class Meta:
+        managed = False
+        db_table = '"Vlasnik"'
+
+    def __str__(self):
+        return f"Vlasnik<{self.idVlasnik}> {self.emailVlasnik}"
+    
+
+
+class Setac(models.Model):
+    idSetac = models.BigAutoField(primary_key=True, db_column="idSetac")
+
+    avgOcjena = models.DecimalField(
+        max_digits=3, decimal_places=2, null=True, blank=True, db_column="avgOcjena"
+    )
+    imeSetac = models.CharField(max_length=20, null=True, blank=True, db_column="imeSetac")
+    prezimeSetac = models.CharField(max_length=20, null=True, blank=True, db_column="prezimeSetac")
+    telefonSetac = models.CharField(max_length=15, null=True, blank=True, db_column="telefonSetac")
+
+    usernameSetac = models.CharField(max_length=20, db_column="usernameSetac")
+    emailSetac = models.CharField(max_length=50, db_column="emailSetac")
+
+    datRegSetac = models.DateField(null=True, blank=True, db_column="datRegSetac")
+    idClanarine = models.BigIntegerField(null=True, blank=True, db_column="idClanarine")
+    idProfilne = models.BigIntegerField(null=True, blank=True, db_column="idProfilne")
+
+    class Meta:
+        managed = False
+        db_table = '"Setac"'
+
+    def __str__(self):
+        return f"Setac<{self.idSetac}> {self.usernameSetac}"
+
 
 
 #AUTOMATSKA KREACIJA PROFILE-A ZA SVAKI NOVI USER

@@ -1,5 +1,5 @@
 //const BASE = import.meta.env.VITE_API_BASE_URL || "";
-const BASE = import.meta.env.VITE_API_BASE_URL || "https://progi-13-4-pawpal.onrender.com";
+const BASE = import.meta.env.VITE_API_BASE_URL;
 
 console.log("API BASE =", BASE);
 

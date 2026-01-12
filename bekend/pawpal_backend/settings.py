@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
-    "accounts", # - moja app
+     # - moje app
+    "accounts.apps.AccountsConfig",
+    "dogs",
+    "walks",
 ]
 
 MIDDLEWARE = [
@@ -46,6 +49,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
 
@@ -106,6 +110,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = [
     "https://pawpal-front.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -167,8 +173,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # gdje se vraća nakon Google login-a
-LOGIN_REDIRECT_URL = "https://pawpal-front.onrender.com/"
-LOGOUT_REDIRECT_URL = "https://pawpal-front.onrender.com/"
+LOGIN_REDIRECT_URL = "http://localhost:5173/"
+LOGOUT_REDIRECT_URL = "http://localhost:5173/"
 
 LOGGING = {
     "version": 1,
