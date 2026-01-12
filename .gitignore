@@ -28,3 +28,8 @@ db.sqlite3
 node_modules/
 dist/
 __pycache__/
+
+
+# Environment variables
+.env
+.env.*
