@@ -1,0 +1,107 @@
+/* styles.css */
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+body {
+    margin: 0;
+    background: #f5f6f8;
+}
+
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+
+.sidebar {
+    width: 240px;
+    background: #7fa6e8;
+    padding: 20px 16px;
+}
+
+
+.back {
+    font-size: 18px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+
+.profile {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 8px;
+}
+
+
+.menu {
+    margin-top: 30px;
+    border-top: 2px solid #000;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.menu a {
+    display: block;
+    text-decoration: none;
+    color: #4f5d7a;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.menu a.active {
+    color: #000;
+    font-weight: bold;
+}
+
+.content {
+    flex: 1;
+    background: #fff;
+    padding: 32px 24px;
+}
+
+
+.title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+
+.comments {
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.comment {
+    background: #7fa6e8;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.delete {
+    background: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 14px;
+}
