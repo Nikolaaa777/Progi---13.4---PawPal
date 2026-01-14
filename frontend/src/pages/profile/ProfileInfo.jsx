@@ -1,4 +1,5 @@
 import "../../styles/all.css";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileInfo() {
 	// kasnije ovo zamijeni s pravim podacima iz api.me()
@@ -11,6 +12,8 @@ export default function ProfileInfo() {
 		walksTotal: 12,
 		walkerRating: 4.8,
 	};
+
+	const navigate = useNavigate();
 
 	return (
 		<main className="content">
@@ -63,7 +66,12 @@ export default function ProfileInfo() {
 
 			<section className="actions-row">
 				<button className="action-btn primary">Neki gumb</button>
-				<button className="action-btn">Uredi profil</button>
+				<button
+					className="action-btn"
+					onClick={() => navigate("/profile/uredi")}
+				>
+					Uredi profil
+				</button>
 
 				<label className="notif-toggle">
 					<span>Obavijesti</span>

@@ -1,6 +1,9 @@
 import "../../styles/all.css";
+import { useNavigate } from "react-router-dom";
 
 export default function MojiLjubimci() {
+	const nav = useNavigate();
+
 	return (
 		<main className="content">
 			<h1 className="page-title">Moji ljubimci</h1>
@@ -45,7 +48,10 @@ export default function MojiLjubimci() {
 
 			<button className="add-btn">
 				Dodaj psa
-				<span className="icon-btn">
+				<span
+					className="icon-btn"
+					onClick={() => nav("/profile/ljubimci/dodaj")}
+				>
 					<img src="/plus.png" alt="add" />
 				</span>
 			</button>
