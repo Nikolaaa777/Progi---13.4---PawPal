@@ -13,9 +13,13 @@ export default function ProfileInfo() {
 				</div>
 
 				<nav className="menu">
-					<a className="active">Moje informacije</a>
+					<NavLink to="/profile" className="active">
+						Moje informacije
+					</NavLink>
+
 					<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
-					<a>Moje rezervacije</a>
+
+					<NavLink to="/profile/rezervacije">Moje rezervacije</NavLink>
 				</nav>
 			</aside>
 
