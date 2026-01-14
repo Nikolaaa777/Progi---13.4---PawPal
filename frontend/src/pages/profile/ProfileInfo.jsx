@@ -5,9 +5,9 @@ export default function ProfileInfo() {
 	// kasnije ovo zamijeni s pravim podacima iz api.me()
 	const user = {
 		full_name: "Ime Prezime",
-		email: "user@mail.com",
+		email: "nekimail@mail.com",
 		city: "Zagreb",
-		role: "Vlasnik psa",
+		role: "Vlasnik",
 		petsCount: 3,
 		walksTotal: 12,
 		walkerRating: 4.8,
@@ -60,7 +60,7 @@ export default function ProfileInfo() {
 						<img src="/star.png" alt="ocjena" className="stat-icon" />
 						<div className="stat-value">4.8</div>
 					</div>
-					<div className="stat-label">Ocjena šetača</div>
+					<div className="stat-label">Ocjena vlasnika</div>
 				</div>
 			</section>
 

@@ -12,9 +12,13 @@ export default function MojiLjubimci() {
 				<div className="appointment-card">
 					<span>Detalji psa</span>
 					<div className="icons">
-						<button className="icon-btn">
+						<button
+							className="icon-btn"
+							onClick={() => nav("/profile/ljubimci/1/uredi")}
+						>
 							<img src="/edit.png" alt="edit" />
 						</button>
+
 						<button className="icon-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
@@ -24,9 +28,13 @@ export default function MojiLjubimci() {
 				<div className="appointment-card">
 					<span>Detalji psa</span>
 					<div className="icons">
-						<button className="icon-btn">
+						<button
+							className="icon-btn"
+							onClick={() => nav("/profile/ljubimci/1/uredi")}
+						>
 							<img src="/edit.png" alt="edit" />
 						</button>
+
 						<button className="icon-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
@@ -36,9 +44,13 @@ export default function MojiLjubimci() {
 				<div className="appointment-card">
 					<span>Detalji psa</span>
 					<div className="icons">
-						<button className="icon-btn">
+						<button
+							className="icon-btn"
+							onClick={() => nav("/profile/ljubimci/1/uredi")}
+						>
 							<img src="/edit.png" alt="edit" />
 						</button>
+
 						<button className="icon-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
