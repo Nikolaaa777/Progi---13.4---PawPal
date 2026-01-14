@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { api } from "./api/client";
 import ProfileInfo from "./pages/profile/ProfileInfo";
+import MojiLjubimci from "./pages/profile/MojiLjubimci";
 
 export default function App() {
 	const [user, setUser] = useState(null);
@@ -22,6 +23,7 @@ export default function App() {
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/profile" element={<ProfileInfo />} />
+			<Route path="/profile/ljubimci" element={<MojiLjubimci />} />
 		</Routes>
 	);
 }

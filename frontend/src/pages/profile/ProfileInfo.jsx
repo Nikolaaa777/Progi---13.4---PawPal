@@ -1,4 +1,5 @@
 import "../../styles/all.css";
+import { NavLink } from "react-router-dom";
 
 export default function ProfileInfo() {
 	return (
@@ -13,7 +14,7 @@ export default function ProfileInfo() {
 
 				<nav className="menu">
 					<a className="active">Moje informacije</a>
-					<a>Moji ljubimci</a>
+					<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
 					<a>Moje rezervacije</a>
 				</nav>
 			</aside>
