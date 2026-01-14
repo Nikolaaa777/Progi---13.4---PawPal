@@ -7,6 +7,7 @@ import { api } from "./api/client";
 import ProfileInfo from "./pages/profile/ProfileInfo";
 import MojiLjubimci from "./pages/profile/MojiLjubimci";
 import MojeRezervacije from "./pages/profile/MojeRezervacije";
+import ProfileLayout from "./pages/profile/ProfileLayout";
 
 export default function App() {
 	const [user, setUser] = useState(null);
@@ -23,9 +24,11 @@ export default function App() {
 			<Route path="/" element={<Home user={user} />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
-			<Route path="/profile" element={<ProfileInfo />} />
-			<Route path="/profile/ljubimci" element={<MojiLjubimci />} />
-			<Route path="/profile/rezervacije" element={<MojeRezervacije />} />
+			<Route path="/profile" element={<ProfileLayout />}>
+				<Route index element={<ProfileInfo />} />
+				<Route path="ljubimci" element={<MojiLjubimci />} />
+				<Route path="rezervacije" element={<MojeRezervacije />} />
+			</Route>
 		</Routes>
 	);
 }

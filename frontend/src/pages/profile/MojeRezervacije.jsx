@@ -10,22 +10,10 @@ export default function MojeRezervacije() {
 					<span>Detalji termina</span>
 					<div className="icons">
 						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
+							<img src="/edit.png" alt="edit" />
 						</button>
 						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
-						</button>
-					</div>
-				</div>
-
-				<div className="appointment-card">
-					<span>Detalji termina</span>
-					<div className="icons">
-						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
-						</button>
-						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
+							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
 				</div>
@@ -34,22 +22,10 @@ export default function MojeRezervacije() {
 					<span>Detalji termina</span>
 					<div className="icons">
 						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
+							<img src="/edit.png" alt="edit" />
 						</button>
 						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
-						</button>
-					</div>
-				</div>
-
-				<div className="appointment-card">
-					<span>Detalji termina</span>
-					<div className="icons">
-						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
-						</button>
-						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
+							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
 				</div>
@@ -58,22 +34,10 @@ export default function MojeRezervacije() {
 					<span>Detalji termina</span>
 					<div className="icons">
 						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
+							<img src="/edit.png" alt="edit" />
 						</button>
 						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
-						</button>
-					</div>
-				</div>
-
-				<div className="appointment-card">
-					<span>Detalji termina</span>
-					<div className="icons">
-						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
-						</button>
-						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
+							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
 				</div>
@@ -82,10 +46,46 @@ export default function MojeRezervacije() {
 					<span>Detalji termina</span>
 					<div className="icons">
 						<button className="icon-btn">
-							<img src="/images/edit.png" alt="edit" />
+							<img src="/edit.png" alt="edit" />
 						</button>
 						<button className="icon-btn">
-							<img src="/images/bin.png" alt="trash" />
+							<img src="/bin.png" alt="trash" />
+						</button>
+					</div>
+				</div>
+
+				<div className="appointment-card">
+					<span>Detalji termina</span>
+					<div className="icons">
+						<button className="icon-btn">
+							<img src="/edit.png" alt="edit" />
+						</button>
+						<button className="icon-btn">
+							<img src="/bin.png" alt="trash" />
+						</button>
+					</div>
+				</div>
+
+				<div className="appointment-card">
+					<span>Detalji termina</span>
+					<div className="icons">
+						<button className="icon-btn">
+							<img src="/edit.png" alt="edit" />
+						</button>
+						<button className="icon-btn">
+							<img src="/bin.png" alt="trash" />
+						</button>
+					</div>
+				</div>
+
+				<div className="appointment-card">
+					<span>Detalji termina</span>
+					<div className="icons">
+						<button className="icon-btn">
+							<img src="/edit.png" alt="edit" />
+						</button>
+						<button className="icon-btn">
+							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
 				</div>
