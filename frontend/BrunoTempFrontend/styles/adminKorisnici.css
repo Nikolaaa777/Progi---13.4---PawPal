@@ -1,113 +1,118 @@
 /* styles.css */
 * {
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
-
 
 body {
-    margin: 0;
-    background: #f5f6f8;
+  margin: 0;
+  background: #f5f6f8;
 }
-
 
 .app {
-    display: flex;
-    min-height: 100vh;
+  display: flex;
+  min-height: 100vh;
 }
-
 
 .sidebar {
-    width: 240px;
-    background: #7fa6e8;
-    padding: 20px 16px;
+  width: 240px;
+  background: #7fa6e8;
+  padding: 20px 16px;
 }
-
 
 .back {
-    font-size: 18px;
-    margin-bottom: 16px;
-    cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 16px;
+  cursor: pointer;
 }
-
 
 .profile {
-    text-align: center;
-    margin-bottom: 24px;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
-
 .avatar {
-    width: 90px;
-    height: 90px;
-    margin-bottom: 8px;
+  width: 90px;
+  height: 90px;
+  margin-bottom: 8px;
 }
 
 .menu {
-    margin-top: 30px;
-    border-top: 2px solid #000;
-    padding-top: 20px;
-    text-align: center;
+  margin-top: 30px;
+  border-top: 2px solid #000;
+  padding-top: 20px;
+  text-align: center;
 }
 
 .menu a {
-    display: block;
-    text-decoration: none;
-    color: #4f5d7a;
-    font-size: 18px;
-    margin-bottom: 16px;
+  display: block;
+  text-decoration: none;
+  color: #4f5d7a;
+  font-size: 18px;
+  margin-bottom: 16px;
 }
 
 .menu a.active {
-    color: #000;
-    font-weight: bold;
+  color: #000;
+  font-weight: bold;
 }
-
 
 .content {
-    flex: 1;
-    background: #fff;
-    padding: 32px 24px;
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
 }
-
 
 .title {
-    text-align: center;
-    margin-bottom: 24px;
+  text-align: center;
+  margin-bottom: 24px;
 }
-
 
 .users {
-    max-width: 420px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
 }
-
 
 .user {
-    background: #7fa6e8;
-    color: #fff;
-    padding: 10px 14px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  width: 100%;
+  max-width: none;
+  height: 120px;
+  background-color: #8fa7e6;
+  border-radius: 16px;
+  padding: 24px;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
 
 .actions {
-    display: flex;
-    gap: 6px;
+  display: flex;
+  gap: 6px;
 }
 
-
 .action {
-    background: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    padding: 4px 6px;
-    font-size: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.action img {
+  width: 24px;
+  height: 24px;
 }
