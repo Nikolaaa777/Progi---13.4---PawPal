@@ -294,18 +294,6 @@ body {
 	box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
 	text-align: left;
 }
-.stat-top {
-	font-size: 22px;
-}
-.stat-value {
-	font-size: 30px;
-	font-weight: 700;
-	margin-top: 6px;
-}
-.stat-label {
-	margin-top: 6px;
-	opacity: 0.85;
-}
 
 .actions-row {
 	width: min(900px, 92%);
@@ -372,6 +360,51 @@ body {
 	justify-content: center;
 	gap: 18px;
 	padding-top: 0;
+}
+
+.stat-icon {
+	width: 40px;
+	height: 40px;
+	opacity: 1;
+}
+
+.stat-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
+	padding: 18px 22px;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 26px rgba(0, 0, 0, 0.14);
+}
+
+.stat-toprow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.stat-icon {
+	width: 36px;
+	height: 36px;
+	object-fit: contain;
+	transform: scale(3.5);
+	transform-origin: center;
+}
+
+.stat-value {
+	font-size: 44px;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.stat-label {
+	font-size: 18px;
+	opacity: 0.85;
 }
 
 @media (max-width: 1024px) {

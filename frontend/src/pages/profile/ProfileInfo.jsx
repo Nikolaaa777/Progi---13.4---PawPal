@@ -37,21 +37,27 @@ export default function ProfileInfo() {
 
 			<section className="stats-row">
 				<div className="stat-card">
-					<div className="stat-top">🐾</div>
-					<div className="stat-value">{user.petsCount}</div>
-					<div className="stat-label">ljubimca</div>
+					<div className="stat-toprow">
+						<img src="/paw.png" alt="ljubimci" className="stat-icon" />
+						<div className="stat-value">3</div>
+					</div>
+					<div className="stat-label">Ljubimca</div>
 				</div>
 
 				<div className="stat-card">
-					<div className="stat-top">🚶</div>
-					<div className="stat-value">{user.walksTotal}</div>
-					<div className="stat-label">šetnji ukupno</div>
+					<div className="stat-toprow">
+						<img src="/walk.png" alt="šetnje" className="stat-icon" />
+						<div className="stat-value">12</div>
+					</div>
+					<div className="stat-label">Ukupno šetnji</div>
 				</div>
 
 				<div className="stat-card">
-					<div className="stat-top">⭐</div>
-					<div className="stat-value">{user.walkerRating}</div>
-					<div className="stat-label">ocjena šetača</div>
+					<div className="stat-toprow">
+						<img src="/star.png" alt="ocjena" className="stat-icon" />
+						<div className="stat-value">4.8</div>
+					</div>
+					<div className="stat-label">Ocjena šetača</div>
 				</div>
 			</section>
 
