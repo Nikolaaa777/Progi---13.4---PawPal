@@ -10,31 +10,31 @@ import MojeRezervacije from "./pages/profile/MojeRezervacije";
 import ProfileLayout from "./pages/profile/ProfileLayout";
 import UrediProfil from "./pages/profile/UrediProfil";
 import DodajPsa from "./pages/profile/DodajPsa";
-import UrediProfilPsa from "./pages/profile/UrediProfilPsa";
+import UrediPsa from "./pages/profile/UrediPsa";
 
 export default function App() {
-	const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
 
-	useEffect(() => {
-		api
-			.me()
-			.then(setUser)
-			.catch(() => setUser(null));
-	}, []);
+  useEffect(() => {
+    api
+      .me()
+      .then(setUser)
+      .catch(() => setUser(null));
+  }, []);
 
-	return (
-		<Routes>
-			<Route path="/" element={<Home user={user} />} />
-			<Route path="/login" element={<Login />} />
-			<Route path="/register" element={<Register />} />
-			<Route path="/profile" element={<ProfileLayout />}>
-				<Route index element={<ProfileInfo />} />
-				<Route path="uredi" element={<UrediProfil />} />
-				<Route path="ljubimci" element={<MojiLjubimci />} />
-				<Route path="ljubimci/dodaj" element={<DodajPsa />} />
-				<Route path="ljubimci/:id/uredi" element={<UrediProfilPsa />} />
-				<Route path="rezervacije" element={<MojeRezervacije />} />
-			</Route>
-		</Routes>
-	);
+  return (
+    <Routes>
+      <Route path="/" element={<Home user={user} />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/profile" element={<ProfileLayout />}>
+        <Route index element={<ProfileInfo />} />
+        <Route path="uredi" element={<UrediProfil />} />
+        <Route path="ljubimci" element={<MojiLjubimci />} />
+        <Route path="ljubimci/dodaj" element={<DodajPsa />} />
+        <Route path="rezervacije" element={<MojeRezervacije />} />
+      </Route>
+      <Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
+    </Routes>
+  );
 }
