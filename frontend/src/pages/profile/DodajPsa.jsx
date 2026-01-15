@@ -22,17 +22,34 @@ export default function DodajPsa() {
 	const onSubmit = async (e) => {
 		e.preventDefault();
 
-		await api.createDog({
-			imePsa: form.name,
-			pasminaPsa: form.breed,
-			starostPsa: Number(form.age) || 0,
-			zdravPas: form.health, // string
-			energijaPsa: form.energy, // string ili broj (kako već držiš)
-			socPsa: form.social, // string
-			posPsa: form.treats, // string
-		});
+		try {
+			const created = await api.createDog({
+				imePsa: form.name,
+				pasminaPsa: form.breed,
+				starostPsa: Number(form.age) || 0,
+				zdravPas: form.health,
+				energijaPsa: form.energy,
+				socPsa: form.social,
+				posPsa: form.treats,
+			});
 
-		nav("/profile/ljubimci");
+			console.log("DOG CREATED:", created);
+			nav("/profile/ljubimci");
+		} catch (err) {
+			console.error("CREATE DOG FAILED:", err);
+
+			// 1) ako je Response
+			if (err && typeof err.status === "number") {
+				const text = await err.text();
+				console.log("STATUS:", err.status);
+				console.log("BODY:", text);
+				alert(`Status ${err.status}: vidi Console`);
+				return;
+			}
+
+			// 2) ako je pravi JS error (TypeError: Failed to fetch)
+			alert(String(err));
+		}
 	};
 
 	return (
