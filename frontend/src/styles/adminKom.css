@@ -1,0 +1,114 @@
+/* styles.css */
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: #7fa6e8;
+  padding: 20px 16px;
+}
+
+.back {
+  font-size: 18px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.profile {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 8px;
+}
+
+.menu {
+  margin-top: 30px;
+  border-top: 2px solid #000;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.menu a {
+  display: block;
+  text-decoration: none;
+  color: #4f5d7a;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.menu a.active {
+  color: #000;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.comments {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+}
+
+.comment {
+  width: 100%;
+  max-width: none;
+  height: 120px;
+  background-color: #8fa7e6;
+  border-radius: 16px;
+  padding: 24px;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.delete img {
+  width: 24px;
+  height: 24px;
+}

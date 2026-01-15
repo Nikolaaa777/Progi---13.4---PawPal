@@ -1,13 +1,33 @@
-version: "3"
 services:
   db:
-    image: postgres
-    container_name: postgres_pawpal
-    ports:
-      - "5432:5432"
+    image: postgres:16
     environment:
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_USER: postgres
-      POSTGRES_DB: db
+      POSTGRES_DB: pawpal_db
+      POSTGRES_USER: pawpal_user
+      POSTGRES_PASSWORD: jaka_lozinka
     volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql:ro
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./bekend
+    env_file:
+      - ./bekend/.env
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bekend:/app
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:

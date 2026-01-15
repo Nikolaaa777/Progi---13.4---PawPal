@@ -1,114 +1,93 @@
-//const BASE = import.meta.env.VITE_API_BASE_URL || "";
-const BASE = import.meta.env.VITE_API_BASE_URL;
+const BASE = "";
+const json = (res) => {
+	if (!res.ok) throw res;
+	return res.json().catch(() => ({}));
+};
 
-console.log("API BASE =", BASE);
-
-let csrfToken = null;
+function getCookie(name) {
+	return document.cookie
+		.split("; ")
+		.find((r) => r.startsWith(name + "="))
+		?.split("=")[1];
+}
 
 export async function ensureCsrf() {
-  // UVIJEK osvježi CSRF token prije POST-a
-  const res = await fetch(`${BASE}/api/auth/csrf/`, {
-    method: "GET",
-    credentials: "include",
-  });
-
-  const data = await res.json().catch(() => ({}));
-  csrfToken = data.csrfToken;
+	await fetch(`${BASE}/api/auth/csrf/`, { credentials: "include" });
 }
 
-
-async function jsonFetch(url, options = {}) {
-  const res = await fetch(url, {
-    credentials: "include",
-    ...options,
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw { status: res.status, data };
-  }
-
-  return data;
+async function post(path, body) {
+	await ensureCsrf();
+	const csrf = getCookie("csrftoken");
+	return json(
+		await fetch(`${BASE}${path}`, {
+			method: "POST",
+			credentials: "include",
+			headers: { "Content-Type": "application/json", "X-CSRFToken": csrf },
+			body: JSON.stringify(body),
+		})
+	);
 }
-
-
-async function post(path, body = {}) {
-  await ensureCsrf();
-
-  return jsonFetch(`${BASE}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRFToken": csrfToken,
-    },
-    body: JSON.stringify(body),
-  });
-}
-
-
-
 
 async function get(path) {
-  return jsonFetch(`${BASE}${path}`, {
-    method: "GET",
-  });
+	await ensureCsrf();
+	return json(await fetch(`${BASE}${path}`, { credentials: "include" }));
 }
 
 export const api = {
-  // vrati user objekt ili null
-me: async () => {
-  const data = await get("/api/auth/me/");
-  console.log("api.me response:", data);
+	me: () => get("/api/auth/me/"),
+	login: (email, password) => post("/api/auth/login/", { email, password }),
+	logout: () => post("/api/auth/logout/", {}),
+	register: ({ email, first_name, last_name, password, is_walker }) =>
+		post("/api/auth/register/", {
+			email,
+			first_name,
+			last_name,
+			password,
+			is_walker,
+		}),
+	toggleNotifications: () => post("/api/notifications/toggle/", {}),
+	googleLoginUrl: async () => {
+		await ensureCsrf();
+		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
+			credentials: "include",
+		});
+		try {
+			const { url } = await res.json();
+			return url;
+		} catch {
+			return res.url;
+		}
+	},
 
-  // slučaj 1: backend vraća { authenticated: true/false, user: {...} | null }
-  if (typeof data.authenticated !== "undefined") {
-    return data.authenticated ? data.user : null;
-  }
+	// DOGS
+	dogs: () => get("/api/dogs/"),
+	dog: (idPsa) => get(`/api/dogs/${idPsa}/`),
+	createDog: (payload) => post("/api/dogs/create/", payload),
+	updateDog: async (idPsa, payload) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/dogs/${idPsa}/update/`, {
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFToken": csrf,
+				},
+				body: JSON.stringify(payload),
+			})
+		);
+	},
 
-  // slučaj 2: backend vraća direktno user objekt { id, email, ... }
-  if (data && (data.id || data.email)) {
-    return data;
-  }
-
-  // u svim ostalim slučajevima tretiraj kao nelogiranog
-  return null;
-},
-
-
-  register: ({ email, first_name, last_name, password, is_walker }) =>
-    post("/api/auth/register/", {
-      email,
-      first_name,
-      last_name,
-      password,
-      is_walker,
-    }),
-
-  login: (email, password) =>
-    post("/api/auth/login/", { email, password }),
-
-logout: async () => {
-  try {
-    return await post("/api/auth/logout/", {});
-  } catch (err) {
-    return err.data || {};
-  }
-},
-
-  googleLoginUrl: async () => {
-    await ensureCsrf();
-    const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
-      credentials: "include",
-    });
-    try {
-      const { url } = await res.json();
-      return url;
-    } catch {
-      return res.url;
-    }
-  },
-  toggleNotifications: async () => {
-    return post("/api/notifications/toggle/", {});  
-  },
+	deleteDog: async (idPsa) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/dogs/${idPsa}/delete/`, {
+				method: "DELETE",
+				credentials: "include",
+				headers: { "X-CSRFToken": csrf },
+			})
+		);
+	},
 };

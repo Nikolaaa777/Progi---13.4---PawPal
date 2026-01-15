@@ -23,13 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
+.venv/
 venv/
-db.sqlite3
 node_modules/
 dist/
 __pycache__/
+*.pyc
 
-
-# Environment variables
 .env
 .env.*
+db.sqlite3
+pgdata/
