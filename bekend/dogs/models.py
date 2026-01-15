@@ -6,12 +6,14 @@ class Pas(models.Model):
     idPsa = models.BigAutoField(primary_key=True, db_column="idPsa")
 
     vlasnik = models.ForeignKey(
-        Vlasnik,
-        to_field="idVlasnik",
-        db_column="idVlasnik",
-        on_delete=models.DO_NOTHING,
-        related_name="psi",
-    )
+    Vlasnik,
+    to_field="idVlasnik",
+    db_column="idVlasnik",
+    on_delete=models.DO_NOTHING,
+    related_name="psi",
+    null=True,
+    blank=True,
+)
 
     energijaPsa = models.CharField(max_length=20, null=True, blank=True, db_column="energijaPsa")
     zdravPas = models.CharField(max_length=20, null=True, blank=True, db_column="zdravPas")
@@ -22,7 +24,7 @@ class Pas(models.Model):
     pasminaPsa = models.CharField(max_length=20, null=True, blank=True, db_column="pasminaPsa")
 
     class Meta:
-        managed = False
+        managed = True
         db_table = '"Pas"'
 
     def __str__(self):

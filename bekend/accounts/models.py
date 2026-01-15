@@ -12,6 +12,7 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.email} | walker={self.is_walker} | notif={self.has_notifications_on}"
     
+    
 
 class Vlasnik(models.Model):
     idVlasnik = models.BigAutoField(primary_key=True, db_column="idVlasnik")
@@ -21,7 +22,7 @@ class Vlasnik(models.Model):
     imeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="imeVlasnik")
     prezimeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="prezimeVlasnik")
     class Meta:
-        managed = False
+        managed = True
         db_table = '"Vlasnik"'
 
     def __str__(self):
@@ -47,7 +48,7 @@ class Setac(models.Model):
     idProfilne = models.BigIntegerField(null=True, blank=True, db_column="idProfilne")
 
     class Meta:
-        managed = False
+        managed = True
         db_table = '"Setac"'
 
     def __str__(self):
