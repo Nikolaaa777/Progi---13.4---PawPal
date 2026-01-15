@@ -382,11 +382,11 @@ body {
 	transition: transform 0.2s ease;
 }
 
-.notif-toggle input:checked+.toggle-ui {
+.notif-toggle input:checked + .toggle-ui {
 	background: rgba(0, 90, 255, 0.45);
 }
 
-.notif-toggle input:checked+.toggle-ui::after {
+.notif-toggle input:checked + .toggle-ui::after {
 	transform: translateX(20px);
 }
 
@@ -450,10 +450,12 @@ body {
 	align-items: center;
 	justify-content: center;
 
-	background: radial-gradient(ellipse at center,
-			#6fa2ff 0%,
-			#2f5bff 45%,
-			#1f2fd6 100%);
+	background: radial-gradient(
+		ellipse at center,
+		#6fa2ff 0%,
+		#2f5bff 45%,
+		#1f2fd6 100%
+	);
 }
 
 .edit-card {

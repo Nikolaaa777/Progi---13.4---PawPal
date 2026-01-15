@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const addBtn = document.querySelector(".add-btn");
-  const container = document.querySelector(".appointments");
+	const addBtn = document.querySelector(".add-btn");
+	const container = document.querySelector(".appointments");
 
-  if (!addBtn || !container) return;
+	if (!addBtn || !container) return;
 
-  addBtn.addEventListener("click", () => {
-    const card = document.createElement("div");
-    card.className = "appointment-card";
+	addBtn.addEventListener("click", () => {
+		const card = document.createElement("div");
+		card.className = "appointment-card";
 
-    card.innerHTML = `
+		card.innerHTML = `
           <span>Detalji psa</span>
 					<div className="icons">
 						<button
@@ -24,13 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					</div>
     `;
 
-    container.appendChild(card);
+		container.appendChild(card);
 
-    const deleteBtn = card.querySelector(".delete-btn");
-    if (deleteBtn) {
-      deleteBtn.addEventListener("click", () => {
-        card.remove();
-      });
-    }
-  });
+		const deleteBtn = card.querySelector(".delete-btn");
+		if (deleteBtn) {
+			deleteBtn.addEventListener("click", () => {
+				card.remove();
+			});
+		}
+	});
 });

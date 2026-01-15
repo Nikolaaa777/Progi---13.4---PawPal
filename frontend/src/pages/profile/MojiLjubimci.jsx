@@ -1,5 +1,4 @@
 import "../../styles/all.css";
-import { api } from "../../api/adder.js";
 import { useNavigate } from "react-router-dom";
 
 export default function MojiLjubimci() {
