@@ -121,7 +121,7 @@ body {
 /* Main content */
 .content {
 	flex: 1;
-	padding: 40px;
+	padding: 24px;
 	display: flex;
 	flex-direction: column;
 }

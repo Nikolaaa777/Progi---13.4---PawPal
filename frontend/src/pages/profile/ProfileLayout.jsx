@@ -17,11 +17,11 @@ export default function ProfileLayout() {
 				</div>
 
 				<nav className="menu">
-					<NavLink end to="/profile">
-						Moje informacije
-					</NavLink>
+					<NavLink end to="/profile">Moje informacije</NavLink>
 					<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
 					<NavLink to="/profile/rezervacije">Moje rezervacije</NavLink>
+					<NavLink to="/profile/termini">Moji termini</NavLink>
+					<NavLink to="/profile/zahtjevi">Zahtjevi za šetnju</NavLink>
 				</nav>
 			</aside>
 			<Outlet />

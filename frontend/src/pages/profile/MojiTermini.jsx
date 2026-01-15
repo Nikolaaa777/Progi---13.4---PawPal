@@ -1,7 +1,7 @@
 import React from "react";
-import "../../styles/rezervacije.css";
+import "../../styles/termini.css";
 
-const MojeRezervacije = () => {
+const MojiTermini = () => {
   // Kasnije iz API-ja
   const rezervacije = [
     {
@@ -11,7 +11,7 @@ const MojeRezervacije = () => {
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Planirana",
+      status: "Planiran",
     },
     {
       id: 2,
@@ -20,7 +20,7 @@ const MojeRezervacije = () => {
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Planirana",
+      status: "Planiran",
     },
     {
       id: 3,
@@ -29,7 +29,7 @@ const MojeRezervacije = () => {
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Završena",
+      status: "Završen",
     },
     {
       id: 4,
@@ -38,84 +38,82 @@ const MojeRezervacije = () => {
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Otkazana",
+      status: "Otkazan",
     },
     {
-      id: 4,
+      id: 5,
       date: "03.02.2026",
       time: "18:00",
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Otkazana",
+      status: "Otkazan",
     },
     {
-      id: 4,
+      id: 6,
       date: "03.02.2026",
       time: "18:00",
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Otkazana",
+      status: "Otkazan",
     },
   ];
 
   const getStatusClass = (status) => {
     if (!status) return "";
     const s = status.toLowerCase();
-    if (s.includes("zavr")) return "zavrsena";
-    if (s.includes("otkaz")) return "otkazana";
-    if (s.includes("plan")) return "planirana";
-    if (s.includes("aktiv")) return "aktivna";
+    if (s.includes("zavr")) return "zavrsen";
+    if (s.includes("otkaz")) return "otkazan";
+    if (s.includes("plan")) return "planiran";
+    if (s.includes("aktiv")) return "aktivan";
     return "";
   };
 
   return (
     <div className="app">
       <main className="content">
-        <h1 className="page-title">Moje rezervacije</h1>
+        <h1 className="page-title">Moji termini</h1>
 
-        <div className="Walk-Reservations">
-          <div className="Walk-Reservations__inner">
+        <div className="Walk-Appointments">
           {rezervacije.map((r) => (
-            <div key={r.id} className="Walk-Reservation-card">
-              <div className="Walk-Reservation-left">
+            <div key={r.id} className="Walk-Appointment-card">
+              <div className="Walk-Appointment-left">
                 <div className="Walk-calendar">
                   <img src="/calendar.png" alt="calendar" />
                 </div>
 
-                <div className="Walk-Reservation-text">
-                  <div className="Walk-Reservation-date">
+                <div className="Walk-Appointment-text">
+                  <div className="Walk-Appointment-date">
                     {r.date} · {r.time}
                   </div>
-                  <div className="Walk-Reservation-info">
+                  <div className="Walk-Appointment-info">
                     Pas: {r.dog} · {r.duration}
                   </div>
-                  <div className="Walk-Reservation-info">
+                  <div className="Walk-Appointment-info">
                     Lokacija: {r.location}
                   </div>
                 </div>
               </div>
 
               <div className="iconsWalk">
-                <div className={`Walk-status-reservation ${getStatusClass(r.status)}`}>{r.status}</div>
+                <div className={`Walk-status-Appointment ${getStatusClass(r.status)}`}>{r.status}</div>
 
-                <button className="editReservation-btn">
+                <button className="editAppointment-btn">
                   <img src="/edit.png" alt="edit" />
                   Uredi
                 </button>
 
-                <button className="deleteReservation-btn">
+                <button className="deleteAppointment-btn">
                   <img src="/bin.png" alt="trash" />
                 </button>
               </div>
             </div>
           ))}
-          </div>
         </div>
       </main>
     </div>
   );
 };
 
-export default MojeRezervacije;
+export default MojiTermini;

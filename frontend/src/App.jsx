@@ -11,6 +11,8 @@ import ProfileLayout from "./pages/profile/ProfileLayout";
 import UrediProfil from "./pages/profile/UrediProfil";
 import DodajPsa from "./pages/profile/DodajPsa";
 import UrediPsa from "./pages/profile/UrediPsa";
+import MojiTermini from "./pages/profile/MojiTermini";
+import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";	
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -33,8 +35,15 @@ export default function App() {
         <Route path="ljubimci" element={<MojiLjubimci />} />
         <Route path="ljubimci/dodaj" element={<DodajPsa />} />
         <Route path="rezervacije" element={<MojeRezervacije />} />
+		<Route path="termini" element={<MojiTermini />} />
+        <Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
       </Route>
       <Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
     </Routes>
   );
 }
+
+
+/* <Route path="termini" element={<MojiTermini />} />
+import MojiTermini from "./pages/profile/MojiTermini";
+import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";*/
