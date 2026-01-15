@@ -740,8 +740,152 @@ body {
 		flex-wrap: wrap;
 	}
 }
-
 /*Kraj Moje rezervacije*/
+
+/*Moji ljubimci*/
+.pets-content {
+	background: #f2f4f7;
+	padding: 32px;
+	justify-content: flex-start;
+}
+
+.pets-shell {
+	width: min(980px, 96%);
+	margin: 0 auto;
+	background: #fff;
+	border-radius: 26px;
+	padding: 34px 34px 90px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	position: relative;
+}
+
+.pets-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 18px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	margin-bottom: 22px;
+}
+
+.pets-title {
+	font-size: 44px;
+	font-weight: 800;
+	letter-spacing: -0.5px;
+}
+
+.pets-list {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.pet-card {
+	background: #fff;
+	border-radius: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	padding: 18px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+}
+
+.pet-left {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.pet-avatar {
+	width: 74px;
+	height: 74px;
+	border-radius: 50%;
+	background: #e9edf6;
+	border: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.pet-info {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.pet-name {
+	font-size: 28px;
+	font-weight: 800;
+}
+
+.pet-sub {
+	font-size: 18px;
+	color: rgba(0, 0, 0, 0.55);
+}
+
+.pet-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.pet-action {
+	height: 46px;
+	border: 0;
+	border-radius: 14px;
+	padding: 0 16px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.pet-action.edit {
+	background: #e7f0ff;
+	color: #1b5cff;
+}
+
+.pet-action.delete {
+	width: 56px;
+	padding: 0;
+	background: #ffe7e7;
+	color: #e04b4b;
+	font-size: 18px;
+}
+
+.pets-add {
+	position: absolute;
+	right: 28px;
+	bottom: 26px;
+	height: 58px;
+	padding: 0 22px;
+	border: 0;
+	border-radius: 999px;
+	background: #2f6bff;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 800;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	box-shadow: 0 14px 28px rgba(47, 107, 255, 0.25);
+}
+
+.pets-add-plus {
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.2);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 22px;
+	line-height: 1;
+}
+
+.pet-action.delete img {
+	width: 22px;
+	height: 22px;
+}
+/*Kraj Moji Ljubimci*/
 
 @media (max-width: 1024px) {
 	.sidebar {
