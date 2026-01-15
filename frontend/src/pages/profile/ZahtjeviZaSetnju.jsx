@@ -2,7 +2,6 @@ import React from "react";
 import "../../styles/zahtjevi.css";
 
 const ZahtjeviZaSetnju = () => {
-  // Kasnije iz API-ja
   const zahtjevi = [
     {
       id: 1,
@@ -24,6 +23,46 @@ const ZahtjeviZaSetnju = () => {
       owner: "Marko P.",
       status: "Na čekanju",
     },
+    {
+      id: 3,
+      date: "19.01.2026",
+      time: "14:30",
+      dog: "Luna",
+      duration: "45 min",
+      location: "Maksimir",
+      owner: "Marko P.",
+      status: "Na čekanju",
+    },
+    {
+      id: 4,
+      date: "19.01.2026",
+      time: "14:30",
+      dog: "Luna",
+      duration: "45 min",
+      location: "Maksimir",
+      owner: "Marko P.",
+      status: "Na čekanju",
+    },
+    {
+      id: 5,
+      date: "19.01.2026",
+      time: "14:30",
+      dog: "Luna",
+      duration: "45 min",
+      location: "Maksimir",
+      owner: "Marko P.",
+      status: "Na čekanju",
+    },
+    {
+      id: 6,
+      date: "19.01.2026",
+      time: "14:30",
+      dog: "Luna",
+      duration: "45 min",
+      location: "Maksimir",
+      owner: "Marko P.",
+      status: "Na čekanju",
+    },
   ];
 
   return (
@@ -32,6 +71,7 @@ const ZahtjeviZaSetnju = () => {
         <h1 className="page-title">Zahtjevi za šetnju</h1>
 
         <div className="Walk-Requests">
+          <div className="Walk-Requests__inner">
           {zahtjevi.map((z) => (
             <div key={z.id} className="Walk-Request-card">
               <div className="Walk-Request-left">
@@ -61,6 +101,7 @@ const ZahtjeviZaSetnju = () => {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </main>
     </div>

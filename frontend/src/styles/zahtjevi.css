@@ -26,13 +26,32 @@ background-color: #e53935;
 }
 
 /* Layout for walk requests (matches component class names) */
+
 .Walk-Requests {
 	width: min(1100px, 96%);
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	padding: 16px 0;
+	padding-bottom: 12px;
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 18px;
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	overflow: hidden;
+}
+
+.Walk-Requests__inner {
+	max-height: calc(100vh - 296px);
+	overflow-y: auto;
+	padding-right: 8px;
+	-webkit-overflow-scrolling: touch;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 10px;
+	border-radius: 8px;
+	box-sizing: border-box;
 }
 
 .Walk-Request-card {
@@ -40,9 +59,16 @@ background-color: #e53935;
 	align-items: center;
 	justify-content: space-between;
 	background: #ffffff;
-	border-radius: 18px;
-	padding: 16px;
-	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+	border-radius: 14px;
+	padding: 20px 24px;
+	border: 1px solid rgba(15, 23, 42, 0.06);
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+	transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.Walk-Request-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
 }
 
 .Walk-Request-left {
@@ -92,6 +118,19 @@ background-color: #e53935;
 	align-items: center;
 }
 
+.Walk-Requests__inner {
+	max-height: calc(100vh - 296px);
+	overflow-y: auto;
+	padding-right: 8px;
+	-webkit-overflow-scrolling: touch;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 10px;
+	border-radius: 8px;
+	box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
 	.Walk-Request-card {
 		flex-direction: column;
@@ -102,5 +141,12 @@ background-color: #e53935;
 	.Request-buttons {
 		justify-content: flex-start;
 		flex-wrap: wrap;
+	}
+
+	/* Disable the fixed max-height on small screens so list flows naturally */
+	.Walk-Requests__inner {
+		max-height: none;
+		overflow: visible;
+		padding-right: 0;
 	}
 }

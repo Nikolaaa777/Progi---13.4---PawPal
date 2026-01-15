@@ -76,6 +76,7 @@ const MojiTermini = () => {
         <h1 className="page-title">Moji termini</h1>
 
         <div className="Walk-Appointments">
+          <div className="Walk-Appointments__inner">
           {rezervacije.map((r) => (
             <div key={r.id} className="Walk-Appointment-card">
               <div className="Walk-Appointment-left">
@@ -110,6 +111,7 @@ const MojiTermini = () => {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </main>
     </div>

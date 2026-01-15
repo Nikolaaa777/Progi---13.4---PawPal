@@ -140,22 +140,18 @@ body {
 	flex-direction: column;
 	gap: 16px;
 	padding-bottom: 12px;
-	/* visible container background */
 	background: #ffffff;
 	border-radius: 12px;
 	padding: 18px;
 	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-	/* clip rounded corners for inner scroll */
 	overflow: hidden;
 }
 
-/* Inner scroll area so outer container keeps rounded corners */
 .Walk-Reservations__inner {
 	max-height: calc(100vh - 296px);
 	overflow-y: auto;
 	padding-right: 8px;
 	-webkit-overflow-scrolling: touch;
-	/* layout + rounded inner corners */
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
