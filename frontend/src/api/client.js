@@ -58,4 +58,36 @@ export const api = {
 			return res.url;
 		}
 	},
+
+	// DOGS
+	dogs: () => get("/api/dogs/"),
+	dog: (idPsa) => get(`/api/dogs/${idPsa}/`),
+	createDog: (payload) => post("/api/dogs/create/", payload),
+	updateDog: async (idPsa, payload) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/dogs/${idPsa}/update/`, {
+				method: "PATCH",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFToken": csrf,
+				},
+				body: JSON.stringify(payload),
+			})
+		);
+	},
+
+	deleteDog: async (idPsa) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/dogs/${idPsa}/delete/`, {
+				method: "DELETE",
+				credentials: "include",
+				headers: { "X-CSRFToken": csrf },
+			})
+		);
+	},
 };

@@ -1,6 +1,7 @@
 import "../../styles/all.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { api } from "../../api/client";
 
 export default function DodajPsa() {
 	const nav = useNavigate();
@@ -18,9 +19,19 @@ export default function DodajPsa() {
 	const onChange = (k) => (e) =>
 		setForm((p) => ({ ...p, [k]: e.target.value }));
 
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		// TODO: kasnije POST na backend
+
+		await api.createDog({
+			imePsa: form.name,
+			pasminaPsa: form.breed,
+			starostPsa: Number(form.age) || 0,
+			zdravPas: form.health, // string
+			energijaPsa: form.energy, // string ili broj (kako već držiš)
+			socPsa: form.social, // string
+			posPsa: form.treats, // string
+		});
+
 		nav("/profile/ljubimci");
 	};
 
