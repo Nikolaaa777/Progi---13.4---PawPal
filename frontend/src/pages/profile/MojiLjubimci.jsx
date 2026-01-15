@@ -1,4 +1,5 @@
 import "../../styles/all.css";
+import { api } from "../../api/adder.js";
 import { useNavigate } from "react-router-dom";
 
 export default function MojiLjubimci() {
@@ -13,13 +14,13 @@ export default function MojiLjubimci() {
 					<span>Detalji psa</span>
 					<div className="icons">
 						<button
-							className="icon-btn"
+							className="edit-btn"
 							onClick={() => nav("/profile/ljubimci/1/uredi")}
 						>
 							<img src="/edit.png" alt="edit" />
 						</button>
 
-						<button className="icon-btn">
+						<button className="delete-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
@@ -29,13 +30,13 @@ export default function MojiLjubimci() {
 					<span>Detalji psa</span>
 					<div className="icons">
 						<button
-							className="icon-btn"
+							className="edit-btn"
 							onClick={() => nav("/profile/ljubimci/1/uredi")}
 						>
 							<img src="/edit.png" alt="edit" />
 						</button>
 
-						<button className="icon-btn">
+						<button className="delete-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
@@ -45,13 +46,13 @@ export default function MojiLjubimci() {
 					<span>Detalji psa</span>
 					<div className="icons">
 						<button
-							className="icon-btn"
+							className="edit-btn"
 							onClick={() => nav("/profile/ljubimci/1/uredi")}
 						>
 							<img src="/edit.png" alt="edit" />
 						</button>
 
-						<button className="icon-btn">
+						<button className="delete-btn">
 							<img src="/bin.png" alt="trash" />
 						</button>
 					</div>
