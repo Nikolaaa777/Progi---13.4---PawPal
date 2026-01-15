@@ -1,6 +1,7 @@
 import "../../styles/all.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { api } from "../../api/client";
 
 export default function DodajPsa() {
 	const nav = useNavigate();
@@ -18,10 +19,37 @@ export default function DodajPsa() {
 	const onChange = (k) => (e) =>
 		setForm((p) => ({ ...p, [k]: e.target.value }));
 
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		// TODO: kasnije POST na backend
-		nav("/profile/ljubimci");
+
+		try {
+			const created = await api.createDog({
+				imePsa: form.name,
+				pasminaPsa: form.breed,
+				starostPsa: Number(form.age) || 0,
+				zdravPas: form.health,
+				energijaPsa: form.energy,
+				socPsa: form.social,
+				posPsa: form.treats,
+			});
+
+			console.log("DOG CREATED:", created);
+			nav("/profile/ljubimci");
+		} catch (err) {
+			console.error("CREATE DOG FAILED:", err);
+
+			// 1) ako je Response
+			if (err && typeof err.status === "number") {
+				const text = await err.text();
+				console.log("STATUS:", err.status);
+				console.log("BODY:", text);
+				alert(`Status ${err.status}: vidi Console`);
+				return;
+			}
+
+			// 2) ako je pravi JS error (TypeError: Failed to fetch)
+			alert(String(err));
+		}
 	};
 
 	return (
