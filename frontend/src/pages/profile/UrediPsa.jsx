@@ -6,7 +6,7 @@ export default function DogProfileEdit() {
 
   return (
     <div className="edit-page">
-      <div className="card">
+      <div className="cardDog">
         <div className="header">
           <span className="back" onClick={() => navigate(-1)}>
             ←
