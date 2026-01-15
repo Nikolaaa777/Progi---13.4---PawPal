@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/urediPsa.css";
 
 export default function DogProfileEdit() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   return (
     <div className="edit-page">
@@ -35,18 +35,21 @@ export default function DogProfileEdit() {
           <label>Zdravstvene napomene</label>
           <input defaultValue="Alergičan na piletinu, Potreban lijek: Rimadyl" />
 
-          <label>Razina energije</label>
-          <input defaultValue="Energičan" />
-
           <label>Dopuštene poslastice</label>
           <input defaultValue="Mrkva, jabuke, goveđi keksi" />
+
+          <label htmlFor="energy">Razina energije</label>
+          <input type="range" id="energy" min={0} max={4} step={1} defaultValue={2}/>
+
+          <label htmlFor="social">Razina socijalizacije</label>
+          <input type="range" id="social" min={0} max={4} step={1} defaultValue={2}/>
         </div>
 
         <div className="buttons">
           <button className="cancel" onClick={() => navigate(-1)}>
             Otkaži
           </button>
-          <button className="save">Spremi promjene</button>
+          <button className="save">Spremi</button>
         </div>
       </div>
     </div>
