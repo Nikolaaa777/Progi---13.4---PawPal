@@ -10,7 +10,14 @@
 	font-size: 36px;
 	font-weight: bold;
 	text-align: center;
-	margin-bottom: 0;
+	color: #1f2937;
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	padding: 18px 0 18px 0;
+	width: min(1100px, 96%);
+	margin-left: auto;
+	margin-right: auto;
 }
 
 /* Center placeholder text */
@@ -68,9 +75,9 @@ body {
 
 /* Sidebar */
 .sidebar {
-	width: 320px;
-	background-color: #8fa7e6;
+	background-color: white;
 	padding: 24px;
+	border-radius: 12px;
 }
 
 .back-arrow {
@@ -89,10 +96,11 @@ body {
 	background-color: #e0e0e0;
 	border-radius: 50%;
 	margin: 0 auto 20px;
-	border: 2px solid #000;
+	border: 2px solid white;
 }
 
 .username {
+	color: white;
 	font-weight: bold;
 	font-size: 18px;
 	margin-bottom: 20px;
@@ -100,9 +108,10 @@ body {
 
 .menu {
 	margin-top: 30px;
-	border-top: 2px solid #000;
 	padding-top: 20px;
 	text-align: center;
+	align-items: center;
+	flex-direction: column;
 }
 
 .menu a {
@@ -126,12 +135,6 @@ body {
 	flex-direction: column;
 }
 
-.page-title {
-	text-align: center;
-	font-size: 36px;
-	font-weight: bold;
-	margin-bottom: 40px;
-}
 
 /* Appointments */
 .appointments {
@@ -358,6 +361,10 @@ body {
 	cursor: pointer;
 }
 
+.notif-label{
+	color: white;
+}
+
 .notif-toggle input {
 	display: none;
 }
@@ -393,7 +400,6 @@ body {
 .content {
 	justify-content: center;
 	gap: 18px;
-	padding-top: 0;
 }
 
 .stat-icon {

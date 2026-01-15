@@ -16,7 +16,7 @@ body {
 	font-size: 28px;
 	font-weight: 600;
 	color: #1f2937;
-	margin-bottom: 24px;
+	color: white;
 }
 
 /* Appointments list */
@@ -148,7 +148,7 @@ body {
 }
 
 .Walk-Reservations__inner {
-	max-height: calc(100vh - 296px);
+	max-height: calc(100vh - 200px);
 	overflow-y: auto;
 	padding-right: 8px;
 	-webkit-overflow-scrolling: touch;
