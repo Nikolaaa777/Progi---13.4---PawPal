@@ -140,13 +140,13 @@ body {
 	padding-bottom: 12px;
 	background: #ffffff;
 	border-radius: 12px;
-	padding: 18px;
+	padding: 14px;
 	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 	overflow: hidden;
 }
 
 .Walk-Reservations__inner {
-	max-height: calc(100vh - 200px);
+	max-height: calc(100vh - 130px);
 	overflow-y: auto;
 	padding-right: 8px;
 	-webkit-overflow-scrolling: touch;
