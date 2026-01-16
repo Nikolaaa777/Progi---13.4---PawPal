@@ -1165,7 +1165,7 @@ body {
 	}
 }
 
-/* Small phones */
+
 @media (max-width: 480px) {
 	.page-title {
 		font-size: 36px;
