@@ -36,12 +36,7 @@ export default function ProfileInfo() {
 
 	return (
 		<main className="content">
-
-			<div className="profile">
-					<div className="avatar"></div>
-					<div className="username">ImePrezime vlasnika</div>
-				</div>
-
+			<h1 className="page-title">Moje informacije</h1>
 
 			<section className="info-card">
 				<h2 className="info-name">{fullName}</h2>
@@ -95,7 +90,7 @@ export default function ProfileInfo() {
 				</button>
 
 				<label className="notif-toggle">
-					<span className="notif-label">Obavijesti</span>
+					<span>Obavijesti</span>
 					<input
 						type="checkbox"
 						checked={notifOn}

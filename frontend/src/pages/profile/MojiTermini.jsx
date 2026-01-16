@@ -111,10 +111,6 @@ const MojiTermini = () => {
               </div>
             </div>
           ))}
-          <button className="addAppointment-btn">
-            <img src="/plus.png" alt="plus" />
-            Dodaj termin
-          </button>
         </div>
         </div>
       </main>

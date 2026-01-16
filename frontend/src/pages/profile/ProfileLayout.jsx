@@ -11,6 +11,11 @@ export default function ProfileLayout() {
 					←
 				</div>
 
+				<div className="profile">
+					<div className="avatar"></div>
+					<div className="username">ImePrezime vlasnika</div>
+				</div>
+
 				<nav className="menu">
 					<NavLink end to="/profile">Moje informacije</NavLink>
 					<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
