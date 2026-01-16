@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.venv/
+venv/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+.env
+.env.*
+db.sqlite3
+pgdata/

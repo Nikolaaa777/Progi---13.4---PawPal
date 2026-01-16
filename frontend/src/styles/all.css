@@ -5,6 +5,7 @@
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Page title */
 .page-title {
 	font-size: 36px;
 	font-weight: bold;
@@ -19,15 +20,65 @@
 	margin-right: auto;
 }
 
-.center-text {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	font-size: 36px;
-	font-weight: bold;
+
+.back-arrow {
+  font-size: 24px;
+  cursor: pointer;
 }
 
+.profile {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  border: 2px solid #000;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+
+.icon-btn img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+
+.grade-btn {
+  width: 120px;
+  height: 44px;
+  border-radius: 16px;
+  border: 2px solid black;
+  background-color: #e0e0e0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  font-size: 14px;
+}
+
+
+/* Edit profile button */
 .edit-btn {
 	position: absolute;
 	bottom: 40px;
@@ -46,6 +97,7 @@
 	gap: 10px;
 }
 
+
 .edit-btn .icon {
 	width: 32px;
 	height: 32px;
@@ -60,14 +112,6 @@
 	font-size: 16px;
 }
 
-body {
-	height: 100vh;
-}
-
-.profile {
-	text-align: center;
-	margin-top: 40px;
-}
 
 .avatar {
 	width: 200px;
@@ -78,48 +122,12 @@ body {
 	border: 2px solid white;
 }
 
-.username {
-	color: white;
-	font-weight: bold;
-	font-size: 18px;
-	margin-bottom: 20px;
-}
-
 
 .content {
 	flex: 1;
 	padding: 24px;
 	display: flex;
 	flex-direction: column;
-}
-
-
-/* Icons */
-.icons {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.icon-btn {
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	border: 2px solid black;
-	background-color: #e0e0e0;
-	cursor: pointer;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	padding: 0;
-}
-
-.icon-btn img {
-	width: 24px;
-	height: 24px;
-	object-fit: contain;
 }
 
 .grade-btn {
@@ -225,6 +233,11 @@ body {
 	display: none;
 }
 
+.notif-toggle span {
+	color: white;
+
+}
+
 .toggle-ui {
 	width: 46px;
 	height: 26px;
@@ -255,7 +268,6 @@ body {
 
 .content {
 	justify-content: center;
-	gap: 18px;
 }
 
 .stat-icon {
@@ -387,6 +399,24 @@ body {
 	cursor: pointer;
 	margin-top: 10px;
 }
+
+.rate-btn {
+	height: 40px;
+	border-radius: 12px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: rgba(240, 243, 255, 0.9);
+	padding: 0 12px;
+	font-size: 14px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rate-btn .star {
+	font-size: 16px;
+}
+
 
 .pets-content {
 	background: #f2f4f7;
@@ -683,78 +713,3 @@ body {
 	color: #fff;
 }
 
-@media (max-width: 768px) {
-	
-	.profile {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-top: 0;
-	}
-
-	.avatar {
-		width: 60px;
-		height: 60px;
-		margin: 0;
-	}
-
-	.username {
-		font-size: 16px;
-		margin-bottom: 0;
-	}
-
-
-	.page-title {
-		font-size: 36px;
-		font-weight: bold;
-		text-align: center;
-		margin-bottom: 0;
-	}
-
-	/* Center text becomes normal flow */
-	.center-text {
-		position: static;
-		transform: none;
-		text-align: center;
-		margin: 40px 0;
-		font-size: 24px;
-	}
-
-	/* Edit button moves into flow */
-	.edit-btn {
-		position: static;
-		margin: 40px auto 0;
-	}
-
-	.icons {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	/* Add button */
-	.add-btn {
-		width: 100%;
-		justify-content: center;
-	}
-}
-
-
-@media (max-width: 480px) {
-	.page-title {
-		font-size: 36px;
-		font-weight: bold;
-		text-align: center;
-		margin-bottom: 0;
-	}
-
-	.icon-btn {
-		width: 40px;
-		height: 40px;
-	}
-
-	.icon-btn img {
-		width: 20px;
-		height: 20px;
-	}
-}

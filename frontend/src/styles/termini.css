@@ -16,7 +16,7 @@ body {
 	font-size: 28px;
 	font-weight: 600;
 	color: #1f2937;
-	background-color: white;
+	margin-bottom: 24px;
 }
 
 /* Appointments list */
@@ -132,30 +132,6 @@ body {
 	height: 16px;
 }
 
-.addAppointment-btn {
-	width: 200px;
-	display: flex;
-	align-self: center;
-	align-items: center;
-	gap: 20px;
-	color: black;
-	background: #ffffff;
-	border-radius: 14px;
-	padding: 20px 24px;
-	border: 1px solid rgba(15, 23, 42, 0.06);
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-	transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.addAppointment-btn:hover {
-	transform: translateY(-6px);
-	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
-}
-
-.addAppointment-btn img {
-	width: 20px;
-	height: 20px;
-}
 
 .Walk-Appointments {
 	width: min(1100px, 96%);
@@ -238,6 +214,31 @@ body {
 	background: #f59e0b;
 	color: #ffffff;
 	border: none;
+}
+
+.addAppointment-btn {
+	align-self: center;
+	display: flex;
+	color: black;
+	align-items: center;
+	width: 190px;
+	gap: 10px;
+	background: #ffffff;
+	border-radius: 14px;
+	padding: 20px 24px;
+	border: 1px solid rgba(15, 23, 42, 0.06);
+	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+	transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.addAppointment-btn:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+}
+
+.addAppointment-btn img {
+	width: 20px;
+	height: 20px;
 }
 
 /* Mobile */
