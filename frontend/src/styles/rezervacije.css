@@ -108,6 +108,10 @@ body {
 	height: 16px;
 }
 
+.editReservation-btn.zavrsena {
+	display: none;
+}
+
 .deleteReservation-btn {
 	background: #fee2e2;
 	border: none;

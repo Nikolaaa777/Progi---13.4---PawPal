@@ -106,7 +106,14 @@ const MojiTermini = () => {
                     {r.status}
                   </div>
 
-                  <button className="editAppointment-btn">
+                  <button
+                    className={`editAppointment-btn ${getStatusClass(r.status)}`}
+                    style={
+                      ["zavrsen", "otkazan"].includes(getStatusClass(r.status))
+                        ? { display: "none" }
+                        : undefined
+                    }
+                  >
                     <img src="/edit.png" alt="edit" />
                     Uredi
                   </button>

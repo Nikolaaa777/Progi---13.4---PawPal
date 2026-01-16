@@ -100,7 +100,14 @@ const MojeRezervacije = () => {
               <div className="iconsWalk">
                 <div className={`Walk-status-reservation ${getStatusClass(r.status)}`}>{r.status}</div>
 
-                <button className="editReservation-btn">
+                <button
+                  className={`editReservation-btn ${getStatusClass(r.status)}`}
+                  style={
+                    ["zavrsena", "otkazana"].includes(getStatusClass(r.status))
+                      ? { display: "none" }
+                      : undefined
+                  }
+                >
                   <img src="/edit.png" alt="edit" />
                   Uredi
                 </button>
