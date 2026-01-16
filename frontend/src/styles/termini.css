@@ -141,7 +141,6 @@ body {
 
 /* Inner scroll area so outer container keeps rounded corners */
 .Walk-Appointments__inner {
-	max-height: calc(100vh - 200px);
 	overflow-y: auto;
 	padding-right: 8px;
 	-webkit-overflow-scrolling: touch;
