@@ -35,7 +35,7 @@ export default function ProfileInfo() {
   const role = user?.is_walker ? "Šetač" : "Vlasnik";
 
   return (
-    <main className="content">
+    <main className="contentInfo">
       <section className="profile">
         <div className="avatar">
           {user?.profile_picture_url ? (
