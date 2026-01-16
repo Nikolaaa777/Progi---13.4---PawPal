@@ -6,17 +6,8 @@ body {
 		sans-serif;
 }
 
-.app {
-	width: 100%;
-}
-
-
-/* Page title */
-.page-title {
-	font-size: 28px;
-	font-weight: 600;
-	color: #1f2937;
-	margin-bottom: 24px;
+.appRezervacije {
+	width: 80%;
 }
 
 /* Appointments list */
@@ -134,7 +125,8 @@ body {
 }
 
 .Walk-Reservations {
-	width: min(1100px, 96%);
+	width: 97%;
+	height: 87%;
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
