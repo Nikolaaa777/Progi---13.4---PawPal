@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import "../../styles/all.css";
+import "../../styles/profileMenu.css";
 
 export default function ProfileLayout() {
 	const nav = useNavigate();
