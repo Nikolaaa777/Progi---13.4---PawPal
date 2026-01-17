@@ -1,4 +1,4 @@
-import "../../styles/all.css";
+import "../../styles/ljubimci.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
@@ -66,8 +66,8 @@ export default function MojiLjubimci() {
 					className="pets-add"
 					onClick={() => nav("/profile/ljubimci/dodaj")}
 				>
-					<span className="pets-add-plus">+</span>
 					Dodaj psa
+					<img src="/plus.png" alt="Add" />
 				</button>
 			</div>
 		</main>

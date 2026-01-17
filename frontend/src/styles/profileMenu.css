@@ -2,10 +2,10 @@
 .app {
 	display: flex;
 	min-height: 100vh;
-	background: linear-gradient(180deg, #4f7cff 0%, #2f55ff 100%);
 	font-family: "Inter", system-ui, sans-serif;
 	min-height: 100vh;
 	width: 100%;
+	background-color: white;
 }
 
 .content {

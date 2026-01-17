@@ -77,47 +77,39 @@ const MojeRezervacije = () => {
 
         <div className="Walk-Reservations">
           <div className="Walk-Reservations__inner">
-          {rezervacije.map((r) => (
-            <div key={r.id} className="Walk-Reservation-card">
-              <div className="Walk-Reservation-left">
-                <div className="Walk-calendar">
-                  <img src="/calendar.png" alt="calendar" />
+            {rezervacije.map((r) => (
+              <div key={r.id} className="Walk-Reservation-card">
+                <div className="Walk-Reservation-left">
+                  <div className="Walk-calendar">
+                    <img src="/calendar.png" alt="calendar" />
+                  </div>
+
+                  <div className="Walk-Reservation-text">
+                    <div className="Walk-Reservation-date">
+                      {r.date} · {r.time}
+                    </div>
+                    <div className="Walk-Reservation-info">
+                      Pas: {r.dog} · {r.duration}
+                    </div>
+                    <div className="Walk-Reservation-info">
+                      Lokacija: {r.location}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="Walk-Reservation-text">
-                  <div className="Walk-Reservation-date">
-                    {r.date} · {r.time}
+                <div className="iconsWalk">
+                  <div
+                    className={`Walk-status-reservation ${getStatusClass(r.status)}`}
+                  >
+                    {r.status}
                   </div>
-                  <div className="Walk-Reservation-info">
-                    Pas: {r.dog} · {r.duration}
-                  </div>
-                  <div className="Walk-Reservation-info">
-                    Lokacija: {r.location}
-                  </div>
+
+                  <button className="deleteReservation-btn">
+                    <img src="/bin.png" alt="trash" />
+                  </button>
                 </div>
               </div>
-
-              <div className="iconsWalk">
-                <div className={`Walk-status-reservation ${getStatusClass(r.status)}`}>{r.status}</div>
-
-                <button
-                  className={`editReservation-btn ${getStatusClass(r.status)}`}
-                  style={
-                    ["zavrsena", "otkazana"].includes(getStatusClass(r.status))
-                      ? { display: "none" }
-                      : undefined
-                  }
-                >
-                  <img src="/edit.png" alt="edit" />
-                  Uredi
-                </button>
-
-                <button className="deleteReservation-btn">
-                  <img src="/bin.png" alt="trash" />
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
           </div>
         </div>
       </main>
