@@ -11,6 +11,7 @@
 	flex-direction: column;
 	justify-content: center;
 	gap: 10px;
+	background: #eef2ff;
 }
 
 .page-title {
@@ -181,10 +182,10 @@
 	height: 52px;
 	border: 0;
 	border-radius: 14px;
-	background: rgba(145, 188, 237, 0.902);
+	background: #3b82f6;
 	font-size: 16px;
 	cursor: pointer;
-	margin-left: 280px;
+	margin-left: 285px;
 }
 
 .action-btn.primary {
@@ -533,13 +534,11 @@
 	border: 0;
 	cursor: pointer;
 	font-weight: 800;
+	background: #2f6bff;
+	color: #fff;
 }
 
 .adddog-cancel {
 	background: rgba(0, 0, 0, 0.18);
-	color: #fff;
-}
-.adddog-save {
-	background: #2f6bff;
 	color: #fff;
 }

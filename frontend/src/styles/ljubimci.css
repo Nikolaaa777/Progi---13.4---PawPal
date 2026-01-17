@@ -118,7 +118,6 @@
 	height: 22px;
 }
 
-
 .pets-add-plus {
 	width: 34px;
 	height: 34px;
@@ -131,27 +130,26 @@
 	line-height: 1;
 }
 
-
-
 .pet-action.delete img {
 	width: 22px;
 	height: 22px;
 }
-
 
 .pets-add {
 	align-self: center;
 	display: flex;
 	color: black;
 	align-items: center;
-	width: 160px;
+	width: 170px;
 	gap: 10px;
 	background: #ffffff;
 	border-radius: 14px;
 	padding: 20px 24px;
 	border: 1px solid rgba(15, 23, 42, 0.06);
 	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-	transition: transform 160ms ease, box-shadow 160ms ease;
+	transition:
+		transform 160ms ease,
+		box-shadow 160ms ease;
 }
 
 .pets-add:hover {
