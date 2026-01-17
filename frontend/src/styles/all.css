@@ -5,83 +5,104 @@
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Page title */
+.contentInfo {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
+}
+
 .page-title {
 	font-size: 36px;
 	font-weight: bold;
 	text-align: center;
-	margin-bottom: 0;
+	color: #1f2937;
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	padding: 20px 0 20px 0;
+	width: 97%;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-/* Center placeholder text */
-.center-text {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	font-size: 36px;
-	font-weight: bold;
+.back-arrow {
+  font-size: 24px;
+  cursor: pointer;
 }
+
+.profile {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  border: 2px solid #000;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+
+.icon-btn img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.grade-btn {
+  width: 120px;
+  height: 44px;
+  border-radius: 16px;
+  border: 2px solid black;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 14px;
+}
+
 
 /* Edit profile button */
 .edit-btn {
 	position: absolute;
 	bottom: 40px;
 	right: 60px;
-
 	background-color: #8fa7e6;
 	border: none;
 	border-radius: 20px;
 	padding: 12px 24px;
-
 	font-size: 18px;
 	cursor: pointer;
-
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-/* Pencil icon inside edit button */
+
 .edit-btn .icon {
 	width: 32px;
 	height: 32px;
 	background-color: #e0e0e0;
 	border-radius: 50%;
 	border: 2px solid black;
-
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
 	font-size: 16px;
 }
 
-body {
-	height: 100vh;
-}
-
-.app {
-	display: flex;
-	height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-	width: 320px;
-	background-color: #8fa7e6;
-	padding: 24px;
-}
-
-.back-arrow {
-	font-size: 24px;
-	cursor: pointer;
-}
-
-.profile {
-	text-align: center;
-	margin-top: 40px;
-}
 
 .avatar {
 	width: 200px;
@@ -89,178 +110,7 @@ body {
 	background-color: #e0e0e0;
 	border-radius: 50%;
 	margin: 0 auto 20px;
-	border: 2px solid #000;
-}
-
-.username {
-	font-weight: bold;
-	font-size: 18px;
-	margin-bottom: 20px;
-}
-
-.menu {
-	margin-top: 30px;
-	border-top: 2px solid #000;
-	padding-top: 20px;
-	text-align: center;
-}
-
-.menu a {
-	display: block;
-	text-decoration: none;
-	color: #4f5d7a;
-	font-size: 18px;
-	margin-bottom: 16px;
-}
-
-.menu a.active {
-	color: #000;
-	font-weight: bold;
-}
-
-/* Main content */
-.content {
-	flex: 1;
-	padding: 24px;
-	display: flex;
-	flex-direction: column;
-}
-
-.page-title {
-	text-align: center;
-	font-size: 36px;
-	font-weight: bold;
-	margin-bottom: 40px;
-}
-
-/* Appointments */
-.appointments {
-	width: 100%;
-	flex: 1;
-	min-height: 0;
-	overflow-y: auto;
-	display: flex;
-	flex-direction: column;
-	gap: 24px;
-	align-items: center;
-	padding: 12px;
-	background-color: rgba(0, 0, 0, 0.03);
-	border-radius: 16px;
-}
-
-.appointment-card {
-	width: 100%;
-	max-width: none;
-	height: 120px;
-	background-color: #8fa7e6;
-	border-radius: 16px;
-	padding: 24px;
-	font-size: 28px;
-	font-weight: bold;
-	color: white;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.appointment-card-finished {
-	width: 100%;
-	max-width: none;
-	height: 120px;
-	background-color: rgb(0, 54, 104);
-	border-radius: 16px;
-	padding: 24px;
-	font-size: 28px;
-	font-weight: bold;
-	color: white;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-/* Icons */
-.icons {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.icon-btn {
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	border: 2px solid black;
-	background-color: #e0e0e0;
-	cursor: pointer;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	padding: 0;
-}
-
-.icon-btn img {
-	width: 24px;
-	height: 24px;
-	object-fit: contain;
-}
-
-/* Scoped appointment edit/delete buttons (override global .edit-btn) */
-.appointment-card .edit-btn,
-.appointment-card .delete-btn {
-	position: static;
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	border: 2px solid black;
-	background-color: #e0e0e0;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
-}
-
-.appointment-card .edit-btn img,
-.appointment-card .delete-btn img {
-	width: 24px;
-	height: 24px;
-	object-fit: contain;
-}
-
-/* Add button */
-.add-btn {
-	margin: 40px auto 0;
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	background-color: #8fa7e6;
-	border: none;
-	border-radius: 20px;
-	padding: 12px 24px;
-	font-size: 18px;
-}
-
-.add-btn:hover {
-	background: #8fa7e6;
-	transform: none !important;
-	cursor: default;
-}
-
-.add-icon {
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	border: 2px solid black;
-	background-color: #e0e0e0;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	font-size: 22px;
-	font-weight: bold;
+	border: 2px solid white;
 }
 
 .grade-btn {
@@ -270,11 +120,9 @@ body {
 	border: 2px solid black;
 	background-color: #e0e0e0;
 	cursor: pointer;
-
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
 	padding: 0;
 	font-size: 14px;
 }
@@ -358,8 +206,17 @@ body {
 	cursor: pointer;
 }
 
+.notif-label{
+	color: white;
+}
+
 .notif-toggle input {
 	display: none;
+}
+
+.notif-toggle span {
+	color: white;
+
 }
 
 .toggle-ui {
@@ -388,12 +245,6 @@ body {
 
 .notif-toggle input:checked + .toggle-ui::after {
 	transform: translateX(20px);
-}
-
-.content {
-	justify-content: center;
-	gap: 18px;
-	padding-top: 0;
 }
 
 .stat-icon {
@@ -474,15 +325,12 @@ body {
 	position: absolute;
 	top: 18px;
 	left: 18px;
-
 	width: 44px;
 	height: 44px;
 	border-radius: 12px;
-
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
 	background: #1f4fd8;
 	color: white;
 	font-size: 20px;
@@ -516,7 +364,8 @@ body {
 }
 
 .primary-btn {
-	height: 54px;
+	width: 180px;
+	height: 55px;
 	border-radius: 14px;
 	border: none;
 	background: #3b6cff;
@@ -524,147 +373,7 @@ body {
 	font-size: 18px;
 	cursor: pointer;
 	margin-top: 10px;
-}
-
-/*Moje rezervacije*/
-.reservations-page {
-	justify-content: flex-start;
-}
-
-.reservations-header {
-	width: min(1100px, 96%);
-	margin: 0 auto 18px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-}
-
-.reservations-title {
-	display: flex;
-	align-items: baseline;
-	gap: 14px;
-}
-
-.reservations-count {
-	opacity: 0.75;
-	font-size: 16px;
-}
-
-.reservations-filter {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	background: rgba(255, 255, 255, 0.75);
-	border: 1px solid rgba(0, 0, 0, 0.08);
-	padding: 10px 14px;
-	border-radius: 12px;
-}
-
-.reservations-filter select {
-	border: none;
-	background: transparent;
-	font-size: 16px;
-	outline: none;
-}
-
-.reservations-list {
-	width: min(1100px, 96%);
-	margin: 0 auto;
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	padding-bottom: 12px;
-}
-
-.reservation-card {
-	background: rgba(255, 255, 255, 0.86);
-	border-radius: 18px;
-	padding: 18px 18px;
-	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 18px;
-}
-
-.reservation-left {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	min-width: 0;
-}
-
-.reservation-icon {
-	width: 46px;
-	height: 46px;
-	border-radius: 12px;
-	background: rgba(59, 108, 255, 0.12);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 auto;
-}
-
-.reservation-icon img {
-	width: 70px;
-	height: 55px;
-	object-fit: contain;
-}
-
-.reservation-info {
-	min-width: 0;
-}
-
-.reservation-datetime {
-	font-size: 22px;
-	font-weight: 800;
-	color: #1b2b4a;
-	margin-bottom: 6px;
-}
-
-.reservation-meta {
-	font-size: 16px;
-	opacity: 0.75;
-	margin-top: 4px;
-}
-
-.reservation-right {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-end;
-	gap: 12px;
-	flex: 0 0 auto;
-}
-
-.status-badge {
-	padding: 8px 14px;
-	border-radius: 999px;
-	font-weight: 700;
-	font-size: 14px;
-	border: 1px solid rgba(0, 0, 0, 0.06);
-	background: rgba(255, 255, 255, 0.8);
-}
-
-.status-badge.nadolazeca {
-	background: rgba(59, 108, 255, 0.12);
-	color: #2f5bff;
-}
-
-.status-badge.zavrsena {
-	background: rgba(0, 140, 255, 0.1);
-	color: rgb(0, 86, 160);
-}
-
-.status-badge.otkazana {
-	background: rgba(160, 160, 160, 0.18);
-	color: #56607a;
-}
-
-.reservation-actions {
-	display: flex;
-	align-items: center;
-	gap: 10px;
+	align-self: center;
 }
 
 .rate-btn {
@@ -684,65 +393,7 @@ body {
 	font-size: 16px;
 }
 
-.edit-pill {
-	height: 40px;
-	border-radius: 12px;
-	border: none;
-	background: rgba(59, 108, 255, 0.12);
-	color: #2f5bff;
-	padding: 0 12px;
-	font-size: 14px;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
 
-.edit-pill img {
-	width: 18px;
-	height: 18px;
-}
-
-.trash-pill {
-	height: 40px;
-	width: 44px;
-	border-radius: 12px;
-	border: none;
-	background: rgba(255, 70, 70, 0.12);
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.trash-pill img {
-	width: 18px;
-	height: 18px;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-	.reservations-header {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.reservation-card {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.reservation-right {
-		align-items: flex-start;
-	}
-
-	.reservation-actions {
-		flex-wrap: wrap;
-	}
-}
-/*Kraj Moje rezervacije*/
-
-/*Moji ljubimci*/
 .pets-content {
 	background: #f2f4f7;
 	padding: 32px;
@@ -885,9 +536,7 @@ body {
 	width: 22px;
 	height: 22px;
 }
-/*Kraj Moji Ljubimci*/
 
-/*Pocetak DodajPsa*/
 .adddog-content {
 	background: radial-gradient(
 			circle at 55% 20%,
@@ -1038,148 +687,4 @@ body {
 .adddog-save {
 	background: #2f6bff;
 	color: #fff;
-}
-
-/*Kraj DodajPsa*/
-
-@media (max-width: 1024px) {
-	.sidebar {
-		width: 260px;
-	}
-
-	.appointment-card,
-	.appointment-card-finished {
-		width: 100%;
-		max-width: 520px;
-	}
-}
-
-@media (max-width: 768px) {
-	.app {
-		flex-direction: column;
-	}
-
-	/* Sidebar becomes top bar */
-	.sidebar {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		padding: 16px;
-	}
-
-	.profile {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-top: 0;
-	}
-
-	.avatar {
-		width: 60px;
-		height: 60px;
-		margin: 0;
-	}
-
-	.username {
-		font-size: 16px;
-		margin-bottom: 0;
-	}
-
-	.menu {
-		display: flex;
-		gap: 12px;
-		border-top: none;
-		padding-top: 0;
-		margin-top: 0;
-		margin-left: auto;
-	}
-
-	.menu a {
-		font-size: 14px;
-		margin-bottom: 0;
-		white-space: nowrap;
-	}
-
-	/* Main content */
-	.content {
-		padding: 24px 16px;
-		position: relative;
-	}
-
-	.page-title {
-		font-size: 36px;
-		font-weight: bold;
-		text-align: center;
-		margin-bottom: 0;
-	}
-
-	/* Center text becomes normal flow */
-	.center-text {
-		position: static;
-		transform: none;
-		text-align: center;
-		margin: 40px 0;
-		font-size: 24px;
-	}
-
-	/* Edit button moves into flow */
-	.edit-btn {
-		position: static;
-		margin: 40px auto 0;
-	}
-
-	/* Appointments */
-	.appointments {
-		width: 100%;
-		max-height: none;
-		overflow: visible;
-		padding: 0;
-		background: none;
-	}
-
-	.appointment-card,
-	.appointment-card-finished {
-		width: 100%;
-		height: auto;
-		padding: 16px;
-		font-size: 20px;
-	}
-
-	.icons {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	/* Add button */
-	.add-btn {
-		width: 100%;
-		justify-content: center;
-	}
-}
-
-/* Small phones */
-@media (max-width: 480px) {
-	.page-title {
-		font-size: 36px;
-		font-weight: bold;
-		text-align: center;
-		margin-bottom: 0;
-	}
-
-	.appointment-card,
-	.appointment-card-finished {
-		font-size: 18px;
-	}
-
-	.icon-btn {
-		width: 40px;
-		height: 40px;
-	}
-
-	.icon-btn img {
-		width: 20px;
-		height: 20px;
-	}
 }

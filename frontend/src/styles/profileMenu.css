@@ -1,0 +1,121 @@
+/* Layout */
+.app {
+	display: flex;
+	min-height: 100vh;
+	background: linear-gradient(180deg, #4f7cff 0%, #2f55ff 100%);
+	font-family: "Inter", system-ui, sans-serif;
+	min-height: 100vh;
+	width: 100%;
+}
+
+.content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+/* Sidebar */
+.sidebar {
+	width: 260px;
+	min-width: 260px;
+	max-width: 260px;
+	border-radius: 0 24px 24px 0;
+	padding: 24px 16px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: #fff;
+	min-height: 100vh;
+	position: relative;
+}
+
+/* Back arrow */
+.back-arrow {
+	font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
+	position: absolute;
+	top: 18px;
+	left: 18px;
+	margin-bottom: 0;
+	z-index: 2;
+}
+
+.back-arrow:hover {
+	background: #2f55ff;
+	color: #ffffff;
+}
+
+/* Menu */
+.menu {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	gap: 18px;
+	width: 100%;
+	min-height: 0;
+}
+
+/* Nav links */
+.menu a {
+	text-decoration: none;
+	color: black;
+	padding: 14px 24px;
+	border-radius: 16px;
+	font-weight: 600;
+	font-size: 18px;
+	letter-spacing: 0.02em;
+	transition: all 0.25s cubic-bezier(.4,2,.6,1);
+	display: flex;
+	align-items: center;
+	width: 90%;
+	justify-content: center;
+}
+
+/* Hover */
+.menu a:hover {
+	transform: translateY(-2px) scale(1.04);
+}
+
+/* Active NavLink */
+.menu a.active {
+	font-weight: 700;
+	position: relative;
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+}
+
+.menu a.active::before {
+	content: '>';
+	font-size: 22px;
+	color: #2f55ff;
+	margin-right: 16px;
+	font-weight: bold;
+	vertical-align: middle;
+	flex-shrink: 0;
+}
+
+/* Right part (main content) stretch */
+.profile-main {
+	flex: 1;
+	min-width: 0;
+	background: #f3f5f9;
+	display: flex;
+	flex-direction: column;
+	padding: 36px 32px;
+	border-radius: 24px 0 0 24px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+}
+

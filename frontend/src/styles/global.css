@@ -50,9 +50,9 @@ button {
 }
 
 button:hover {
-	background-color: #174cb8;
 	transform: translateY(-1px);
 }
+
 button.google {
 	background: #fff;
 	color: #000;

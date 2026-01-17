@@ -77,41 +77,58 @@ const MojiTermini = () => {
 
         <div className="Walk-Appointments">
           <div className="Walk-Appointments__inner">
-          {rezervacije.map((r) => (
-            <div key={r.id} className="Walk-Appointment-card">
-              <div className="Walk-Appointment-left">
-                <div className="Walk-calendar">
-                  <img src="/calendar.png" alt="calendar" />
+            {rezervacije.map((r) => (
+              <div key={r.id} className="Walk-Appointment-card">
+                <div className="Walk-Appointment-left">
+                  <div className="Walk-calendar">
+                    <img src="/calendar.png" alt="calendar" />
+                  </div>
+
+                  <div className="Walk-Appointment-text">
+                    <div className="Walk-Appointment-date">
+                      {r.date} · {r.time}
+                    </div>
+                    <div className="Walk-Appointment-info">
+                      Pas: {r.dog} · {r.duration}
+                    </div>
+                    <div className="Walk-Appointment-info">
+                      Lokacija: {r.location}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="Walk-Appointment-text">
-                  <div className="Walk-Appointment-date">
-                    {r.date} · {r.time}
+                <div className="iconsWalk">
+                  <div
+                    className={`Walk-status-Appointment ${getStatusClass(
+                      r.status
+                    )}`}
+                  >
+                    {r.status}
                   </div>
-                  <div className="Walk-Appointment-info">
-                    Pas: {r.dog} · {r.duration}
-                  </div>
-                  <div className="Walk-Appointment-info">
-                    Lokacija: {r.location}
-                  </div>
+
+                  <button
+                    className={`editAppointment-btn ${getStatusClass(r.status)}`}
+                    style={
+                      ["zavrsen", "otkazan"].includes(getStatusClass(r.status))
+                        ? { display: "none" }
+                        : undefined
+                    }
+                  >
+                    <img src="/edit.png" alt="edit" />
+                    Uredi
+                  </button>
+
+                  <button className="deleteAppointment-btn">
+                    <img src="/bin.png" alt="trash" />
+                  </button>
                 </div>
               </div>
-
-              <div className="iconsWalk">
-                <div className={`Walk-status-Appointment ${getStatusClass(r.status)}`}>{r.status}</div>
-
-                <button className="editAppointment-btn">
-                  <img src="/edit.png" alt="edit" />
-                  Uredi
-                </button>
-
-                <button className="deleteAppointment-btn">
-                  <img src="/bin.png" alt="trash" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+            <button className="addAppointment-btn">
+              Dodaj termin
+              <img src="/plus.png" alt="plus" />
+            </button>
+          </div>
         </div>
       </main>
     </div>
