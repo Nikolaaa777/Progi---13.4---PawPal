@@ -30,7 +30,5 @@ dist/
 __pycache__/
 *.pyc
 
-.env
-.env.*
 db.sqlite3
 pgdata/
