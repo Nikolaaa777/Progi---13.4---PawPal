@@ -128,7 +128,12 @@ export default function Navbar() {
 						</button>
 
 						<button className="icon-btn" aria-label="Chat">
-							<img src="/chat.png" alt="Chat" className="chat-icon" />
+							<img
+								src="/chat.png"
+								alt="Chat"
+								onClick={() => nav("/chat")}
+								style={{ cursor: "pointer" }}
+							/>
 						</button>
 
 						<div

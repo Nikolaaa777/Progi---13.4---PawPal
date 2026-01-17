@@ -12,38 +12,37 @@ import UrediProfil from "./pages/profile/UrediProfil";
 import DodajPsa from "./pages/profile/DodajPsa";
 import UrediPsa from "./pages/profile/UrediPsa";
 import MojiTermini from "./pages/profile/MojiTermini";
-import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";	
+import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";
+import AdminHome from "./pages/admin/AdminHome";
+import ChatPage from "./pages/chat/ChatPage";
 
 export default function App() {
-  const [user, setUser] = useState(null);
+	const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    api
-      .me()
-      .then(setUser)
-      .catch(() => setUser(null));
-  }, []);
+	useEffect(() => {
+		api
+			.me()
+			.then(setUser)
+			.catch(() => setUser(null));
+	}, []);
 
-  return (
-    <Routes>
-      <Route path="/" element={<Home user={user} />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/profile" element={<ProfileLayout />}>
-        <Route index element={<ProfileInfo />} />
-        <Route path="uredi" element={<UrediProfil />} />
-        <Route path="ljubimci" element={<MojiLjubimci />} />
-        <Route path="ljubimci/dodaj" element={<DodajPsa />} />
-        <Route path="rezervacije" element={<MojeRezervacije />} />
-		<Route path="termini" element={<MojiTermini />} />
-        <Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
-      </Route>
-      <Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
-    </Routes>
-  );
+	return (
+		<Routes>
+			<Route path="/" element={<Home user={user} />} />
+			<Route path="/login" element={<Login />} />
+			<Route path="/register" element={<Register />} />
+			<Route path="/profile" element={<ProfileLayout />}>
+				<Route index element={<ProfileInfo />} />
+				<Route path="uredi" element={<UrediProfil />} />
+				<Route path="ljubimci" element={<MojiLjubimci />} />
+				<Route path="ljubimci/dodaj" element={<DodajPsa />} />
+				<Route path="rezervacije" element={<MojeRezervacije />} />
+				<Route path="termini" element={<MojiTermini />} />
+				<Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
+			</Route>
+			<Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
+			<Route path="/admin" element={<AdminHome />} />
+			<Route path="/chat" element={<ChatPage />} />
+		</Routes>
+	);
 }
-
-
-/* <Route path="termini" element={<MojiTermini />} />
-import MojiTermini from "./pages/profile/MojiTermini";
-import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";*/

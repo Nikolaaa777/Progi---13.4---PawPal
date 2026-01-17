@@ -103,6 +103,14 @@ def logout_view(request):
 def me(request):
     user = request.user
     profile, _ = Profile.objects.get_or_create(user=user)
+
+    if user.is_staff or user.is_superuser:
+        role = "ADMIN"
+    elif profile.is_walker:
+        role = "WALKER"
+    else:
+        role = "OWNER"
+
     return Response({
         "id": user.id,
         "email": user.email,
@@ -110,6 +118,7 @@ def me(request):
         "last_name": user.last_name,
         "is_walker": profile.is_walker,
         "has_notifications_on": profile.has_notifications_on,
+        "role": role,
     }, status=status.HTTP_200_OK)
 
 @extend_schema(
