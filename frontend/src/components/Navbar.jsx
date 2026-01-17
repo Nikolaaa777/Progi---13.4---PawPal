@@ -127,6 +127,10 @@ export default function Navbar() {
 							</svg>
 						</button>
 
+						<button className="icon-btn" aria-label="Chat">
+							<img src="/chat.png" alt="Chat" className="chat-icon" />
+						</button>
+
 						<div
 							className="avatar-wrap"
 							onMouseEnter={() => setMenuOpen(true)}
