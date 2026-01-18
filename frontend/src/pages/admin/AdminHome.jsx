@@ -19,49 +19,56 @@ export default function AdminHome() {
 				</div>
 
 				<nav className="menuAdmin">
-					<NavLink
-						to="/admin"
-						className={({ isActive }) =>
-							isActive ? "active" : undefined
-						}
-					>
+					<NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : undefined)}>
 						Generalno
 					</NavLink>
 
-					<NavLink
-						to="/adminKom"
-						className={({ isActive }) =>
-							isActive ? "active" : undefined
-						}
-					>
+					<NavLink to="/adminKom" className={({ isActive }) => (isActive ? "active" : undefined)}>
 						Komentari
 					</NavLink>
 
-					<NavLink
-						to="/adminKorisnici"
-						className={({ isActive }) =>
-							isActive ? "active" : undefined
-						}
-					>
+					<NavLink to="/adminKorisnici" className={({ isActive }) => (isActive ? "active" : undefined)}>
 						Korisnici
 					</NavLink>
 				</nav>
 			</aside>
 
 			<main className="contentAdmin">
+				{/* ===== HEADER ===== */}
 				<div className="headerAdmin">
 					<h1>Generalno</h1>
-					<h2>GENERALNI INFO</h2>
+				</div>
+
+				{/* ===== GENERALNI INFO INPUT ===== */}
+				<div className="cardAdmin">
+					<h2>Generalni info</h2>
+					<textarea
+						className="textareaAdmin"
+						placeholder="Unesi obavijest za korisnike..."
+						rows={4}
+					/>
 				</div>
 
 				<div className="centerAdmin">
-					<button className="subscription-btn">Postavi članarinu</button>
+					<button className="subscription-btn">
+						Postavi članarinu
+					</button>
 				</div>
 
-				<div className="cardAdmin">Unesi obavijest</div>
+				{/* ===== OBAVIJEST INPUT ===== */}
+				<div className="cardAdmin">
+					<h2>Obavijest</h2>
+					<textarea
+						className="textareaAdmin"
+						placeholder="Unesi obavijest za korisnike..."
+						rows={4}
+					/>
+				</div>
 
 				<div className="centerAdmin">
-					<button className="notification-btn">Pošalji obavijest</button>
+					<button className="notification-btn">
+						Pošalji obavijest
+					</button>
 				</div>
 			</main>
 		</div>
