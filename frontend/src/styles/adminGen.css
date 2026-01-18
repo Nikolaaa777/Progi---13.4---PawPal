@@ -1,120 +1,178 @@
-/* General styles for the admin panel 
-* {
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+/* Root layout */
+.appAdmin {
+	display: flex;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #eef2ff, #c7d2fe);
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-
-body {
-    margin: 0;
-    background: #f5f6f8;
+/* Sidebar */
+.sidebarAdmin {
+	width: 260px;
+	background: rgba(255, 255, 255, 0.35);
+	backdrop-filter: blur(18px);
+	border-right: 1px solid rgba(0, 0, 0, 0.08);
+	padding: 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
 }
 
-
-.app {
-    display: flex;
-    min-height: 100vh;
+/* Back button */
+.backAdmin {
+	width: 36px;
+	height: 36px;
+	border-radius: 12px;
+	background: rgba(0, 0, 0, 0.08);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	font-size: 18px;
+	font-weight: 800;
+	color: #111;
+	transition: background 0.2s, transform 0.2s;
 }
 
-
-.sidebar {
-    width: 240px;
-    background: #7fa6e8;
-    padding: 20px 16px;
+.backAdmin:hover {
+	background: rgba(0, 0, 0, 0.14);
+	transform: translateY(-1px);
 }
 
-
-.back {
-    font-size: 18px;
-    margin-bottom: 16px;
-    cursor: pointer;
+/* Profile */
+.profileAdmin {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding-top: 10px;
 }
 
-
-.profile {
-    text-align: center;
-    margin-bottom: 24px;
+.avatarAdmin {
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-
-.avatar {
-    width: 90px;
-    height: 90px;
-    margin-bottom: 8px;
+.profileAdmin strong {
+	font-size: 15px;
+	color: #111;
 }
 
-
-.menu {
-    margin-top: 30px;
-    border-top: 2px solid #000;
-    padding-top: 20px;
-    text-align: center;
+/* Menu */
+.menuAdmin {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
-.menu a {
-    display: block;
-    text-decoration: none;
-    color: #4f5d7a;
-    font-size: 18px;
-    margin-bottom: 16px;
+.menuAdmin a {
+	text-decoration: none;
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-weight: 700;
+	color: #334155;
+	transition: background 0.2s, color 0.2s;
 }
 
-.menu a.active {
-    color: #000;
-    font-weight: bold;
+.menuAdmin a:hover {
+	background: rgba(0, 0, 0, 0.06);
 }
 
-
-.content {
-    flex: 1;
-    background: #fff;
-    padding: 32px 24px;
+.menuAdmin a.active {
+	background: green;
+	color: #fff;
+	box-shadow: 0 10px 22px rgba(79, 70, 229, 0.35);
 }
 
-
-.header {
-    text-align: center;
-    margin-bottom: 24px;
+/* Main content */
+.contentAdmin {
+	flex: 1;
+	padding: 36px 44px;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
 }
 
-
-.header h1 {
-    margin: 0;
-    font-size: 22px;
+/* Header */
+.headerAdmin h1 {
+	font-size: 28px;
+	font-weight: 900;
+	color: #111;
+	margin: 0;
 }
 
-
-.header h2 {
-    margin-top: 8px;
-    font-size: 16px;
-    letter-spacing: 1px;
+.headerAdmin h2 {
+	font-size: 13px;
+	letter-spacing: 1.2px;
+	color: #64748b;
+	margin-top: 4px;
 }
 
-
-.button {
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: none;
-    background: #5c87e6;
-    color: #fff;
-    font-size: 14px;
-    cursor: pointer;
+/* Center helpers */
+.centerAdmin {
+	display: flex;
+	justify-content: center;
 }
 
-
-.card {
-    background: #e6e6e6;
-    height: 120px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #777;
-    margin: 24px 0;
+/* Buttons */
+.subscription-btn,
+.notification-btn {
+	height: 46px;
+	padding: 0 26px;
+	border-radius: 16px;
+	border: 0;
+	cursor: pointer;
+	font-weight: 800;
+	font-size: 15px;
+	transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
-
-.center {
-    text-align: center;
+/* Subscription */
+.subscription-btn {
+	background: linear-gradient(135deg, #4f46e5, #6366f1);
+	color: #fff;
+	box-shadow: 0 12px 26px rgba(79, 70, 229, 0.35);
 }
-    */
+
+.subscription-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 36px rgba(79, 70, 229, 0.45);
+}
+
+/* Notification */
+.notification-btn {
+	background: linear-gradient(135deg, #16a34a, #22c55e);
+	color: #fff;
+	box-shadow: 0 12px 26px rgba(22, 163, 74, 0.35);
+}
+
+.notification-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 36px rgba(22, 163, 74, 0.45);
+}
+
+/* Card */
+.cardAdmin {
+	background: rgba(255, 255, 255, 0.55);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(14px);
+	border-radius: 20px;
+	padding: 28px;
+	font-weight: 700;
+	color: #334155;
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+	text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+	.sidebarAdmin {
+		width: 210px;
+	}
+
+	.contentAdmin {
+		padding: 28px;
+	}
+}
