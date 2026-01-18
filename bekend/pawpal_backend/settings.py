@@ -31,17 +31,12 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
-<<<<<<< Updated upstream
-    "accounts", # - moja app
-=======
-     # - moje app
     "accounts.apps.AccountsConfig",
     "dogs",
     "walks",
     "reservations",
     "payments",
     "chat",
->>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -78,19 +73,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "pawpal_backend.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "pawpal_db",
-        "USER": "pawpal_user",
-        "PASSWORD": "jaka_lozinka",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-        "OPTIONS": {"options": "-c search_path=pawpal,public"},
-    }
-}
+# Database configuration - supports both local development and Docker
+DATABASE_URL = config("DATABASE_URL", default=None)
 
-DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
+if DATABASE_URL:
+    # Use DATABASE_URL from environment (for Docker or production)
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Fallback for local development without DATABASE_URL
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "pawpal_db",
+            "USER": "pawpal_user",
+            "PASSWORD": "jaka_lozinka",
+            "HOST": config("DB_HOST", default="127.0.0.1"),  # Use "db" in Docker
+            "PORT": config("DB_PORT", default="5432"),
+            "OPTIONS": {"options": "-c search_path=pawpal,public"},
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -108,8 +111,13 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
-    "http://127.0.0.1:8000"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://frontend:5173",  # Docker service name
+]
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 

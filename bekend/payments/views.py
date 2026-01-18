@@ -110,7 +110,7 @@ def create_payment_intent(request):
                 'description': f'Payment for reservation {reservation_id}'
             }],
             'application_context': {
-                'return_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={{token}}&payment_id={payment.idPlacanja}",
+                'return_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={{token}}",
                 'cancel_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-cancelled",
             }
         }
@@ -150,7 +150,8 @@ def create_payment_intent(request):
                 "payment_id": payment.idPlacanja,
                 "order_id": order_id,
                 "approval_url": approval_url,
-                "payment_method": "paypal"
+                "payment_method": "paypal",
+                "return_url": f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={order_id}&payment_id={payment.idPlacanja}"
             }, status=status.HTTP_201_CREATED)
         else:
             return Response(
@@ -382,7 +383,8 @@ def get_payment_status(request, payment_id):
 def get_user_payments(request):
     """Get all payments for the current user"""
     vlasnik = get_current_vlasnik(request.user)
-    payments = PlacanjeSetnje.objects.filter(idVlasnik=vlasnik.idVlasnik).order_by('-created_at')
+    # Order by tracking's created_at if available, otherwise by payment ID (descending for newest first)
+    payments = PlacanjeSetnje.objects.filter(idVlasnik=vlasnik.idVlasnik).select_related('tracking').order_by('-tracking__created_at', '-idPlacanja')
     return Response({
         "success": 1,
         "payments": PaymentSerializer(payments, many=True).data

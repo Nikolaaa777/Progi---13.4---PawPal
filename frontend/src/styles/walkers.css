@@ -1,0 +1,89 @@
+.availableWalkers {
+  display: flex;
+  gap: 24px;
+}
+
+.availableWalkers__filters {
+  width: 260px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.availableWalkers__filters label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.availableWalkers__filters select {
+  width: 100%;
+  padding: 8px;
+}
+
+.availableWalkers__list {
+  flex: 1;
+}
+
+.availableWalkers__title {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.availableWalkers__card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.availableWalkers__left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.availableWalkers__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e6efff;
+}
+
+.availableWalkers__name {
+  font-weight: 600;
+}
+
+.availableWalkers__info {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.availableWalkers__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.availableWalkers__rating {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.availableWalkers__btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.availableWalkers__empty {
+  opacity: 0.6;
+}

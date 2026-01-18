@@ -1,11 +1,10 @@
 from accounts.authentication import CsrfExemptSessionAuthentication
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.db.models import Q, Max
-from django.views.decorators.csrf import csrf_exempt
 from .models import Conversation, Message
 from .serializers import (
     ConversationSerializer, 
@@ -20,6 +19,7 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
     responses={200: OpenApiResponse(description='List of conversations')}
 )
 @api_view(["GET"])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def list_conversations(request):
     """Get all conversations for the current user"""
@@ -38,6 +38,7 @@ def list_conversations(request):
     responses={200: OpenApiResponse(description='Conversation details with messages')}
 )
 @api_view(["GET"])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_conversation(request, conversation_id):
     """Get a specific conversation with its messages"""
@@ -71,8 +72,8 @@ def get_conversation(request, conversation_id):
 @extend_schema(
     responses={200: OpenApiResponse(description='Conversation created or retrieved')}
 )
-@csrf_exempt
 @api_view(["POST"])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation(request, user_id):
     """Get or create a conversation with another user"""
@@ -117,8 +118,8 @@ def get_or_create_conversation(request, user_id):
     request=CreateMessageSerializer,
     responses={201: OpenApiResponse(description='Message created')}
 )
-@csrf_exempt
 @api_view(["POST"])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def send_message(request):
     """Send a message in a conversation"""
@@ -165,6 +166,7 @@ def send_message(request):
     responses={200: OpenApiResponse(description='List of users')}
 )
 @api_view(["GET"])
+@authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def list_users(request):
     """Get list of users (excluding current user)"""

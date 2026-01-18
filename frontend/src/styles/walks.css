@@ -1,0 +1,88 @@
+.availableWalks {
+  display: flex;
+  gap: 24px;
+}
+
+.availableWalks__filters {
+  width: 260px;
+  height: 100%;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.availableWalks__filters label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.availableWalks__filters select {
+  width: 100%;
+  padding: 8px;
+}
+
+.availableWalks__list {
+  flex: 1;
+}
+
+.availableWalks__title {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.availableWalks__card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.availableWalks__left {
+  display: flex;
+  gap: 16px;
+}
+
+.availableWalks__calendar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e6efff;
+}
+
+.availableWalks__date {
+  font-weight: 600;
+}
+
+.availableWalks__info {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.availableWalks__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.availableWalks__badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #e6f9f0;
+  color: #0f9d58;
+  font-size: 14px;
+}
+
+.availableWalks__book {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}

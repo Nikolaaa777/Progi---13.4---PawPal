@@ -1,8 +1,9 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.urls import reverse
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
 from django.contrib.auth.models import User
@@ -10,8 +11,13 @@ from .serializers import RegisterSerializer, LoginSerializer
 from drf_spectacular.utils import extend_schema, OpenApiResponse, OpenApiExample, OpenApiParameter
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from .models import Profile 
+from .serializers import EnableWalkerSerializer
+from .domain_sync import ensure_setac_row, SetacPayload
 
 
+
+from accounts.authentication import CsrfExemptSessionAuthentication
 
 @extend_schema(responses={200: OpenApiResponse(description='CSRF token')})
 @api_view(["GET"])
@@ -39,6 +45,7 @@ def csrf(request):
         )
     ]
 )
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def register(request):
@@ -60,6 +67,8 @@ def register(request):
         OpenApiExample('Login example', value={'email':'test@example.com','password':'tajna123'})
     ]
 )
+
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login_view(request):
@@ -87,17 +96,29 @@ def logout_view(request):
     logout(request)
     return Response({"message": "Logged out"}, status=status.HTTP_200_OK)
 
-
+@csrf_exempt
 @extend_schema(responses={200: OpenApiResponse(description='Current user info')})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user
+    profile, _ = Profile.objects.get_or_create(user=user)
+
+    if user.is_staff or user.is_superuser:
+        role = "ADMIN"
+    elif profile.is_walker:
+        role = "WALKER"
+    else:
+        role = "OWNER"
+
     return Response({
         "id": user.id,
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "is_walker": profile.is_walker,
+        "has_notifications_on": profile.has_notifications_on,
+        "role": role,
     }, status=status.HTTP_200_OK)
 
 @extend_schema(
@@ -117,10 +138,48 @@ def google_login_url(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def toggle_notifications(request):
-    profile = request.user.profile
+    # osiguraj da profil SIGURNO postoji (i za Google i za stare user-e)
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
     profile.has_notifications_on = not profile.has_notifications_on
     profile.save()
 
     return Response({
         "has_notifications_on": profile.has_notifications_on
     })
+
+
+@api_view(["POST"])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
+def enable_walker(request):
+    serializer = EnableWalkerSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response({"success": 0, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    phone = (serializer.validated_data.get("phone") or "").strip() or None
+
+    with transaction.atomic():
+        profile, _ = Profile.objects.get_or_create(user=request.user)
+        setac = ensure_setac_row(
+            request.user,
+            payload=SetacPayload(
+            email=request.user.email,
+            username=None,  # neka se generira
+            first_name=request.user.first_name or None,
+            last_name=request.user.last_name or None,
+            phone=phone,
+            idClanarine=None,
+            idProfilne=None,
+            ),
+        )
+        profile.is_walker = True
+        profile.save(update_fields=["is_walker"])
+
+    return Response({
+        "success": 1,
+        "message": "Walker enabled.",
+        "is_walker": True,
+        "idSetac": setac.idSetac,
+        "usernameSetac": setac.usernameSetac,
+    }, status=status.HTTP_200_OK)
