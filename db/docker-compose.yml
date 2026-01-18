@@ -1,10 +1,13 @@
 version: "3"
 services:
   db:
-  image: postgres:16
-  environment:
-    POSTGRES_DB: pawpal_db
-    POSTGRES_USER: pawpal_user
-    POSTGRES_PASSWORD: jaka_lozinka
-  volumes:
-    - pgdata:/var/lib/postgresql/data
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pawpal_db
+      POSTGRES_USER: pawpal_user
+      POSTGRES_PASSWORD: jaka_lozinka
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

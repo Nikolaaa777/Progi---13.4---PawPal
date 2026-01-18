@@ -13,7 +13,7 @@ services:
   backend:
     build: ./bekend
     env_file:
-      - ./bekend/.env
+      - ./bekend/.env  # Optional - will use defaults if not present
     depends_on:
       - db
     ports:

@@ -7,9 +7,9 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", cast = bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-in-production")
+DEBUG = config("DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0,backend").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -31,17 +31,13 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
-<<<<<<< Updated upstream
-    "accounts", # - moja app
-=======
-     # - moje app
+    # - moje app
     "accounts.apps.AccountsConfig",
     "dogs",
     "walks",
     "reservations",
     "payments",
     "chat",
->>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -84,13 +80,16 @@ DATABASES = {
         "NAME": "pawpal_db",
         "USER": "pawpal_user",
         "PASSWORD": "jaka_lozinka",
-        "HOST": "127.0.0.1",
+        "HOST": "db",  # Changed to 'db' for Docker Compose service name
         "PORT": "5432",
         "OPTIONS": {"options": "-c search_path=pawpal,public"},
     }
 }
 
-DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
+# Override with DATABASE_URL if provided
+database_url = config("DATABASE_URL", default="")
+if database_url:
+    DATABASES["default"] = dj_database_url.parse(database_url)
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
