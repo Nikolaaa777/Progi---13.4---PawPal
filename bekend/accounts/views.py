@@ -14,6 +14,8 @@ from django.http import JsonResponse
 from .models import Profile 
 from .serializers import EnableWalkerSerializer
 from .domain_sync import ensure_setac_row, SetacPayload
+from .serializers import MeUpdateSerializer
+
 
 
 
@@ -98,11 +100,16 @@ def logout_view(request):
 
 @csrf_exempt
 @extend_schema(responses={200: OpenApiResponse(description='Current user info')})
-@api_view(["GET"])
+@api_view(["GET", "PATCH"])
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user
-    profile, _ = Profile.objects.get_or_create(user=user)
+    profile, _ = Profile.objects.get_or_create(user=user) 
+    if request.method == "PATCH":
+        ser = MeUpdateSerializer(data=request.data, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.update(user, ser.validated_data)
+        profile, _ = Profile.objects.get_or_create(user=user)
 
     if user.is_staff or user.is_superuser:
         role = "ADMIN"
@@ -119,6 +126,7 @@ def me(request):
         "is_walker": profile.is_walker,
         "has_notifications_on": profile.has_notifications_on,
         "role": role,
+        "phone": request.data.get("phone", ""),
     }, status=status.HTTP_200_OK)
 
 @extend_schema(

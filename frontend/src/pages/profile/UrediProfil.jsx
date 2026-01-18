@@ -1,34 +1,107 @@
 import "../../styles/all.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { api } from "../../api/client";
 
 export default function UrediProfil() {
 	const nav = useNavigate();
 
+	const [form, setForm] = useState({
+		first_name: "",
+		last_name: "",
+		email: "",
+		phone: "",
+	});
+
+	useEffect(() => {
+		api.me().then((me) => {
+			setForm({
+				first_name: me.first_name || "",
+				last_name: me.last_name || "",
+				email: me.email || "",
+				phone: me.phone || "",
+			});
+		});
+	}, []);
+
+	const [saving, setSaving] = useState(false);
+
+	const onSubmit = async () => {
+		try {
+			setSaving(true);
+			await api.updateMe(form);
+			nav("/profile");
+		} catch (err) {
+			console.error(err);
+			alert("Save failed (check Console/Network)");
+		} finally {
+			setSaving(false);
+		}
+	};
+
 	return (
 		<div className="overlay">
 			<div className="edit-card">
-				<button className="back-btn" onClick={() => nav(-1)}>
+				<button type="button" className="back-btn" onClick={() => nav(-1)}>
 					←
 				</button>
 
-				<h1>Uređivanje profila</h1>
+				<form onSubmit={onSubmit}>
+					<h1>Uređivanje profila</h1>
 
-				<label className="field">
-					<span>Ime i prezime vlasnika</span>
-					<input defaultValue="Ivan Horvat" />
-				</label>
+					<label className="field">
+						<span>Ime</span>
+						<input
+							placeholder="Ime"
+							value={form.first_name}
+							onChange={(e) =>
+								setForm((f) => ({ ...f, first_name: e.target.value }))
+							}
+						/>
+					</label>
 
-				<label className="field">
-					<span>Email adresa</span>
-					<input defaultValue="ivan.horvat@example.com" />
-				</label>
+					<label className="field">
+						<span>Prezime</span>
+						<input
+							placeholder="Prezime"
+							value={form.last_name}
+							onChange={(e) =>
+								setForm((f) => ({ ...f, last_name: e.target.value }))
+							}
+						/>
+					</label>
 
-				<label className="field">
-					<span>Broj telefona</span>
-					<input defaultValue="+385 91 123 4567" />
-				</label>
+					<label className="field">
+						<span>Email adresa</span>
+						<input
+							placeholder="Email"
+							value={form.email}
+							onChange={(e) =>
+								setForm((f) => ({ ...f, email: e.target.value }))
+							}
+						/>
+					</label>
 
-				<button className="primary-btn">Spremi promjene</button>
+					<label className="field">
+						<span>Broj telefona</span>
+						<input
+							placeholder="Telefon"
+							value={form.phone}
+							onChange={(e) =>
+								setForm((f) => ({ ...f, phone: e.target.value }))
+							}
+						/>
+					</label>
+
+					<button
+						className="primary-btn"
+						type="button"
+						onClick={onSubmit}
+						disabled={saving}
+					>
+						{saving ? "Spremam..." : "Spremi promjene"}
+					</button>
+				</form>
 			</div>
 		</div>
 	);

@@ -24,7 +24,23 @@ async function post(path, body) {
 			credentials: "include",
 			headers: { "Content-Type": "application/json", "X-CSRFToken": csrf },
 			body: JSON.stringify(body),
-		})
+		}),
+	);
+}
+
+async function patch(path, body) {
+	await ensureCsrf();
+	const csrf = getCookie("csrftoken");
+	return json(
+		await fetch(`${BASE}${path}`, {
+			method: "PATCH",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFToken": csrf,
+			},
+			body: JSON.stringify(body),
+		}),
 	);
 }
 
@@ -35,6 +51,7 @@ async function get(path) {
 
 export const api = {
 	me: () => get("/api/auth/me/"),
+	updateMe: (data) => patch("/api/auth/me/", data),
 	login: (email, password) => post("/api/auth/login/", { email, password }),
 	logout: () => post("/api/auth/logout/", {}),
 	register: ({ email, first_name, last_name, password, is_walker }) =>
@@ -75,7 +92,7 @@ export const api = {
 					"X-CSRFToken": csrf,
 				},
 				body: JSON.stringify(payload),
-			})
+			}),
 		);
 	},
 
@@ -87,7 +104,7 @@ export const api = {
 				method: "DELETE",
 				credentials: "include",
 				headers: { "X-CSRFToken": csrf },
-			})
+			}),
 		);
 	},
 };
