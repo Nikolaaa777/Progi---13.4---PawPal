@@ -97,9 +97,6 @@ export default function Navbar() {
 
 				<div className="nav-right">
 					<nav className="nav-pills">
-						<NavLink to="/novosti" className="pill">
-							Novosti
-						</NavLink>
 						<NavLink to="/setnje" className="pill">
 							Dostupne šetnje
 						</NavLink>

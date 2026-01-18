@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { api } from "./api/client";
+import AvailableWalks from "./pages/AvailableWalks";
+import AvailableWalkers from "./pages/AvailableWalkers";
 import ProfileInfo from "./pages/profile/ProfileInfo";
 import MojiLjubimci from "./pages/profile/MojiLjubimci";
 import MojeRezervacije from "./pages/profile/MojeRezervacije";
@@ -15,6 +17,7 @@ import MojiTermini from "./pages/profile/MojiTermini";
 import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";
 import AdminHome from "./pages/admin/AdminHome";
 import ChatPage from "./pages/chat/ChatPage";
+
 
 export default function App() {
 	const [user, setUser] = useState(null);
@@ -29,6 +32,8 @@ export default function App() {
 	return (
 		<Routes>
 			<Route path="/" element={<Home user={user} />} />
+			<Route path="/setnje" element={<AvailableWalks />} />
+			<Route path="/setaci" element={<AvailableWalkers />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/profile" element={<ProfileLayout />}>
