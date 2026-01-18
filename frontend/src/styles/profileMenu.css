@@ -99,7 +99,7 @@
 }
 
 .menu a.active::before {
-	content: '>';
+	content: '🐾';
 	font-size: 22px;
 	color: #2f55ff;
 	margin-right: 16px;

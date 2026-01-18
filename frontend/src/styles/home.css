@@ -104,10 +104,7 @@ body {
 .icon-btn:hover {
 	background: rgba(0, 0, 0, 0.06);
 }
-.icon-btn:last-child img {
-	width: 63px;
-	height: 63px;
-}
+
 .bell-icon svg {
 	width: 18px;
 	height: 18px;
