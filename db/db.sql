@@ -213,6 +213,8 @@ ALTER TABLE public."Setac" ADD CONSTRAINT setac_phone_unique UNIQUE ("telefonSet
 ALTER TABLE public."Setnja"
   ADD CONSTRAINT setnja_setac_fk FOREIGN KEY ("idSetac") REFERENCES public."Setac" ("idSetac");
 
+
+
 ALTER TABLE  public."Vlasnik"
     ADD CONSTRAINT "Vlasnik_email_unique" UNIQUE ("emailVlasnik");
 
