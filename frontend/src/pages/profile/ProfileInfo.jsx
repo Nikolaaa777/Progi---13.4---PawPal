@@ -95,7 +95,7 @@ export default function ProfileInfo() {
 
 			<section className="actions-row">
 				<button
-					className="action-btn"
+					className="profile-btn"
 					onClick={() => navigate("/profile/uredi")}
 				>
 					Uredi profil

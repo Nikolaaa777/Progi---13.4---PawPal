@@ -1,4 +1,4 @@
-/* Base reset */
+
 body {
 	background-color: #f4f6fb;
 	margin: 0;
@@ -12,7 +12,6 @@ body {
 	flex-direction: column;
 }
 
-/* Appointments list wrapper (NO WINDOW BORDER) */
 .Walk-Reservations {
 	width: 97%;
 	height: 87%;
@@ -20,26 +19,21 @@ body {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-
-	/* window look removed */
 	background: transparent;
 	border-radius: 0;
 	box-shadow: none;
-
 	padding: 0;
 	overflow: hidden;
 }
 
 /* Scrollable inner list */
 .Walk-Reservations__inner {
-	max-height: calc(100vh - 130px);
+	max-height: calc(100vh - 100px);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
-
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-
 	padding: 10px;
 	box-sizing: border-box;
 }
@@ -53,7 +47,6 @@ body {
 	border-radius: 14px;
 	padding: 20px 24px;
 	border: 1px solid rgba(15, 23, 42, 0.06);
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 	transition: transform 160ms ease, box-shadow 160ms ease;
 }
 

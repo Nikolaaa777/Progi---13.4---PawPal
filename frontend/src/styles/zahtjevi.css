@@ -32,29 +32,25 @@ background-color: #e53935;
 
 .Walk-Requests {
 	width: 97%;
-	height: 87%;
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	padding-bottom: 12px;
-	background: #ffffff;
-	border-radius: 12px;
-	padding: 18px;
-	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	background: transparent;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 0;
 	overflow: hidden;
 }
 
 .Walk-Requests__inner {
-	max-height: calc(100vh - 296px);
+	max-height: calc(100vh - 100px);
 	overflow-y: auto;
-	padding-right: 8px;
 	-webkit-overflow-scrolling: touch;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
 	padding: 10px;
-	border-radius: 8px;
 	box-sizing: border-box;
 }
 
@@ -66,7 +62,6 @@ background-color: #e53935;
 	border-radius: 14px;
 	padding: 20px 24px;
 	border: 1px solid rgba(15, 23, 42, 0.06);
-	box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 	transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
