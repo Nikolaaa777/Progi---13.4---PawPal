@@ -20,23 +20,22 @@
 
 /* Back button */
 .backAdmin {
-	width: 36px;
-	height: 36px;
-	border-radius: 12px;
-	background: rgba(0, 0, 0, 0.08);
+	font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	cursor: pointer;
-	font-size: 18px;
-	font-weight: 800;
-	color: #111;
-	transition: background 0.2s, transform 0.2s;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
 }
 
 .backAdmin:hover {
-	background: rgba(0, 0, 0, 0.14);
-	transform: translateY(-1px);
+	background: #2f55ff;
+	color: #ffffff;
 }
 
 /* Profile */
