@@ -6,6 +6,13 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("api/", include("accounts.urls")),
+<<<<<<< Updated upstream
+=======
+    path("api/", include("walks.urls")),
+    path("api/", include("payments.urls")),
+    path("api/", include("dogs.urls")),
+    path("api/", include("chat.urls")),
+>>>>>>> Stashed changes
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]

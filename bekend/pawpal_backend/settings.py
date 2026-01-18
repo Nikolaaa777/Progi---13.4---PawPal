@@ -31,7 +31,17 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
+<<<<<<< Updated upstream
     "accounts", # - moja app
+=======
+     # - moje app
+    "accounts.apps.AccountsConfig",
+    "dogs",
+    "walks",
+    "reservations",
+    "payments",
+    "chat",
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
