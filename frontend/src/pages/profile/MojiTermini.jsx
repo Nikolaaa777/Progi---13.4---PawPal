@@ -1,8 +1,8 @@
 import React from "react";
 import "../../styles/termini.css";
+import { NavLink } from "react-router-dom";
 
 const MojiTermini = () => {
-  // Kasnije iz API-ja
   const rezervacije = [
     {
       id: 1,
@@ -33,24 +33,6 @@ const MojiTermini = () => {
     },
     {
       id: 4,
-      date: "03.02.2026",
-      time: "18:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Otkazan",
-    },
-    {
-      id: 5,
-      date: "03.02.2026",
-      time: "18:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Otkazan",
-    },
-    {
-      id: 6,
       date: "03.02.2026",
       time: "18:00",
       dog: "Rex",
@@ -120,19 +102,18 @@ const MojiTermini = () => {
                   </div>
 
                   <div className="iconsWalk">
-                    <div
-                      className={`Walk-status-Appointment ${statusClass}`}
-                    >
+                    <div className={`Walk-status-Appointment ${statusClass}`}>
                       {r.status}
                     </div>
 
                     {canEdit && (
-                      <button
+                      <NavLink
+                        to={`/profile/termini/${r.id}/uredi`}
                         className={`editAppointment-btn ${statusClass}`}
                       >
                         <img src="/edit.png" alt="edit" />
                         Uredi
-                      </button>
+                      </NavLink>
                     )}
 
                     <button className="deleteAppointment-btn">
@@ -143,10 +124,12 @@ const MojiTermini = () => {
               );
             })}
 
-            <button className="addAppointment-btn">
-              Dodaj termin
-              <img src="/plus.png" alt="plus" />
-            </button>
+            <NavLink
+              to="/profile/termini/dodaj"
+              className="addAppointment-btn"
+            >
+              Dodaj termin <img src="/plus.png" alt="plus" />
+            </NavLink>
           </div>
         </div>
       </main>

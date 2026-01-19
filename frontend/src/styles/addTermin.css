@@ -1,0 +1,193 @@
+/* ---------- Page ---------- */
+
+.add-termin-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ---------- Card ---------- */
+
+.add-termin-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Title ---------- */
+
+.add-termin-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* ---------- Form ---------- */
+
+.add-termin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* ---------- Radio buttons (Tip šetnje) ---------- */
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.radio-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid #eef2ff;
+  cursor: pointer;
+  font-weight: 600;
+  color: #2f55ff;
+  transition: all 0.2s ease;
+}
+
+/* hide default radio */
+.radio-option input[type="radio"] {
+  accent-color: #2f55ff;
+  cursor: pointer;
+}
+
+/* hover */
+.radio-option:hover {
+  background: #eef2ff;
+}
+
+/* selected state */
+.radio-option input[type="radio"]:checked + span {
+  font-weight: 700;
+}
+
+/* ---------- Actions ---------- */
+
+.add-termin-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.cancel-btn {
+  width: 180px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 2px solid #eef2ff;
+  background: #ffffff;
+  color: #2f55ff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: #eef2ff;
+}
+
+.save-btn {
+  width: 180px;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #2f55ff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background: #1f3fff;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.radio-option {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  border-radius: 12px;
+  border: 2px solid #eef2ff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #2f55ff;
+}
+
+/* hide native radio */
+.radio-option input {
+  display: none;
+}
+
+/* selected */
+.radio-option input:checked + span {
+  color: #ffffff;
+}
+
+.radio-option:has(input:checked) {
+  background: #2f55ff;
+  color: white;
+}
+
+/* hover */
+.radio-option:hover {
+  background: #eef2ff;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+  .radio-group {
+    flex-direction: column;
+  }
+
+  .add-termin-actions {
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+  }
+
+  .radio-group {
+    flex-direction: column;
+  }
+
+}

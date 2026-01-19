@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/addTermin.css";
+import "../../styles/editTermin.css";
 
-const DodajTermin = () => {
+const UrediTermin = () => {
   const navigate = useNavigate();
 
   const [date, setDate] = useState("");
@@ -13,20 +13,19 @@ const DodajTermin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Termin uspješno dodan!");
+    alert("Termin uspješno uređen!");
     navigate(-1);
   };
 
   return (
     <div className="app">
-      <main className="content add-termin-content">
-        <div className="add-termin-card">
-          <h1 className="add-termin-title">Dodaj novi termin</h1>
-
-          <form className="add-termin-form" onSubmit={handleSubmit}>
+      <main className="content edit-termin-content">
+        <div className="edit-termin-card">
+          <h1 className="edit-termin-title">Uredi termin</h1>
+          <form className="edit-termin-form" onSubmit={handleSubmit}>
             
             {/* LOKACIJA */}
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Lokacija</label>
               <input
                 type="text"
@@ -38,7 +37,7 @@ const DodajTermin = () => {
             </div>
 
             {/* TIP ŠETNJE */}
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Tip šetnje</label>
 
               <div className="radio-group">
@@ -53,7 +52,7 @@ const DodajTermin = () => {
                   Individualna
                 </label>
 
-                <label className="radio-option">
+                <label className="edit-radio-option">
                   <input
                     type="radio"
                     name="walkType"
@@ -67,7 +66,7 @@ const DodajTermin = () => {
             </div>
 
             {/* DATUM */}
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Datum</label>
               <input
                 type="date"
@@ -78,7 +77,7 @@ const DodajTermin = () => {
             </div>
 
             {/* VRIJEME */}
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Vrijeme</label>
               <input
                 type="time"
@@ -89,7 +88,7 @@ const DodajTermin = () => {
             </div>
 
             {/* TRAJANJE */}
-            <div className="form-group">
+            <div className="edit-form-group">
               <label>Trajanje (minute)</label>
               <input
                 type="number"
@@ -103,7 +102,7 @@ const DodajTermin = () => {
             </div>
 
             {/* ACTIONS */}
-            <div className="add-termin-actions">
+            <div className="edit-termin-actions">
               <button
                 type="button"
                 className="cancel-btn"
@@ -113,7 +112,7 @@ const DodajTermin = () => {
               </button>
 
               <button type="submit" className="save-btn">
-                Dodaj termin
+                Spremi promjene
               </button>
             </div>
           </form>
@@ -123,4 +122,4 @@ const DodajTermin = () => {
   );
 };
 
-export default DodajTermin;
+export default UrediTermin;

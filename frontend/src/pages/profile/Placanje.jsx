@@ -46,23 +46,11 @@ const Placanje = () => {
               <h2>Podatci o kartici</h2>
 
               <div className="card-fields">
-                <input
-                  type="text"
-                  placeholder="Broj kartice"
-                  required
-                />
+                <input type="text" placeholder="Broj kartice" required />
 
                 <div className="card-row">
-                  <input
-                    type="text"
-                    placeholder="MM/YY"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="CVC"
-                    required
-                  />
+                  <input type="text" placeholder="MM/YY" required />
+                  <input type="text" placeholder="CVC" required />
                 </div>
               </div>
               <div className="payment-actions">
