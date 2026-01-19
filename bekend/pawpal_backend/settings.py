@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "chat",
     "admin_api",
     "membership",
+    "reviews",
 ]
 
 MIDDLEWARE = [
