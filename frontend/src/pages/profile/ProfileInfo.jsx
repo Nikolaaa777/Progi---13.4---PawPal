@@ -45,9 +45,11 @@ export default function ProfileInfo() {
 							className="avatar-img"
 						/>
 					) : (
-						<div className="avatar-placeholder">
-							{user?.username?.charAt(0).toUpperCase() || "?"}
-						</div>
+						<img
+							src="/profile.png"
+							alt="default avatar"
+							className="avatar-img"
+						/>
 					)}
 				</div>
 			</section>
