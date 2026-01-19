@@ -157,13 +157,7 @@ export default function Navbar() {
 									>
 										<span>Profile</span>
 									</button>
-									<button
-										className="menu-item"
-										role="menuitem"
-										onClick={() => nav("/settings")}
-									>
-										<span>Settings</span>
-									</button>
+
 									<div className="menu-divider" role="separator" />
 									{!user ? (
 										<button
