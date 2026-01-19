@@ -33,17 +33,21 @@ export default function ProfileLayout() {
 					</div>
 
 					{/* Vlasnik menu */}
-					<NavLink end to="/profile">
-						Moje informacije
-					</NavLink>
-					<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
-					<NavLink to="/profile/rezervacije">Moje rezervacije</NavLink>
+					<NavLink end to="/profile">Moje informacije</NavLink>
+
+					{!isWalker && (
+						<>
+							<NavLink to="/profile/ljubimci">Moji ljubimci</NavLink>
+							<NavLink to="/profile/rezervacije">Moje rezervacije</NavLink>
+						</>
+					)}
 
 					{/* Setac menu dodatak */}
 					{isWalker && (
 						<>
 							<NavLink to="/profile/termini">Moji termini</NavLink>
 							<NavLink to="/profile/zahtjevi">Moji zahtjevi</NavLink>
+							<NavLink to="/profile/clanarina">Moja članarina</NavLink>
 						</>
 					)}
 				</nav>

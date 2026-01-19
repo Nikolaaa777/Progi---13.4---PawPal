@@ -1,118 +1,192 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import "../../styles/editDog.css";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { api } from "../../api/client";
-import "../../styles/urediPsa.css";
 
-export default function DogProfileEdit() {
-	const { idPsa } = useParams();
-	const navigate = useNavigate();
+export default function UrediPsa() {
+  const nav = useNavigate();
 
-	const [form, setForm] = useState({
-		imePsa: "",
-		pasminaPsa: "",
-		zdravPas: "",
-		posPsa: "",
-		energijaPsa: 2,
-		socPsa: 2,
-	});
+  const [form, setForm] = useState({
+    name: "",
+    breed: "",
+    age: "",
+    health: "",
+    energy: "",
+    social: "",
+    treats: "",
+  });
 
-	useEffect(() => {
-		api.dog(idPsa).then((data) => {
-			setForm({
-				imePsa: data.imePsa,
-				pasminaPsa: data.pasminaPsa,
-				zdravPas: data.zdravPas,
-				posPsa: data.posPsa,
-				energijaPsa: data.energijaPsa,
-				socPsa: data.socPsa,
-			});
-		});
-	}, [idPsa]);
+  const onChange = (k) => (e) =>
+    setForm((p) => ({ ...p, [k]: e.target.value }));
 
-	return (
-		<div className="edit-page">
-			<div className="cardDog">
-				<div className="header">
-					<span className="back" onClick={() => navigate(-1)}>
-						←
-					</span>
-					<h2>Uređivanje profila psa</h2>
-				</div>
+  const onSubmit = async (e) => {
+    e.preventDefault();
 
-				<div className="profile">
-					<img
-						src="https://images.unsplash.com/photo-1552053831-71594a27632d"
-						alt="Rex"
-					/>
-					<div>
-						<h3>{form.imePsa || "Pas"}</h3>
-						<p>{form.pasminaPsa || ""}</p>
-					</div>
-				</div>
+    try {
+      const created = await api.createDog({
+        imePsa: form.name,
+        pasminaPsa: form.breed,
+        starostPsa: Number(form.age) || 0,
+        zdravPas: form.health,
+        energijaPsa: form.energy,
+        socPsa: form.social,
+        posPsa: form.treats,
+      });
 
-				<div className="form">
-					<label>Ime psa</label>
-					<input
-						value={form.imePsa}
-						onChange={(e) => setForm({ ...form, imePsa: e.target.value })}
-					/>
+      console.log("DOG CREATED:", created);
+      nav("/profile/ljubimci");
+    } catch (err) {
+      console.error("CREATE DOG FAILED:", err);
 
-					<label>Pasmina</label>
-					<input
-						value={form.pasminaPsa}
-						onChange={(e) => setForm({ ...form, pasminaPsa: e.target.value })}
-					/>
+      // 1) ako je Response
+      if (err && typeof err.status === "number") {
+        const text = await err.text();
+        console.log("STATUS:", err.status);
+        console.log("BODY:", text);
+        alert(`Status ${err.status}: vidi Console`);
+        return;
+      }
 
-					<label>Zdravstvene napomene</label>
-					<input
-						value={form.zdravPas}
-						onChange={(e) => setForm({ ...form, zdravPas: e.target.value })}
-					/>
+      // 2) ako je pravi JS error (TypeError: Failed to fetch)
+      alert(String(err));
+    }
+  };
 
-					<label>Dopuštene poslastice</label>
-					<input
-						value={form.posPsa}
-						onChange={(e) => setForm({ ...form, posPsa: e.target.value })}
-					/>
+  return (
+    <main className="content edit-dog-content">
+      <div className="edit-dog-modal">
+        <button
+          className="edit-dog-back"
+          onClick={() => nav("/profile/ljubimci")}
+        >
+          ←
+        </button>
 
-					<label htmlFor="energy">Razina energije</label>
-					<input
-						type="range"
-						min={0}
-						max={4}
-						value={form.energijaPsa}
-						onChange={(e) =>
-							setForm({ ...form, energijaPsa: Number(e.target.value) })
-						}
-					/>
+        <h2 className="edit-dog-title">Uredi psa</h2>
 
-					<label htmlFor="social">Razina socijalizacije</label>
-					<input
-						type="range"
-						min={0}
-						max={4}
-						value={form.socPsa}
-						onChange={(e) =>
-							setForm({ ...form, socPsa: Number(e.target.value) })
-						}
-					/>
-				</div>
+        <form onSubmit={onSubmit}>
+          <div className="edit-dog-top">
+            <button type="button" className="edit-dog-photo">
+              <span className="edit-dog-photo-ico">📷</span>
+            </button>
 
-				<div className="buttons">
-					<button className="cancel" onClick={() => navigate(-1)}>
-						Otkaži
-					</button>
-					<button
-						className="save"
-						onClick={async () => {
-							await api.updateDog(idPsa, form);
-							navigate("/profile/ljubimci");
-						}}
-					>
-						Spremi
-					</button>
-				</div>
-			</div>
-		</div>
-	);
+            <div className="edit-dog-top-fields">
+              <label className="edit-dog-label">
+                Ime psa
+                <input
+                  className="edit-dog-input"
+                  placeholder="Unesite ime psa"
+                  value={form.name}
+                  onChange={onChange("name")}
+                />
+              </label>
+
+              <label className="edit-dog-label">
+                Pasmina
+                <input
+                  className="edit-dog-input"
+                  placeholder="Unesite pasminu"
+                  value={form.breed}
+                  onChange={onChange("breed")}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="edit-dog-rows">
+            <div className="edit-dog-row">
+              <div className="edit-dog-row-ico">🐾</div>
+              <div className="edit-dog-row-body">
+                <div className="edit-dog-row-title">Starost</div>
+                <input
+                  className="edit-dog-row-input"
+                  placeholder="Unesite starost"
+                  value={form.age}
+                  onChange={onChange("age")}
+                />
+              </div>
+            </div>
+
+            <div className="edit-dog-row">
+              <div className="edit-dog-row-ico">💊</div>
+              <div className="edit-dog-row-body">
+                <div className="edit-dog-row-title">Zdravstvene napomene</div>
+                <input
+                  className="edit-dog-row-input"
+                  placeholder="Lijekovi, alergije, itd."
+                  value={form.health}
+                  onChange={onChange("health")}
+                />
+              </div>
+            </div>
+
+            <div className="edit-dog-row">
+              <div className="edit-dog-row-ico">🦴</div>
+              <div className="edit-dog-row-body">
+                <div className="edit-dog-row-title">Dopuštene poslastice</div>
+                <input
+                  className="edit-dog-row-input"
+                  placeholder="Mrkva, jabuke, keksi..."
+                  value={form.treats}
+                  onChange={onChange("treats")}
+                />
+              </div>
+            </div>
+
+            <div className="edit-dog-row">
+              <div className="edit-dog-row-ico">⚡</div>
+              <div className="edit-dog-row-body">
+                <div className="edit-dog-row-title">
+                  Razina energije: {" "}
+                  <span className="edit-dog-range-value">{form.energy}</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  className="edit-dog-range"
+                  value={form.energy}
+                  onChange={onChange("energy")}
+                />
+              </div>
+            </div>
+
+            <div className="edit-dog-row">
+              <div className="edit-dog-row-ico">🐶</div>
+              <div className="edit-dog-row-body">
+                <div className="edit-dog-row-title">
+                  Razina socijalizacije: {" "}
+                  <span className="edit-dog-range-value">{form.social}</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  className="edit-dog-range"
+                  value={form.social}
+                  onChange={onChange("social")}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="edit-dog-actions">
+            <button
+              type="button"
+              className="edit-dog-cancel"
+              onClick={() => nav("/profile/ljubimci")}
+            >
+              Zatvori
+            </button>
+
+            <button type="submit" className="edit-dog-save">
+              Spremi promjene
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
 }

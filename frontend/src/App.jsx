@@ -18,6 +18,7 @@ import MojiTermini from "./pages/profile/MojiTermini";
 import DodajTermin from "./pages/profile/DodajTermin";
 import UrediTermin from "./pages/profile/UrediTermin";
 import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";
+import Clanarina from "./pages/profile/clanarina";
 import AdminHome from "./pages/admin/AdminHome";
 import AdminKomentari from "./pages/admin/AdminKom";
 import AdminKor from "./pages/admin/AdminKorisnici";
@@ -46,12 +47,14 @@ export default function App() {
 				<Route path="uredi" element={<UrediProfil />} />
 				<Route path="ljubimci" element={<MojiLjubimci />} />
 				<Route path="ljubimci/dodaj" element={<DodajPsa />} />
+				<Route path="ljubimci/:id/uredi" element={<UrediPsa />} />
 				<Route path="rezervacije" element={<MojeRezervacije />} />
 				<Route path="rezervacije/placanje" element={<Placanje />} />
 				<Route path="termini" element={<MojiTermini />} />
 				<Route path="termini/dodaj" element={<DodajTermin />} />
 				<Route path="termini/:id/uredi" element={<UrediTermin />} />
 				<Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
+				<Route path="clanarina" element={<Clanarina />} />
 			</Route>
 			<Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
 			<Route path="/admin" element={<AdminHome />} />
