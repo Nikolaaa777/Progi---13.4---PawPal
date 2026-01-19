@@ -63,12 +63,28 @@ const MojiTermini = () => {
   const getStatusClass = (status) => {
     if (!status) return "";
     const s = status.toLowerCase();
+
     if (s.includes("zavr")) return "zavrsen";
     if (s.includes("otkaz")) return "otkazan";
     if (s.includes("plan")) return "planiran";
     if (s.includes("aktiv")) return "aktivan";
+
     return "";
   };
+
+  const statusOrder = {
+    planiran: 1,
+    aktivan: 2,
+    zavrsen: 3,
+    otkazan: 4,
+  };
+
+  const sortedRezervacije = [...rezervacije].sort((a, b) => {
+    const statusA = getStatusClass(a.status);
+    const statusB = getStatusClass(b.status);
+
+    return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
+  });
 
   return (
     <div className="app">
@@ -77,53 +93,56 @@ const MojiTermini = () => {
 
         <div className="Walk-Appointments">
           <div className="Walk-Appointments__inner">
-            {rezervacije.map((r) => (
-              <div key={r.id} className="Walk-Appointment-card">
-                <div className="Walk-Appointment-left">
-                  <div className="Walk-calendar">
-                    <img src="/calendar.png" alt="calendar" />
+            {sortedRezervacije.map((r) => {
+              const statusClass = getStatusClass(r.status);
+              const canEdit = !["zavrsen", "otkazan"].includes(statusClass);
+
+              return (
+                <div key={r.id} className="Walk-Appointment-card">
+                  <div className="Walk-Appointment-left">
+                    <div className="Walk-calendar">
+                      <img src="/calendar.png" alt="calendar" />
+                    </div>
+
+                    <div className="Walk-Appointment-text">
+                      <div className="Walk-Appointment-date">
+                        {r.date} · {r.time}
+                      </div>
+
+                      <div className="Walk-Appointment-info">
+                        Pas: {r.dog} · {r.duration}
+                      </div>
+
+                      <div className="Walk-Appointment-info">
+                        Lokacija: {r.location}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="Walk-Appointment-text">
-                    <div className="Walk-Appointment-date">
-                      {r.date} · {r.time}
+                  <div className="iconsWalk">
+                    <div
+                      className={`Walk-status-Appointment ${statusClass}`}
+                    >
+                      {r.status}
                     </div>
-                    <div className="Walk-Appointment-info">
-                      Pas: {r.dog} · {r.duration}
-                    </div>
-                    <div className="Walk-Appointment-info">
-                      Lokacija: {r.location}
-                    </div>
+
+                    {canEdit && (
+                      <button
+                        className={`editAppointment-btn ${statusClass}`}
+                      >
+                        <img src="/edit.png" alt="edit" />
+                        Uredi
+                      </button>
+                    )}
+
+                    <button className="deleteAppointment-btn">
+                      <img src="/bin.png" alt="trash" />
+                    </button>
                   </div>
                 </div>
+              );
+            })}
 
-                <div className="iconsWalk">
-                  <div
-                    className={`Walk-status-Appointment ${getStatusClass(
-                      r.status
-                    )}`}
-                  >
-                    {r.status}
-                  </div>
-
-                  <button
-                    className={`editAppointment-btn ${getStatusClass(r.status)}`}
-                    style={
-                      ["zavrsen", "otkazan"].includes(getStatusClass(r.status))
-                        ? { display: "none" }
-                        : undefined
-                    }
-                  >
-                    <img src="/edit.png" alt="edit" />
-                    Uredi
-                  </button>
-
-                  <button className="deleteAppointment-btn">
-                    <img src="/bin.png" alt="trash" />
-                  </button>
-                </div>
-              </div>
-            ))}
             <button className="addAppointment-btn">
               Dodaj termin
               <img src="/plus.png" alt="plus" />

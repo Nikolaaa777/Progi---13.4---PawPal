@@ -41,17 +41,17 @@ const MojeRezervacije = () => {
       status: "Otkazana",
     },
     {
-      id: 4,
-      date: "03.02.2026",
+      id: 5,
+      date: "04.02.2026",
       time: "18:00",
       dog: "Rex",
       duration: "60 min",
       location: "Trešnjevka",
-      status: "Otkazana",
+      status: "Aktivna",
     },
     {
-      id: 4,
-      date: "03.02.2026",
+      id: 6,
+      date: "05.02.2026",
       time: "18:00",
       dog: "Rex",
       duration: "60 min",
@@ -63,12 +63,28 @@ const MojeRezervacije = () => {
   const getStatusClass = (status) => {
     if (!status) return "";
     const s = status.toLowerCase();
+
     if (s.includes("zavr")) return "zavrsena";
     if (s.includes("otkaz")) return "otkazana";
     if (s.includes("plan")) return "planirana";
     if (s.includes("aktiv")) return "aktivna";
+
     return "";
   };
+
+  const statusOrder = {
+    zavrsena: 1,
+    planirana: 2,
+    aktivna: 3,
+    otkazana: 4,
+  };
+
+  const sortedRezervacije = [...rezervacije].sort((a, b) => {
+    const statusA = getStatusClass(a.status);
+    const statusB = getStatusClass(b.status);
+
+    return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
+  });
 
   return (
     <div className="app">
@@ -77,7 +93,7 @@ const MojeRezervacije = () => {
 
         <div className="Walk-Reservations">
           <div className="Walk-Reservations__inner">
-            {rezervacije.map((r) => (
+            {sortedRezervacije.map((r) => (
               <div key={r.id} className="Walk-Reservation-card">
                 <div className="Walk-Reservation-left">
                   <div className="Walk-calendar">
@@ -88,9 +104,11 @@ const MojeRezervacije = () => {
                     <div className="Walk-Reservation-date">
                       {r.date} · {r.time}
                     </div>
+
                     <div className="Walk-Reservation-info">
                       Pas: {r.dog} · {r.duration}
                     </div>
+
                     <div className="Walk-Reservation-info">
                       Lokacija: {r.location}
                     </div>
@@ -99,10 +117,16 @@ const MojeRezervacije = () => {
 
                 <div className="iconsWalk">
                   <div
-                    className={`Walk-status-reservation ${getStatusClass(r.status)}`}
+                    className={`Walk-status-reservation ${getStatusClass(
+                      r.status
+                    )}`}
                   >
                     {r.status}
                   </div>
+
+                  {getStatusClass(r.status) === "zavrsena" && (
+                    <button className="payReservation-btn">Plaćanje</button>
+                  )}
 
                   <button className="deleteReservation-btn">
                     <img src="/bin.png" alt="trash" />
