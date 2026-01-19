@@ -1,8 +1,8 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import "../../styles/rezervacije.css";
 
 const MojeRezervacije = () => {
-  // Kasnije iz API-ja
   const rezervacije = [
     {
       id: 1,
@@ -125,7 +125,12 @@ const MojeRezervacije = () => {
                   </div>
 
                   {getStatusClass(r.status) === "zavrsena" && (
-                    <button className="payReservation-btn">Plaćanje</button>
+                    <NavLink
+                      to="/profile/rezervacije/placanje"
+                      className="payReservation-btn"
+                    >
+                      Plaćanje
+                    </NavLink>
                   )}
 
                   <button className="deleteReservation-btn">

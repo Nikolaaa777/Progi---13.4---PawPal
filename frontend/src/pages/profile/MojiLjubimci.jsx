@@ -66,7 +66,7 @@ export default function MojiLjubimci() {
 					className="pets-add"
 					onClick={() => nav("/profile/ljubimci/dodaj")}
 				>
-					Dodaj psa
+					Dodaj ljubimca
 					<img src="/plus.png" alt="Add" />
 				</button>
 			</div>

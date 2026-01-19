@@ -9,6 +9,7 @@ import AvailableWalkers from "./pages/AvailableWalkers";
 import ProfileInfo from "./pages/profile/ProfileInfo";
 import MojiLjubimci from "./pages/profile/MojiLjubimci";
 import MojeRezervacije from "./pages/profile/MojeRezervacije";
+import Placanje from "./pages/profile/Placanje";
 import ProfileLayout from "./pages/profile/ProfileLayout";
 import UrediProfil from "./pages/profile/UrediProfil";
 import DodajPsa from "./pages/profile/DodajPsa";
@@ -44,6 +45,7 @@ export default function App() {
 				<Route path="ljubimci" element={<MojiLjubimci />} />
 				<Route path="ljubimci/dodaj" element={<DodajPsa />} />
 				<Route path="rezervacije" element={<MojeRezervacije />} />
+				<Route path="rezervacije/placanje" element={<Placanje />} />
 				<Route path="termini" element={<MojiTermini />} />
 				<Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
 			</Route>
