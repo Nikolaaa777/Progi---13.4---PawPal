@@ -16,10 +16,9 @@ CREATE TABLE public."Admin" (
 --
 
 CREATE TABLE public."Clanarina" (
-    "idClanarine" bigint NOT NULL,
-    "idSetaca" bigint NOT NULL,
-    iznos bigint,
-    "datClanarine" date
+    id SERIAL PRIMARY KEY,
+    iznos NUMERIC(8,2) NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 
@@ -105,7 +104,6 @@ CREATE TABLE public."Setac" (
     "usernameSetac" character varying(20) NOT NULL,
     "emailSetac" character varying(50) NOT NULL,
     "datRegSetac" date,
-    "idClanarine" bigint,
     "idProfilne" bigint
 );
 
@@ -138,14 +136,6 @@ CREATE TABLE public."Vlasnik" (
 );
 
 
-
-
---
--- Name: Clanarina Clanarina_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE  public."Clanarina"
-    ADD CONSTRAINT "Clanarina_pkey" PRIMARY KEY ("idClanarine", "idSetaca");
 
 
 --

@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "reservations",
     "payments",
     "chat",
+    "admin_api",
+    "membership",
 ]
 
 MIDDLEWARE = [
