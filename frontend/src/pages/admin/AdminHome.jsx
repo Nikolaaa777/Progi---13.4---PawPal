@@ -1,49 +1,76 @@
-import { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 import "../../styles/adminGen.css";
-import { useNavigate } from "react-router-dom";
 
 export default function AdminHome() {
-
 	const nav = useNavigate();
 
 	return (
-		 <div className="app">
-      <aside className="sidebar">
-        <div className="back" onClick={() => nav("/")}>
-            ←
-          </div>
+		<div className="appAdmin">
+			<aside className="sidebarAdmin">
+				<div className="backAdmin" onClick={() => nav("/")}>
+					←
+				</div>
 
-        <div className="profile">
-          <img className="avatar" src="/admin.png" alt="admin" />
-          <div>
-            <strong>ImePrezime Admina</strong>
-          </div>
-        </div>
+				<div className="profileAdmin">
+					<img className="avatarAdmin" src="/admin.png" alt="admin" />
+					<div>
+						<strong>ImePrezime Admina</strong>
+					</div>
+				</div>
 
-        <nav className="menu">
-          <a href="#" className="active">Generalno</a>
-          <a href="/adminKom">Komentari</a>
-          <a href="/adminKorisnici">Korisnici</a>
-        </nav>
-      </aside>
+				<nav className="menuAdmin">
+					<NavLink to="/admin" className={({ isActive }) => (isActive ? "active" : undefined)}>
+						Generalno
+					</NavLink>
 
-      <main className="content">
-        <div className="header">
-          <h1>Generalno</h1>
-          <h2>GENERALNI INFO</h2>
-        </div>
+					<NavLink to="/adminKom" className={({ isActive }) => (isActive ? "active" : undefined)}>
+						Komentari
+					</NavLink>
 
-        <div className="center">
-          <button className="button">Postavi članarinu</button>
-        </div>
+					<NavLink to="/adminKorisnici" className={({ isActive }) => (isActive ? "active" : undefined)}>
+						Korisnici
+					</NavLink>
+				</nav>
+			</aside>
 
-        <div className="card">Unesi obavijest</div>
+			<main className="contentAdmin">
+				{/* ===== HEADER ===== */}
+				<div className="headerAdmin">
+					<h1>Generalno</h1>
+				</div>
 
-        <div className="center">
-          <button className="button">Pošalji obavijest</button>
-        </div>
-      </main>
-    </div>
+				{/* ===== GENERALNI INFO INPUT ===== */}
+				<div className="cardAdmin">
+					<h2>Generalni info</h2>
+					<textarea
+						className="textareaAdmin"
+						placeholder="Unesi obavijest za korisnike..."
+						rows={4}
+					/>
+				</div>
+
+				<div className="centerAdmin">
+					<button className="subscription-btn">
+						Postavi članarinu
+					</button>
+				</div>
+
+				{/* ===== OBAVIJEST INPUT ===== */}
+				<div className="cardAdmin">
+					<h2>Obavijest</h2>
+					<textarea
+						className="textareaAdmin"
+						placeholder="Unesi obavijest za korisnike..."
+						rows={4}
+					/>
+				</div>
+
+				<div className="centerAdmin">
+					<button className="notification-btn">
+						Pošalji obavijest
+					</button>
+				</div>
+			</main>
+		</div>
 	);
 }
-

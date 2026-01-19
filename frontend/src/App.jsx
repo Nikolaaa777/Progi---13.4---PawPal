@@ -16,6 +16,8 @@ import UrediPsa from "./pages/profile/UrediPsa";
 import MojiTermini from "./pages/profile/MojiTermini";
 import ZahtjeviZaSetnju from "./pages/profile/ZahtjeviZaSetnju";
 import AdminHome from "./pages/admin/AdminHome";
+import AdminKomentari from "./pages/admin/AdminKom";
+import AdminKor from "./pages/admin/AdminKorisnici";
 import ChatPage from "./pages/chat/ChatPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
 
@@ -47,6 +49,8 @@ export default function App() {
 			</Route>
 			<Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
 			<Route path="/admin" element={<AdminHome />} />
+			<Route path="/adminKom" element={<AdminKomentari />} />
+			<Route path="/adminKorisnici" element={<AdminKor />} />
       		<Route path="/payment-success" element={<PaymentSuccess />} />
       		<Route path="/chat" element={<ChatPage user={user} setUser={setUser} />} />
 		</Routes>
