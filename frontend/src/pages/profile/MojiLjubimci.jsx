@@ -36,7 +36,10 @@ export default function MojiLjubimci() {
 					{pets.map((p) => (
 						<div key={p.idPsa} className="pet-card">
 							<div className="pet-left">
-								<div className="pet-avatar" />
+								<div className="pet-avatar">
+									<img src="/doggy.png" alt="dog avatar" />
+								</div>
+
 								<div className="pet-info">
 									<div className="pet-name">{p.imePsa}</div>
 									<div className="pet-sub">{p.pasminaPsa}</div>
@@ -49,7 +52,7 @@ export default function MojiLjubimci() {
 									className="pet-action edit"
 									onClick={() => nav(`/profile/ljubimci/${p.idPsa}/uredi`)}
 								>
-									Edit
+									Uredi
 								</button>
 								<button
 									className="pet-action delete"
