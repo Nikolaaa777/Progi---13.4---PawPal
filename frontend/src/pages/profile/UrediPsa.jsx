@@ -1,29 +1,70 @@
 import "../../styles/editDog.css";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { api } from "../../api/client";
+
 
 export default function UrediPsa() {
   const nav = useNavigate();
+  const {idPsa } = useParams(); // <-- 1) dodano
+
+  
+  const [loading, setLoading] = useState(true); // <-- 2) dodano
 
   const [form, setForm] = useState({
     name: "",
     breed: "",
     age: "",
     health: "",
-    energy: "",
-    social: "",
+    energy: "3",
+    social: "3",
     treats: "",
   });
 
   const onChange = (k) => (e) =>
     setForm((p) => ({ ...p, [k]: e.target.value }));
 
+  // <-- 2) UCITAJ PSA I NAPUNI FORMU
+  useEffect(() => {
+    const loadDog = async () => {
+      try {
+        setLoading(true);
+        const dog = await api.dog(idPsa); // GET /api/dogs/{dog_id}/
+
+        setForm({
+          name: dog.imePsa ?? "",
+          breed: dog.pasminaPsa ?? "",
+          age: String(dog.starostPsa ?? ""),
+          health: dog.zdravPas ?? "",
+          energy: String(dog.energijaPsa ?? "3"),
+          social: String(dog.socPsa ?? "3"),
+          treats: dog.posPsa ?? "",
+        });
+      } catch (err) {
+        console.error("LOAD DOG FAILED:", err);
+
+        if (err && typeof err.status === "number") {
+          const text = await err.text();
+          console.log("STATUS:", err.status);
+          console.log("BODY:", text);
+        }
+
+        alert("Ne mogu učitati psa. Vidi Console.");
+        nav("/profile/ljubimci");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (idPsa) loadDog();
+  }, [idPsa, nav]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const created = await api.createDog({
+      // <-- 3) UPDATE UMJESTO CREATE
+      const updated = await api.updateDog(idPsa, {
         imePsa: form.name,
         pasminaPsa: form.breed,
         starostPsa: Number(form.age) || 0,
@@ -33,12 +74,11 @@ export default function UrediPsa() {
         posPsa: form.treats,
       });
 
-      console.log("DOG CREATED:", created);
+      console.log("DOG UPDATED:", updated);
       nav("/profile/ljubimci");
     } catch (err) {
-      console.error("CREATE DOG FAILED:", err);
+      console.error("UPDATE DOG FAILED:", err);
 
-      // 1) ako je Response
       if (err && typeof err.status === "number") {
         const text = await err.text();
         console.log("STATUS:", err.status);
@@ -47,10 +87,17 @@ export default function UrediPsa() {
         return;
       }
 
-      // 2) ako je pravi JS error (TypeError: Failed to fetch)
       alert(String(err));
     }
   };
+
+  if (loading) {
+    return (
+      <main className="content edit-dog-content">
+        <div className="edit-dog-modal">Učitavam...</div>
+      </main>
+    );
+  }
 
   return (
     <main className="content edit-dog-content">
@@ -137,7 +184,7 @@ export default function UrediPsa() {
               <div className="edit-dog-row-ico">⚡</div>
               <div className="edit-dog-row-body">
                 <div className="edit-dog-row-title">
-                  Razina energije: {" "}
+                  Razina energije:{" "}
                   <span className="edit-dog-range-value">{form.energy}</span>
                 </div>
                 <input
@@ -156,7 +203,7 @@ export default function UrediPsa() {
               <div className="edit-dog-row-ico">🐶</div>
               <div className="edit-dog-row-body">
                 <div className="edit-dog-row-title">
-                  Razina socijalizacije: {" "}
+                  Razina socijalizacije:{" "}
                   <span className="edit-dog-range-value">{form.social}</span>
                 </div>
                 <input

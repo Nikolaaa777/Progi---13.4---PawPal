@@ -47,7 +47,7 @@ export default function App() {
 				<Route path="uredi" element={<UrediProfil />} />
 				<Route path="ljubimci" element={<MojiLjubimci />} />
 				<Route path="ljubimci/dodaj" element={<DodajPsa />} />
-				<Route path="ljubimci/:id/uredi" element={<UrediPsa />} />
+				<Route path="ljubimci/:idPsa/uredi" element={<UrediPsa />} />
 				<Route path="rezervacije" element={<MojeRezervacije />} />
 				<Route path="rezervacije/placanje" element={<Placanje />} />
 				<Route path="termini" element={<MojiTermini />} />
@@ -56,7 +56,6 @@ export default function App() {
 				<Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
 				<Route path="clanarina" element={<Clanarina />} />
 			</Route>
-			<Route path="/profile/ljubimci/:id/uredi" element={<UrediPsa />} />
 			<Route path="/admin" element={<AdminHome />} />
 			<Route path="/adminKom" element={<AdminKomentari />} />
 			<Route path="/adminKorisnici" element={<AdminKor />} />
