@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import { api } from "./api/client";
 import AvailableWalks from "./pages/AvailableWalks";
 import AvailableWalkers from "./pages/AvailableWalkers";
+import WalkerProfile from "./pages/WalkerProfile";
 import ProfileInfo from "./pages/profile/ProfileInfo";
 import MojiLjubimci from "./pages/profile/MojiLjubimci";
 import MojeRezervacije from "./pages/profile/MojeRezervacije";
@@ -40,6 +41,7 @@ export default function App() {
 			<Route path="/" element={<Home user={user} />} />
 			<Route path="/setnje" element={<AvailableWalks />} />
 			<Route path="/setaci" element={<AvailableWalkers />} />
+			<Route path="/setac/:id" element={<WalkerProfile />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/register" element={<Register />} />
 			<Route path="/profile" element={<ProfileLayout />}>
