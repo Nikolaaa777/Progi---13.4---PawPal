@@ -27,8 +27,8 @@ class PlacanjeSetnje(models.Model):
     idSetac = models.BigIntegerField(db_column="idSetac")
     
     class Meta:
-        managed = False
-        db_table = '"PlacanjeSetnje"'
+        managed = True
+        db_table = "PlacanjeSetnje"
     
     def __str__(self):
         return f"Payment<{self.idPlacanja}> type={self.tipPlacanja} amount={self.cijenaSetnje}"
