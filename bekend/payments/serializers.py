@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PlacanjeSetnje, PaymentTracking, PAYMENT_TYPE_PAYPAL, PAYMENT_TYPE_CARD
+from .models import PlacanjeSetnje, PaymentTracking, PAYMENT_TYPE_PAYPAL, PAYMENT_TYPE_CARD, PAYMENT_TYPE_CASH
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -66,7 +66,7 @@ class CreatePaymentIntentSerializer(serializers.Serializer):
     """Serializer for creating a payment intent"""
     reservation_id = serializers.IntegerField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = serializers.ChoiceField(choices=['paypal', 'stripe'])
+    payment_method = serializers.ChoiceField(choices=['paypal', 'stripe', 'cash'])
 
 
 class ConfirmPaymentSerializer(serializers.Serializer):

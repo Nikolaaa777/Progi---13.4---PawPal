@@ -107,4 +107,55 @@ export const api = {
 			}),
 		);
 	},
+
+	// RESERVATIONS
+	getMyReservations: () => get("/api/reservations/my-reservations/"),
+	createReservation: (payload) => post("/api/reservations/create/", payload),
+	createReservationFromWalk: (walkId, payload) => post(`/api/reservations/create-from-walk/${walkId}/`, payload),
+	acceptReservation: (reservationId) => post(`/api/reservations/accept/${reservationId}/`, {}),
+	rejectReservation: (reservationId) => post(`/api/reservations/reject/${reservationId}/`, {}),
+	markWalkDone: (reservationId) => post(`/api/reservations/mark-done/${reservationId}/`, {}),
+	deleteReservation: async (reservationId) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/reservations/delete/${reservationId}/`, {
+				method: "DELETE",
+				credentials: "include",
+				headers: { "X-CSRFToken": csrf },
+			}),
+		);
+	},
+
+	// WALKS
+	walks: () => get("/api/walks/"),
+	getAvailableWalks: () => get("/api/walks/available/"),
+	getAllWalks: () => get("/api/walks/fromAllWalkers/"),
+	createWalk: (payload) => post("/api/walks/create/", payload),
+	updateWalk: (walkId, payload) => patch(`/api/walks/${walkId}/update/`, payload),
+	deleteWalk: async (walkId) => {
+		await ensureCsrf();
+		const csrf = getCookie("csrftoken");
+		return json(
+			await fetch(`${BASE}/api/walks/${walkId}/delete/`, {
+				method: "DELETE",
+				credentials: "include",
+				headers: { "X-CSRFToken": csrf },
+			}),
+		);
+	},
+
+	// CHAT
+	getConversations: () => get("/api/chat/conversations/"),
+	getConversation: (conversationId) => get(`/api/chat/conversations/${conversationId}/`),
+	getOrCreateConversationFromReservation: (reservationId) =>
+		post(`/api/chat/conversations/reservation/${reservationId}/`, {}),
+	sendMessage: (payload) => post("/api/chat/messages/", payload),
+
+	// PAYMENTS
+	createPaymentIntent: (payload) => post("/api/payments/create/", payload),
+	confirmPayPalPayment: (payload) => post("/api/payments/paypal/confirm/", payload),
+	confirmStripePayment: (payload) => post("/api/payments/stripe/confirm/", payload),
+	getPaymentStatus: (paymentId) => get(`/api/payments/${paymentId}/`),
+	getUserPayments: () => get("/api/payments/user/"),
 };

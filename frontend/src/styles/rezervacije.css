@@ -122,6 +122,28 @@ body {
 	font-size: 14px;
 	font-weight: 500;
 	color: #2563eb;
+	transition: background 0.2s;
+}
+
+.payReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.chatReservation-btn {
+	background: #f0fdf4;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	transition: background 0.2s;
+}
+
+.chatReservation-btn:hover {
+	background: #dcfce7;
 }
 
 .payReservation-btn img {

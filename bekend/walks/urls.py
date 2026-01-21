@@ -9,4 +9,5 @@ urlpatterns = [
     path("walks/<int:walk_id>/update/", views.walk_update, name="walk_update"),
     path("walks/<int:walk_id>/delete/", views.walk_delete, name="walk_delete"),
     path("walks/fromAllWalkers/", views.get_AllWalks, name="get_AllWalks"),
+    path("walks/available/", views.get_available_walks, name="get_available_walks"),
 ]

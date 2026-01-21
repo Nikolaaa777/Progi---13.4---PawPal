@@ -17,7 +17,8 @@ from .models import (
     PlacanjeSetnje, 
     PaymentTracking,
     PAYMENT_TYPE_PAYPAL, 
-    PAYMENT_TYPE_CARD, 
+    PAYMENT_TYPE_CARD,
+    PAYMENT_TYPE_CASH,
     PAYMENT_STATUS_PENDING, 
     PAYMENT_STATUS_COMPLETED, 
     PAYMENT_STATUS_FAILED
@@ -110,7 +111,7 @@ def create_payment_intent(request):
                 'description': f'Payment for reservation {reservation_id}'
             }],
             'application_context': {
-                'return_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={{token}}&payment_id={payment.idPlacanja}",
+                'return_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={{token}}",
                 'cancel_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-cancelled",
             }
         }
@@ -208,6 +209,31 @@ def create_payment_intent(request):
                 {"success": 0, "error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+    
+    elif payment_method == 'cash':
+        # Create cash payment record (immediately completed)
+        payment = PlacanjeSetnje.objects.create(
+            tipPlacanja=PAYMENT_TYPE_CASH,
+            cijenaSetnje=int(float(amount) * 100),  # Convert to cents
+            idRezervacije=reservation_id,
+            idVlasnik=vlasnik.idVlasnik,
+            idSetac=setac_id,
+        )
+        
+        # Create tracking record with completed status
+        PaymentTracking.objects.create(
+            payment=payment,
+            payment_status=PAYMENT_STATUS_COMPLETED,
+            transaction_id=f"CASH-{payment.idPlacanja}",
+            payment_method='cash'
+        )
+        
+        return Response({
+            "success": 1,
+            "payment_id": payment.idPlacanja,
+            "payment_method": "cash",
+            "message": "Cash payment recorded successfully"
+        }, status=status.HTTP_201_CREATED)
     
     return Response(
         {"success": 0, "error": "Invalid payment method"},

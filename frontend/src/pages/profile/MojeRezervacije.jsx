@@ -1,73 +1,94 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { api } from "../../api/client";
+import PaymentModal from "../../components/PaymentModal";
 import "../../styles/rezervacije.css";
 
 const MojeRezervacije = () => {
-  const rezervacije = [
-    {
-      id: 1,
-      date: "17.01.2026",
-      time: "16:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Planirana",
-    },
-    {
-      id: 2,
-      date: "20.01.2026",
-      time: "09:45",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Planirana",
-    },
-    {
-      id: 3,
-      date: "28.01.2026",
-      time: "13:30",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Završena",
-    },
-    {
-      id: 4,
-      date: "03.02.2026",
-      time: "18:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Otkazana",
-    },
-    {
-      id: 5,
-      date: "04.02.2026",
-      time: "18:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Aktivna",
-    },
-    {
-      id: 6,
-      date: "05.02.2026",
-      time: "18:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      status: "Otkazana",
-    },
-  ];
+  const navigate = useNavigate();
+  const [rezervacije, setRezervacije] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [dogs, setDogs] = useState({});
+
+  useEffect(() => {
+    loadReservations();
+    loadDogs();
+  }, []);
+
+  const loadReservations = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getMyReservations();
+      if (response.success) {
+        setRezervacije(response.data || []);
+      } else {
+        setError(response.message || "Failed to load reservations");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDogs = async () => {
+    try {
+      const dogsData = await api.dogs();
+      const dogsMap = {};
+      dogsData.forEach((dog) => {
+        dogsMap[dog.idPsa] = dog.imePsa;
+      });
+      setDogs(dogsMap);
+    } catch (err) {
+      console.error("Failed to load dogs:", err);
+    }
+  };
+
+  const handleDelete = async (reservationId) => {
+    if (!window.confirm("Jeste li sigurni da želite otkazati ovu rezervaciju?")) {
+      return;
+    }
+    try {
+      await api.deleteReservation(reservationId);
+      loadReservations();
+    } catch (err) {
+      alert(err.message || "Failed to delete reservation");
+    }
+  };
+
+  const handlePayment = (reservation) => {
+    setSelectedReservation(reservation);
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = (response) => {
+    alert("Plaćanje uspješno!");
+    setShowPaymentModal(false);
+    loadReservations();
+  };
+
+  const handleChat = (reservationId) => {
+    navigate(`/chat?reservationId=${reservationId}`);
+  };
+
+  const getStatus = (reservation) => {
+    if (reservation.odradena) return "Završena";
+    if (reservation.potvrdeno === true) return "Potvrđena";
+    if (reservation.potvrdeno === false) return "Odbijena";
+    return "Na čekanju";
+  };
 
   const getStatusClass = (status) => {
     if (!status) return "";
     const s = status.toLowerCase();
 
     if (s.includes("zavr")) return "zavrsena";
-    if (s.includes("otkaz")) return "otkazana";
-    if (s.includes("plan")) return "planirana";
-    if (s.includes("aktiv")) return "aktivna";
+    if (s.includes("otkaz") || s.includes("odbij")) return "otkazana";
+    if (s.includes("plan") || s.includes("čekanju")) return "planirana";
+    if (s.includes("potvr")) return "aktivna";
 
     return "";
   };
@@ -80,67 +101,123 @@ const MojeRezervacije = () => {
   };
 
   const sortedRezervacije = [...rezervacije].sort((a, b) => {
-    const statusA = getStatusClass(a.status);
-    const statusB = getStatusClass(b.status);
+    const statusA = getStatusClass(getStatus(a));
+    const statusB = getStatusClass(getStatus(b));
 
     return (statusOrder[statusA] || 99) - (statusOrder[statusB] || 99);
   });
+
+  if (loading) {
+    return (
+      <div className="app">
+        <main className="content">
+          <h1 className="page-title">Moje rezervacije</h1>
+          <div style={{ padding: "40px", textAlign: "center" }}>Učitavanje...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <main className="content">
         <h1 className="page-title">Moje rezervacije</h1>
 
+        {error && (
+          <div style={{ padding: "12px", background: "#fee2e2", color: "#991b1b", marginBottom: "16px", borderRadius: "8px" }}>
+            {error}
+          </div>
+        )}
+
         <div className="Walk-Reservations">
           <div className="Walk-Reservations__inner">
-            {sortedRezervacije.map((r) => (
-              <div key={r.id} className="Walk-Reservation-card">
-                <div className="Walk-Reservation-left">
-                  <div className="Walk-calendar">
-                    <img src="/calendar.png" alt="calendar" />
-                  </div>
-
-                  <div className="Walk-Reservation-text">
-                    <div className="Walk-Reservation-date">
-                      {r.date} · {r.time}
-                    </div>
-
-                    <div className="Walk-Reservation-info">
-                      Pas: {r.dog} · {r.duration}
-                    </div>
-
-                    <div className="Walk-Reservation-info">
-                      Lokacija: {r.location}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="iconsWalk">
-                  <div
-                    className={`Walk-status-reservation ${getStatusClass(
-                      r.status
-                    )}`}
-                  >
-                    {r.status}
-                  </div>
-
-                  {getStatusClass(r.status) === "zavrsena" && (
-                    <NavLink
-                      to="/profile/rezervacije/placanje"
-                      className="payReservation-btn"
-                    >
-                      Plaćanje
-                    </NavLink>
-                  )}
-
-                  <button className="deleteReservation-btn">
-                    <img src="/bin.png" alt="trash" />
-                  </button>
-                </div>
+            {sortedRezervacije.length === 0 ? (
+              <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
+                Nema rezervacija
               </div>
-            ))}
+            ) : (
+              sortedRezervacije.map((r) => {
+                const status = getStatus(r);
+                const statusClass = getStatusClass(status);
+                const isConfirmed = r.potvrdeno;
+                const isCompleted = r.odradena;
+
+                return (
+                  <div key={r.idRezervacije} className="Walk-Reservation-card">
+                    <div className="Walk-Reservation-left">
+                      <div className="Walk-calendar">
+                        <img src="/calendar.png" alt="calendar" />
+                      </div>
+
+                      <div className="Walk-Reservation-text">
+                        <div className="Walk-Reservation-date">
+                          Rezervacija #{r.idRezervacije}
+                        </div>
+
+                        <div className="Walk-Reservation-info">
+                          Pas: {r.dog_name || dogs[r.idPsa] || `ID: ${r.idPsa}`}
+                        </div>
+
+                        <div className="Walk-Reservation-info">
+                          Šetač: {r.walker_name || "N/A"}
+                        </div>
+
+                        {r.walk_details?.cijenaSetnje && (
+                          <div className="Walk-Reservation-info">
+                            Cijena: {r.walk_details.cijenaSetnje.toFixed(2)} €
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="iconsWalk">
+                      <div className={`Walk-status-reservation ${statusClass}`}>
+                        {status}
+                      </div>
+
+                      {isConfirmed && (
+                        <button
+                          className="chatReservation-btn"
+                          onClick={() => handleChat(r.idRezervacije)}
+                          title="Otvori razgovor"
+                        >
+                          💬
+                        </button>
+                      )}
+
+                      {isCompleted && r.walk_details?.cijenaSetnje && (
+                        <button
+                          className="payReservation-btn"
+                          onClick={() => handlePayment(r)}
+                        >
+                          Plaćanje
+                        </button>
+                      )}
+
+                      <button
+                        className="deleteReservation-btn"
+                        onClick={() => handleDelete(r.idRezervacije)}
+                        title="Otkazi rezervaciju"
+                      >
+                        <img src="/bin.png" alt="trash" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
+
+        {showPaymentModal && selectedReservation && (
+          <PaymentModal
+            isOpen={showPaymentModal}
+            onClose={() => setShowPaymentModal(false)}
+            reservationId={selectedReservation.idRezervacije}
+            amount={selectedReservation.walk_details?.cijenaSetnje || 20.0}
+            onSuccess={handlePaymentSuccess}
+          />
+        )}
       </main>
     </div>
   );

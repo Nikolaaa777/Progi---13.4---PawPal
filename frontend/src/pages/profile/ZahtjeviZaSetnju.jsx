@@ -1,107 +1,179 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { api } from "../../api/client";
+import { useNavigate } from "react-router-dom";
 import "../../styles/zahtjevi.css";
 
 const ZahtjeviZaSetnju = () => {
-  const zahtjevi = [
-    {
-      id: 1,
-      date: "18.01.2026",
-      time: "10:00",
-      dog: "Rex",
-      duration: "60 min",
-      location: "Trešnjevka",
-      owner: "Ana K.",
-      status: "Na čekanju",
-    },
-    {
-      id: 2,
-      date: "19.01.2026",
-      time: "14:30",
-      dog: "Luna",
-      duration: "45 min",
-      location: "Maksimir",
-      owner: "Marko P.",
-      status: "Na čekanju",
-    },
-    {
-      id: 3,
-      date: "19.01.2026",
-      time: "14:30",
-      dog: "Luna",
-      duration: "45 min",
-      location: "Maksimir",
-      owner: "Marko P.",
-      status: "Na čekanju",
-    },
-    {
-      id: 4,
-      date: "19.01.2026",
-      time: "14:30",
-      dog: "Luna",
-      duration: "45 min",
-      location: "Maksimir",
-      owner: "Marko P.",
-      status: "Na čekanju",
-    },
-    {
-      id: 5,
-      date: "19.01.2026",
-      time: "14:30",
-      dog: "Luna",
-      duration: "45 min",
-      location: "Maksimir",
-      owner: "Marko P.",
-      status: "Na čekanju",
-    },
-    {
-      id: 6,
-      date: "19.01.2026",
-      time: "14:30",
-      dog: "Luna",
-      duration: "45 min",
-      location: "Maksimir",
-      owner: "Marko P.",
-      status: "Na čekanju",
-    },
-  ];
+  const navigate = useNavigate();
+  const [zahtjevi, setZahtjevi] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  const loadRequests = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getMyReservations();
+      if (response.success) {
+        // Filter only pending reservations (potvrdeno is null or false)
+        const pending = (response.data || []).filter(
+          (r) => r.potvrdeno === null || r.potvrdeno === false
+        );
+        setZahtjevi(pending);
+      } else {
+        setError(response.message || "Failed to load requests");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAccept = async (reservationId) => {
+    if (!window.confirm("Jeste li sigurni da želite prihvatiti ovu rezervaciju?")) {
+      return;
+    }
+
+    try {
+      const response = await api.acceptReservation(reservationId);
+      if (response.success) {
+        alert("Rezervacija prihvaćena!");
+        loadRequests();
+      } else {
+        alert(response.message || "Failed to accept reservation");
+      }
+    } catch (err) {
+      alert(err.message || "An error occurred");
+    }
+  };
+
+  const handleReject = async (reservationId) => {
+    if (!window.confirm("Jeste li sigurni da želite odbiti ovu rezervaciju?")) {
+      return;
+    }
+
+    try {
+      const response = await api.rejectReservation(reservationId);
+      if (response.success) {
+        alert("Rezervacija odbijena.");
+        loadRequests();
+      } else {
+        alert(response.message || "Failed to reject reservation");
+      }
+    } catch (err) {
+      alert(err.message || "An error occurred");
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("hr-HR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const formatTime = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleTimeString("hr-HR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="app">
+        <main className="content">
+          <h1 className="page-title">Zahtjevi za šetnju</h1>
+          <div style={{ padding: "40px", textAlign: "center" }}>Učitavanje...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <main className="content">
         <h1 className="page-title">Zahtjevi za šetnju</h1>
 
+        {error && (
+          <div style={{ padding: "12px", background: "#fee2e2", color: "#991b1b", marginBottom: "16px", borderRadius: "8px" }}>
+            {error}
+          </div>
+        )}
+
         <div className="Walk-Requests">
           <div className="Walk-Requests__inner">
-          {zahtjevi.map((z) => (
-            <div key={z.id} className="Walk-Request-card">
-              <div className="Walk-Request-left">
-                <div className="Walk-calendar">
-                  <img src="/calendar.png" alt="calendar" />
-                </div>
-
-                <div className="Walk-Request-text">
-                  <div className="Walk-Request-date">
-                    {z.date} · {z.time}
-                  </div>
-                  <div className="Walk-Request-info">
-                    Pas: {z.dog} · {z.duration}
-                  </div>
-                  <div className="Walk-Request-info">
-                    Lokacija: {z.location}
-                  </div>
-                  <div className="Walk-Request-info">
-                    Vlasnik: {z.owner}
-                  </div>
-                </div>
+            {zahtjevi.length === 0 ? (
+              <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
+                Nema zahtjeva za šetnju
               </div>
+            ) : (
+              zahtjevi.map((z) => {
+                const walkDate = z.walk_details?.terminSetnje
+                  ? formatDate(z.walk_details.terminSetnje)
+                  : "N/A";
+                const walkTime = z.walk_details?.terminSetnje
+                  ? formatTime(z.walk_details.terminSetnje)
+                  : "N/A";
 
-              <div className="Request-buttons">
-                <button className="accept-btn">Prihvati</button>
-                <button className="reject-btn">Odbij</button>
-              </div>
-            </div>
-          ))}
-        </div>
+                return (
+                  <div key={z.idRezervacije} className="Walk-Request-card">
+                    <div className="Walk-Request-left">
+                      <div className="Walk-calendar">
+                        <img src="/calendar.png" alt="calendar" />
+                      </div>
+
+                      <div className="Walk-Request-text">
+                        <div className="Walk-Request-date">
+                          {walkDate} · {walkTime}
+                        </div>
+                        <div className="Walk-Request-info">
+                          Pas: {z.dog_name || `ID: ${z.idPsa}`}
+                        </div>
+                        {z.walk_details?.trajanjeSetnje && (
+                          <div className="Walk-Request-info">
+                            Trajanje: {z.walk_details.trajanjeSetnje}
+                          </div>
+                        )}
+                        <div className="Walk-Request-info">
+                          Vlasnik: {z.owner_name || "N/A"}
+                        </div>
+                        {z.walk_details?.cijenaSetnje && (
+                          <div className="Walk-Request-info">
+                            Cijena: {z.walk_details.cijenaSetnje.toFixed(2)} €
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="Request-buttons">
+                      <button
+                        className="accept-btn"
+                        onClick={() => handleAccept(z.idRezervacije)}
+                      >
+                        Prihvati
+                      </button>
+                      <button
+                        className="reject-btn"
+                        onClick={() => handleReject(z.idRezervacije)}
+                      >
+                        Odbij
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       </main>
     </div>

@@ -14,6 +14,8 @@ from .serializers import (
     UserSerializer
 )
 from drf_spectacular.utils import extend_schema, OpenApiResponse
+from reservations.models import Rezervacija
+from accounts.models import Vlasnik, Setac
 
 
 @extend_schema(
@@ -170,4 +172,110 @@ def list_users(request):
     """Get list of users (excluding current user)"""
     users = User.objects.exclude(id=request.user.id)
     serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@extend_schema(
+    responses={200: OpenApiResponse(description='Conversation created or retrieved from reservation')}
+)
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_or_create_conversation_from_reservation(request, reservation_id):
+    """Get or create a conversation from a reservation (only if confirmed)"""
+    try:
+        reservation = Rezervacija.objects.get(idRezervacije=reservation_id)
+    except Rezervacija.DoesNotExist:
+        return Response(
+            {"error": "Reservation not found"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Check if reservation is confirmed
+    if not reservation.potvrdeno:
+        return Response(
+            {"error": "Reservation must be confirmed before starting a conversation"}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Get the other user (vlasnik or setac) based on current user
+    current_user_email = request.user.email
+    
+    # Determine if current user is vlasnik or setac
+    try:
+        vlasnik = Vlasnik.objects.get(emailVlasnik=current_user_email)
+        is_vlasnik = True
+        other_id = reservation.idSetac
+    except Vlasnik.DoesNotExist:
+        try:
+            setac = Setac.objects.get(emailSetac=current_user_email)
+            is_vlasnik = False
+            other_id = reservation.idVlasnik
+        except Setac.DoesNotExist:
+            return Response(
+                {"error": "User profile not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    # Verify user is part of this reservation
+    if is_vlasnik and reservation.idVlasnik != vlasnik.idVlasnik:
+        return Response(
+            {"error": "You are not authorized to access this reservation"}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    elif not is_vlasnik and reservation.idSetac != setac.idSetac:
+        return Response(
+            {"error": "You are not authorized to access this reservation"}, 
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    # Get the other user's email
+    if is_vlasnik:
+        try:
+            other_setac = Setac.objects.get(idSetac=other_id)
+            other_user_email = other_setac.emailSetac
+        except Setac.DoesNotExist:
+            return Response(
+                {"error": "Walker not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    else:
+        try:
+            other_vlasnik = Vlasnik.objects.get(idVlasnik=other_id)
+            other_user_email = other_vlasnik.emailVlasnik
+        except Vlasnik.DoesNotExist:
+            return Response(
+                {"error": "Owner not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    # Get the other user
+    try:
+        other_user = User.objects.get(email=other_user_email)
+    except User.DoesNotExist:
+        return Response(
+            {"error": "Other user not found"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Get or create conversation
+    conversation = Conversation.objects.filter(
+        (Q(participant1=request.user) & Q(participant2=other_user)) |
+        (Q(participant1=other_user) & Q(participant2=request.user))
+    ).first()
+    
+    if not conversation:
+        # Create new conversation (ensure consistent ordering)
+        if request.user.id < other_user.id:
+            conversation = Conversation.objects.create(
+                participant1=request.user,
+                participant2=other_user
+            )
+        else:
+            conversation = Conversation.objects.create(
+                participant1=other_user,
+                participant2=request.user
+            )
+    
+    serializer = ConversationSerializer(conversation, context={'request': request})
     return Response(serializer.data)
