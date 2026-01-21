@@ -37,30 +37,28 @@ export default function AvailableWalkers() {
   const filteredWalkers = walkers.filter(
     (w) =>
       (!filters.city || w.city === filters.city) &&
-      (!filters.rating || w.rating >= Number(filters.rating))
+      (!filters.rating || w.rating >= Number(filters.rating)),
   );
 
   return (
     <div className="availableWalkers">
-      {/* BACK ARROW */}
-      <button
-        className="availableWalkers__back"
-        onClick={() => navigate("/")}
-        aria-label="Natrag"
-      >
-        ←
-      </button>
-
       {/* FILTERS */}
       <aside className="availableWalkers__filters">
+        {/* BACK ARROW */}
+        <button
+          className="availableWalkers__back"
+          onClick={() => navigate("/")}
+          aria-label="Natrag"
+        >
+          ←
+        </button>
+
         <h3>Filter šetača</h3>
 
         <label>Grad</label>
         <select
           value={filters.city}
-          onChange={(e) =>
-            setFilters({ ...filters, city: e.target.value })
-          }
+          onChange={(e) => setFilters({ ...filters, city: e.target.value })}
         >
           <option value="">Svi</option>
           <option value="Zagreb">Zagreb</option>
@@ -70,9 +68,7 @@ export default function AvailableWalkers() {
         <label>Minimalna ocjena</label>
         <select
           value={filters.rating}
-          onChange={(e) =>
-            setFilters({ ...filters, rating: e.target.value })
-          }
+          onChange={(e) => setFilters({ ...filters, rating: e.target.value })}
         >
           <option value="">Sve</option>
           <option value="4.5">4.5+</option>
@@ -83,9 +79,7 @@ export default function AvailableWalkers() {
 
       {/* LIST */}
       <section className="availableWalkers__list">
-        <h1 className="availableWalkers__title">
-          Dostupni šetači
-        </h1>
+        <h1 className="availableWalkers__title">Dostupni šetači</h1>
 
         {filteredWalkers.map((w) => (
           <div key={w.id} className="availableWalkers__card">
@@ -93,27 +87,16 @@ export default function AvailableWalkers() {
               <div className="availableWalkers__avatar" />
 
               <div>
-                <div className="availableWalkers__name">
-                  {w.name}
-                </div>
-                <div className="availableWalkers__info">
-                  Grad: {w.city}
-                </div>
-                <div className="availableWalkers__info">
-                  Šetnje: {w.walks}
-                </div>
+                <div className="availableWalkers__name">{w.name}</div>
+                <div className="availableWalkers__info">Grad: {w.city}</div>
+                <div className="availableWalkers__info">Šetnje: {w.walks}</div>
               </div>
             </div>
 
             <div className="availableWalkers__actions">
-              <span className="availableWalkers__rating">
-                ⭐ {w.rating}
-              </span>
+              <span className="availableWalkers__rating">⭐ {w.rating}</span>
 
-              <NavLink
-                to={`/setac/${w.id}`}
-                className="availableWalkers__btn"
-              >
+              <NavLink to={`/setac/${w.id}`} className="availableWalkers__btn">
                 Profil
               </NavLink>
             </div>
@@ -121,9 +104,7 @@ export default function AvailableWalkers() {
         ))}
 
         {filteredWalkers.length === 0 && (
-          <p className="availableWalkers__empty">
-            Nema šetača po kriterijima.
-          </p>
+          <p className="availableWalkers__empty">Nema šetača po kriterijima.</p>
         )}
       </section>
     </div>
