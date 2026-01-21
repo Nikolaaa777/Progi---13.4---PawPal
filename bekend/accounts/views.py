@@ -15,6 +15,7 @@ from .models import Profile
 from .serializers import EnableWalkerSerializer
 from .domain_sync import ensure_setac_row, SetacPayload
 from .serializers import MeUpdateSerializer
+from .models import Setac
 
 
 
@@ -191,3 +192,29 @@ def enable_walker(request):
         "idSetac": setac.idSetac,
         "usernameSetac": setac.usernameSetac,
     }, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
+def available_walkers(request):
+    qs = Setac.objects.all()
+
+    # FILTER: ocjena
+    min_rating = request.GET.get("rating")
+    if min_rating:
+        qs = qs.filter(avgOcjena__gte=min_rating)
+
+    data = []
+    for s in qs:
+        data.append({
+            "id": s.idSetac,
+            "name": f"{s.imeSetac or ''} {s.prezimeSetac or ''}".strip(),
+            "rating": float(s.avgOcjena) if s.avgOcjena else None,
+
+            # dok nemamo stvarne tablice
+            "city": "Zagreb",
+            "price": 10,
+        })
+
+    return Response(data)

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/walkers.css";
 
@@ -10,30 +10,26 @@ export default function AvailableWalkers() {
     rating: "",
   });
 
-  const walkers = [
-    {
-      id: 1,
-      name: "Ana Kovač",
-      city: "Zagreb",
-      rating: 4.9,
-      walks: 120,
-    },
-    {
-      id: 2,
-      name: "Marko Horvat",
-      city: "Split",
-      rating: 4.7,
-      walks: 86,
-    },
-    {
-      id: 3,
-      name: "Ivana Marić",
-      city: "Zagreb",
-      rating: 5.0,
-      walks: 200,
-    },
-  ];
+  const [walkers, setWalkers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // DOHVAT ŠETAČA IZ BACKENDA
+  useEffect(() => {
+    setLoading(true);
+
+    fetch("/api/walkers/")
+      .then((res) => res.json())
+      .then((data) => {
+        setWalkers(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setWalkers([]);
+        setLoading(false);
+      });
+  }, []);
+
+  // FILTERI (frontend)
   const filteredWalkers = walkers.filter(
     (w) =>
       (!filters.city || w.city === filters.city) &&
@@ -44,7 +40,7 @@ export default function AvailableWalkers() {
     <div className="availableWalkers">
       {/* FILTERS */}
       <aside className="availableWalkers__filters">
-        {/* BACK ARROW */}
+        {/* BACK */}
         <button
           className="availableWalkers__back"
           onClick={() => navigate("/")}
@@ -55,12 +51,12 @@ export default function AvailableWalkers() {
 
         <h3>Filter šetača</h3>
 
-        <label>Grad</label>
+        <label>Lokacija</label>
         <select
           value={filters.city}
           onChange={(e) => setFilters({ ...filters, city: e.target.value })}
         >
-          <option value="">Svi</option>
+          <option value="">Sve</option>
           <option value="Zagreb">Zagreb</option>
           <option value="Split">Split</option>
         </select>
@@ -81,30 +77,41 @@ export default function AvailableWalkers() {
       <section className="availableWalkers__list">
         <h1 className="availableWalkers__title">Dostupni šetači</h1>
 
-        {filteredWalkers.map((w) => (
-          <div key={w.id} className="availableWalkers__card">
-            <div className="availableWalkers__left">
-              <div className="availableWalkers__avatar" />
+        {loading && <p>Učitavanje šetača...</p>}
 
-              <div>
-                <div className="availableWalkers__name">{w.name}</div>
-                <div className="availableWalkers__info">Grad: {w.city}</div>
-                <div className="availableWalkers__info">Šetnje: {w.walks}</div>
+        {!loading &&
+          filteredWalkers.map((w) => (
+            <div key={w.id} className="availableWalkers__card">
+              <div className="availableWalkers__left">
+                <div className="availableWalkers__avatar" />
+
+                <div>
+                  <div className="availableWalkers__name">{w.name}</div>
+                  <div className="availableWalkers__info">
+                    Lokacija: {w.city}
+                  </div>
+                  <div className="availableWalkers__info">
+                    Cijena: {w.price} €
+                  </div>
+                </div>
+              </div>
+
+              <div className="availableWalkers__actions">
+                <span className="availableWalkers__rating">
+                  ⭐ {w.rating ?? "—"}
+                </span>
+
+                <NavLink to={`/setac/${w.id}`} className="availableWalkers__btn">
+                  Profil
+                </NavLink>
               </div>
             </div>
+          ))}
 
-            <div className="availableWalkers__actions">
-              <span className="availableWalkers__rating">⭐ {w.rating}</span>
-
-              <NavLink to={`/setac/${w.id}`} className="availableWalkers__btn">
-                Profil
-              </NavLink>
-            </div>
-          </div>
-        ))}
-
-        {filteredWalkers.length === 0 && (
-          <p className="availableWalkers__empty">Nema šetača po kriterijima.</p>
+        {!loading && filteredWalkers.length === 0 && (
+          <p className="availableWalkers__empty">
+            Nema šetača po odabranim kriterijima.
+          </p>
         )}
       </section>
     </div>
