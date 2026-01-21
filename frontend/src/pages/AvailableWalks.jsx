@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../api/client";
 import "../styles/walks.css";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const AvailableWalks = () => {
+
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({ city: "", type: "" });
   const [walks, setWalks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -167,7 +171,16 @@ const AvailableWalks = () => {
   return (
     <div className="availableWalks">
       <aside className="availableWalks__filters">
-        <h3>Filteri</h3>
+
+        <button
+          className="availableWalks__back"
+          onClick={() => navigate("/")}
+          aria-label="Natrag"
+        >
+          ←
+        </button>
+
+        <h3>Filters</h3>
 
         <label>Grad</label>
         <select onChange={(e) => setFilters({ ...filters, city: e.target.value })}>

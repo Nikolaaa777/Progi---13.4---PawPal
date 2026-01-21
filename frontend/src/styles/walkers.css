@@ -2,9 +2,8 @@
    Layout
 ======================= */
 .availableWalkers {
-  position: relative;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 32px;
   padding: 32px;
   min-height: 100vh;
@@ -14,30 +13,52 @@
 }
 
 /* =======================
+   Filters Card
+======================= */
+.availableWalkers__filters {
+  position: sticky;
+  top: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  background: linear-gradient(180deg, #ffffff, #f9faff);
+  padding: 24px;
+  border-radius: 22px;
+
+  border: 1px solid #eef0f6;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  height: fit-content;
+}
+
+/* =======================
    Back Arrow
 ======================= */
 .availableWalkers__back {
-  position: fixed;
-  top: 18px;
-  left: 18px;
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  border: none;
-  background: #f1f4ff;
-  color: #4a5fff;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
+  border-radius: 12px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  transition: background 0.2s ease, transform 0.1s ease;
+
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+
+  color: #2f55ff;
+  background: #eef2ff;
+  transition: all 0.2s ease;
 }
 
 .availableWalkers__back:hover {
-  background: #e4e9ff;
+  background: #2f55ff;
+  color: #ffffff;
 }
 
 .availableWalkers__back:active {
@@ -45,48 +66,48 @@
 }
 
 /* =======================
-   Filters
+   Filter Text
 ======================= */
-.availableWalkers__filters {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  height: fit-content;
-}
-
 .availableWalkers__filters h3 {
-  margin-bottom: 16px;
+  text-align: center;
+  margin: 0;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .availableWalkers__filters label {
-  display: block;
-  margin-top: 16px;
-  margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #555;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
 }
 
 .availableWalkers__filters select {
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
   font-size: 14px;
-  background: #fff;
+
   cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.availableWalkers__filters select:hover {
+  border-color: #c7d2fe;
 }
 
 .availableWalkers__filters select:focus {
   outline: none;
   border-color: #5b8cff;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.15);
 }
 
 /* =======================
-   List
+   Walkers List (VERTICAL)
 ======================= */
 .availableWalkers__list {
   display: flex;
@@ -101,26 +122,28 @@
 }
 
 /* =======================
-   Card
+   Walker Card (LIST)
 ======================= */
 .availableWalkers__card {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
   background: #ffffff;
   padding: 20px 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .availableWalkers__card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
 }
 
 /* =======================
-   Left Side
+   Card Content
 ======================= */
 .availableWalkers__left {
   display: flex;
@@ -139,16 +162,15 @@
 .availableWalkers__name {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 4px;
 }
 
 .availableWalkers__info {
   font-size: 14px;
-  color: #666;
+  color: #6b7280;
 }
 
 /* =======================
-   Actions
+   Card Actions
 ======================= */
 .availableWalkers__actions {
   display: flex;
@@ -170,14 +192,15 @@
 ======================= */
 .availableWalkers__btn {
   padding: 10px 18px;
-  border-radius: 12px;
-  border: none;
+  border-radius: 14px;
+
   background: #5b8cff;
   color: #ffffff;
+
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
   text-decoration: none;
+
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
@@ -186,7 +209,7 @@
 }
 
 .availableWalkers__btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 /* =======================
@@ -205,15 +228,10 @@
 @media (max-width: 900px) {
   .availableWalkers {
     grid-template-columns: 1fr;
-    padding-top: 72px;
   }
 
   .availableWalkers__filters {
-    order: 2;
-  }
-
-  .availableWalkers__list {
-    order: 1;
+    position: static;
   }
 }
 
