@@ -143,25 +143,13 @@ CREATE TABLE public."Vlasnik" (
 -- Name: Pas Pas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE public."Pas"
-  ADD CONSTRAINT pas_vlasnik_fk FOREIGN KEY ("idVlasnik")
-  REFERENCES public."Vlasnik" ("idVlasnik")
-  ON DELETE CASCADE;
-
 
 
 --
 -- Name: PlacanjeSetnje PlacanjeSetnje_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE public."PlacanjeSetnje"
-  ADD CONSTRAINT pay_rez_fk FOREIGN KEY ("idRezervacije") REFERENCES public."Rezervacija" ("idRezervacije") ON DELETE CASCADE;
-ALTER TABLE public."PlacanjeSetnje"
-  ADD CONSTRAINT pay_vlasnik_fk FOREIGN KEY ("idVlasnik") REFERENCES public."Vlasnik" ("idVlasnik");
-ALTER TABLE public."PlacanjeSetnje"
-  ADD CONSTRAINT pay_setac_fk FOREIGN KEY ("idSetac") REFERENCES public."Setac" ("idSetac");
 
---
 -- Name: Pretplata Pretplata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
