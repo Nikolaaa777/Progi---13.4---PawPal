@@ -65,6 +65,7 @@ def ensure_vlasnik_row(user: User, payload: Optional[VlasnikPayload] = None) -> 
             vlasnik.telefonVlasnik = payload.phone
             changed = True
 
+
         if vlasnik.emailVlasnik != email_norm:
             vlasnik.emailVlasnik = email_norm
             changed = True
@@ -84,6 +85,7 @@ class SetacPayload:
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
+    city: Optional[str] = None
     idClanarine: Optional[int] = None
     idProfilne: Optional[int] = None
 
@@ -154,6 +156,7 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
         "imeSetac": payload.first_name,
         "prezimeSetac": payload.last_name,
         "telefonSetac": payload.phone,
+        "gradSetac": payload.city,
         "datRegSetac": date.today(),
         "idClanarine": payload.idClanarine,
         "idProfilne": payload.idProfilne,
@@ -184,6 +187,9 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
         if payload.phone and not setac.telefonSetac:
             setac.telefonSetac = payload.phone
             changed = True
+        if payload.city and not setac.gradSetac:
+            setac.gradSetac = payload.city
+            changed = True
 
         # dopuni datRegSetac ako je NULL
         if not setac.datRegSetac:
@@ -210,6 +216,7 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
                 "imeSetac",
                 "prezimeSetac",
                 "telefonSetac",
+                "gradSetac",
                 "datRegSetac",
                 "idClanarine",
                 "idProfilne",
