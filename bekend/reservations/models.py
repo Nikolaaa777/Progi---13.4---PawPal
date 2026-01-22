@@ -9,6 +9,7 @@ class Rezervacija(models.Model):
     idPsa = models.BigIntegerField(db_column="idPsa")
     potvrdeno = models.BooleanField(null=True, blank=True, db_column="potvrdeno")
     odradena = models.BooleanField(null=True, blank=True, db_column="odradena")
+    gradSetnje = models.CharField(max_length=20, null=True, blank=True, db_column="gradSetnje") # Dodano polje
 
     class Meta:
         managed = False
