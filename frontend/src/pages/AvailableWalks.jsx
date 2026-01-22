@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../api/client";
 import "../styles/walks.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AvailableWalks = () => {
-
   const navigate = useNavigate();
 
   const [filters, setFilters] = useState({ city: "", type: "" });
@@ -27,6 +26,8 @@ const AvailableWalks = () => {
       const response = await api.getAvailableWalks();
       if (response.success) {
         setWalks(response.data || []);
+        console.log("AVAILABLE WALKS sample:", (response.data || [])[0]);
+        console.log("AVAILABLE WALKS keys:", Object.keys((response.data || [])[0] || {}));
       } else {
         setError("Failed to load walks");
       }
@@ -66,34 +67,30 @@ const AvailableWalks = () => {
         alert("Rezervacija uspješno kreirana! Čekajte potvrdu od šetača.");
         setShowReservationModal(false);
         setSelectedDog("");
-        loadWalks(); // Reload to remove reserved walk
+        loadWalks();
       } else {
         alert(response.message || response.errors || "Failed to create reservation");
       }
     } catch (err) {
       console.error("Reservation error:", err);
       let errorMsg = "Greška u validaciji podataka";
-      
-      // Try to extract error message from response
-      // err is a Response object when thrown from json() function
-      if (err && typeof err.json === 'function') {
+
+      if (err && typeof err.json === "function") {
         try {
           const errorData = await err.json();
-          // Handle different error formats
           if (errorData.errors) {
-            // If it's a dictionary of field errors, format them
-            if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+            if (typeof errorData.errors === "object" && !Array.isArray(errorData.errors)) {
               const errorMessages = Object.entries(errorData.errors)
                 .map(([field, messages]) => {
-                  const fieldName = field === 'idPsa' ? 'Pas' : field;
-                  const msg = Array.isArray(messages) ? messages.join(', ') : messages;
+                  const fieldName = field === "idPsa" ? "Pas" : field;
+                  const msg = Array.isArray(messages) ? messages.join(", ") : messages;
                   return `${fieldName}: ${msg}`;
                 })
-                .join('\n');
+                .join("\n");
               errorMsg = errorMessages || errorData.message || errorMsg;
             } else {
-              errorMsg = Array.isArray(errorData.errors) 
-                ? errorData.errors.join(', ') 
+              errorMsg = Array.isArray(errorData.errors)
+                ? errorData.errors.join(", ")
                 : errorData.errors || errorData.message || errorMsg;
             }
           } else {
@@ -105,10 +102,10 @@ const AvailableWalks = () => {
         }
       } else if (err && err.message) {
         errorMsg = err.message;
-      } else if (typeof err === 'string') {
+      } else if (typeof err === "string") {
         errorMsg = err;
       }
-      
+
       alert(`Greška: ${errorMsg}`);
     }
   };
@@ -134,14 +131,11 @@ const AvailableWalks = () => {
 
   const formatDuration = (duration) => {
     if (!duration) return "N/A";
-    // Duration is in format like "01:00:00" (HH:MM:SS)
     const parts = duration.split(":");
     if (parts.length >= 2) {
       const hours = parseInt(parts[0]);
       const minutes = parseInt(parts[1]);
-      if (hours > 0) {
-        return `${hours}h ${minutes}min`;
-      }
+      if (hours > 0) return `${hours}h ${minutes}min`;
       return `${minutes} min`;
     }
     return duration;
@@ -149,16 +143,20 @@ const AvailableWalks = () => {
 
   const formatPrice = (price) => {
     if (!price && price !== 0) return "N/A";
-    const priceNum = typeof price === 'number' ? price : parseFloat(price);
+    const priceNum = typeof price === "number" ? price : parseFloat(price);
     if (isNaN(priceNum)) return "N/A";
     return `${priceNum.toFixed(2)} €`;
   };
 
-  const filteredWalks = walks.filter(
-    (w) =>
-      (!filters.city || w.location === filters.city) &&
-      (!filters.type || w.type === filters.type)
-  );
+  // ✅ Dinamički gradovi iz dostupnih šetnji
+  const cities = Array.from(new Set((walks || []).map((w) => w.city).filter(Boolean))).sort();
+
+  // ✅ Ispravno filtriranje po backend keyevima: city i tipSetnje
+  const filteredWalks = (walks || []).filter((w) => {
+    const okCity = !filters.city || (w.city ?? "") === filters.city;
+    const okType = !filters.type || Number(w.tipSetnje) === Number(filters.type);
+    return okCity && okType;
+  });
 
   if (loading) {
     return (
@@ -171,7 +169,6 @@ const AvailableWalks = () => {
   return (
     <div className="availableWalks">
       <aside className="availableWalks__filters">
-
         <button
           className="availableWalks__back"
           onClick={() => navigate("/")}
@@ -183,17 +180,26 @@ const AvailableWalks = () => {
         <h3>Filters</h3>
 
         <label>Grad</label>
-        <select onChange={(e) => setFilters({ ...filters, city: e.target.value })}>
+        <select
+          value={filters.city}
+          onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+        >
           <option value="">Svi</option>
-          <option value="Trešnjevka">Trešnjevka</option>
-          <option value="Maksimir">Maksimir</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
 
         <label>Tip šetnje</label>
-        <select onChange={(e) => setFilters({ ...filters, type: e.target.value })}>
+        <select
+          value={filters.type}
+          onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+        >
           <option value="">Svi</option>
-          <option value="Individual">Individualna</option>
-          <option value="Group">Grupna</option>
+          <option value="1">Individualna</option>
+          <option value="2">Grupna</option>
         </select>
       </aside>
 
@@ -201,14 +207,22 @@ const AvailableWalks = () => {
         <h1 className="availableWalks__title">Dostupne šetnje</h1>
 
         {error && (
-          <div style={{ padding: "12px", background: "#fee2e2", color: "#991b1b", marginBottom: "16px", borderRadius: "8px" }}>
+          <div
+            style={{
+              padding: "12px",
+              background: "#fee2e2",
+              color: "#991b1b",
+              marginBottom: "16px",
+              borderRadius: "8px",
+            }}
+          >
             {error}
           </div>
         )}
 
         {filteredWalks.length === 0 ? (
           <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-            {walks.length === 0 
+            {walks.length === 0
               ? "Nema dostupnih šetnji. Šetači mogu kreirati nove termine u profilu."
               : "Nema šetnji koje odgovaraju filterima."}
           </div>
@@ -217,23 +231,29 @@ const AvailableWalks = () => {
             <div key={w.idSetnje} className="availableWalks__card">
               <div className="availableWalks__left">
                 <div className="availableWalks__calendar">
-                  <img src="/calendar.png" alt="calendar" style={{ width: "24px", height: "24px" }} />
+                  <img
+                    src="/calendar.png"
+                    alt="calendar"
+                    style={{ width: "24px", height: "24px" }}
+                  />
                 </div>
 
                 <div>
                   <div className="availableWalks__date">
                     {formatDate(w.terminSetnje)} · {formatTime(w.terminSetnje)}
                   </div>
+
                   <div className="availableWalks__info">
                     Trajanje: {formatDuration(w.trajanjeSetnje)}
                   </div>
-                  <div className="availableWalks__info">
-                    Šetač: {w.walker_name || "N/A"}
-                  </div>
+
+                  <div className="availableWalks__info">Šetač: {w.walker_name || "N/A"}</div>
+
+                  {/* ✅ Prikaži grad (da vidiš da radi i da korisnik zna) */}
+                  {w.city && <div className="availableWalks__info">Grad: {w.city}</div>}
+
                   {w.cijenaSetnje && (
-                    <div className="availableWalks__info">
-                      Cijena: {formatPrice(w.cijenaSetnje)}
-                    </div>
+                    <div className="availableWalks__info">Cijena: {formatPrice(w.cijenaSetnje)}</div>
                   )}
                 </div>
               </div>
@@ -241,7 +261,7 @@ const AvailableWalks = () => {
               <div className="availableWalks__actions">
                 {w.tipSetnje && (
                   <span className="availableWalks__badge">
-                    {w.tipSetnje === 1 ? "Individualna" : "Grupna"}
+                    {Number(w.tipSetnje) === 1 ? "Individualna" : "Grupna"}
                   </span>
                 )}
                 <button className="availableWalks__book" onClick={() => handleBook(w)}>
@@ -258,19 +278,38 @@ const AvailableWalks = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Rezerviraj šetnju</h2>
             <div style={{ marginBottom: "16px" }}>
-              <p><strong>Datum:</strong> {formatDate(selectedWalk.terminSetnje)}</p>
-              <p><strong>Vrijeme:</strong> {formatTime(selectedWalk.terminSetnje)}</p>
-              <p><strong>Šetač:</strong> {selectedWalk.walker_name}</p>
+              <p>
+                <strong>Datum:</strong> {formatDate(selectedWalk.terminSetnje)}
+              </p>
+              <p>
+                <strong>Vrijeme:</strong> {formatTime(selectedWalk.terminSetnje)}
+              </p>
+              <p>
+                <strong>Šetač:</strong> {selectedWalk.walker_name}
+              </p>
+              {selectedWalk.city && (
+                <p>
+                  <strong>Grad:</strong> {selectedWalk.city}
+                </p>
+              )}
               {selectedWalk.cijenaSetnje && (
-                <p><strong>Cijena:</strong> {formatPrice(selectedWalk.cijenaSetnje)}</p>
+                <p>
+                  <strong>Cijena:</strong> {formatPrice(selectedWalk.cijenaSetnje)}
+                </p>
               )}
             </div>
+
             <label>
               <strong>Odaberi psa:</strong>
               <select
                 value={selectedDog}
                 onChange={(e) => setSelectedDog(e.target.value)}
-                style={{ width: "100%", padding: "8px", marginTop: "8px", borderRadius: "6px" }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  marginTop: "8px",
+                  borderRadius: "6px",
+                }}
               >
                 <option value="">-- Odaberi psa --</option>
                 {dogs.map((dog) => (
@@ -280,6 +319,7 @@ const AvailableWalks = () => {
                 ))}
               </select>
             </label>
+
             <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
               <button
                 onClick={() => setShowReservationModal(false)}

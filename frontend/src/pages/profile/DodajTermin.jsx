@@ -56,6 +56,7 @@ const DodajTermin = () => {
         trajanjeSetnje: durationStr,
         cijenaSetnje: priceInCents,
         tipSetnje: tipSetnje,
+        gradSetnje: location,
       });
 
       if (response.success === 1 || response.idSetnje) {

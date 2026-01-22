@@ -118,7 +118,8 @@ CREATE TABLE public."Setnja" (
     "idSetac" bigint NOT NULL,
     "tipSetnje" bigint,
     "cijenaSetnje" bigint,
-    "trajanjeSetnje" interval
+    "trajanjeSetnje" interval,
+    "gradSetnje" character varying(15)
 );
 
 

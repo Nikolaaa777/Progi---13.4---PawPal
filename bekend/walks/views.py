@@ -49,12 +49,14 @@ def walks_create(request):
         except (ValueError, IndexError):
             pass
     
+    grad = (request.data.get("gradSetnje") or request.data.get("city") or request.data.get("location") or "").strip() or None
     walk = Setnja.objects.create(
         idSetac=setac_id,
         terminSetnje=serializer.validated_data.get("terminSetnje"),
         tipSetnje=serializer.validated_data.get("tipSetnje"),
         cijenaSetnje=serializer.validated_data.get("cijenaSetnje"),
         trajanjeSetnje=trajanje,
+        gradSetnje=grad,
     )
 
     return Response({

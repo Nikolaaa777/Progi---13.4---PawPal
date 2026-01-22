@@ -9,6 +9,7 @@ class SetnjaSerializer(serializers.ModelSerializer):
     walker_name = serializers.SerializerMethodField()
     walker_email = serializers.SerializerMethodField()
     is_reserved = serializers.SerializerMethodField()
+    city = serializers.CharField(source="gradSetnje", read_only=True)
     
     class Meta:
         model = Setnja
@@ -22,8 +23,9 @@ class SetnjaSerializer(serializers.ModelSerializer):
             "walker_name",
             "walker_email",
             "is_reserved",
+            "city",
         ]
-        read_only_fields = ["idSetnje","idSetac", "walker_name", "walker_email", "is_reserved"]
+        read_only_fields = ["idSetnje","idSetac", "walker_name", "walker_email", "is_reserved", "city"]
     
     def validate_trajanjeSetnje(self, value):
         """Convert string duration to timedelta if needed"""

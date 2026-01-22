@@ -11,6 +11,7 @@ class Setnja(models.Model):
     cijenaSetnje = models.BigIntegerField(null=True, blank=True, db_column="cijenaSetnje")
 
     trajanjeSetnje = models.DurationField(null=True, blank=True, db_column="trajanjeSetnje")
+    gradSetnje = models.CharField(max_length=20, null=True, blank=True, db_column="gradSetnje")
 
     class Meta:
         managed = False
