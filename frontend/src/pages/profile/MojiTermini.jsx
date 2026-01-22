@@ -1,341 +1,206 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
 import "../../styles/termini.css";
 
+const WALK_TYPE_LABELS = {
+  1: "Individualna",
+  2: "Grupna",
+};
+
 const MojiTermini = () => {
   const navigate = useNavigate();
-  const [rezervacije, setRezervacije] = useState([]);
-  const [walks, setWalks] = useState([]);
+
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showAll, setShowAll] = useState(true); // true = show all, false = show only confirmed
 
   useEffect(() => {
-    loadAppointments();
-    loadMyWalks();
+    loadData();
   }, []);
 
-  const loadAppointments = async () => {
-    try {
-      const response = await api.getMyReservations();
-      if (response.success) {
-        // Filter only confirmed reservations (potvrdeno is true)
-        const confirmed = (response.data || []).filter(
-          (r) => r.potvrdeno === true
-        );
-        setRezervacije(confirmed);
-      } else {
-        setError(response.message || "Failed to load appointments");
-      }
-    } catch (err) {
-      console.error("Error loading reservations:", err);
-    }
-  };
-
-  const loadMyWalks = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const response = await api.walks();
-      // Handle response format: could be {success: 1, data: [...]} or direct array
-      if (response.success && response.data) {
-        setWalks(response.data || []);
-      } else if (Array.isArray(response)) {
-        setWalks(response);
-      } else if (response.data && Array.isArray(response.data)) {
-        setWalks(response.data);
-      } else {
-        setWalks([]);
-      }
+
+      const [walksRes, reservationsRes] = await Promise.all([
+        api.walks(),
+        api.getMyReservations(),
+      ]);
+
+      const walks = (walksRes.data || []).map((w) => ({
+        id: w.idSetnje,
+        type: "walk",
+        date: w.terminSetnje,
+        duration: w.trajanjeSetnje,
+        price: w.cijenaSetnje,
+        walkType: w.tipSetnje,
+        town: w.city,
+        status: "Planiran",
+      }));
+
+      const reservations = (reservationsRes.data || [])
+        .filter((r) => r.potvrdeno)
+        .map((r) => ({
+          id: r.idRezervacije,
+          type: "reservation",
+          date: r.walk_details.terminSetnje,
+          dog: r.dog_name,
+          duration: r.walk_details.trajanjeSetnje,
+          walkType: r.walk_details.tipSetnje,
+          town: r.walk_details.city,
+          status: r.odradena ? "Završen" : "Rezerviran",
+          done: r.odradena,
+        }));
+
+      const merged = [...walks, ...reservations].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      setItems(merged);
     } catch (err) {
-      console.error("Error loading walks:", err);
-      setWalks([]);
+      console.error(err);
+      setItems([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleMarkDone = async (reservationId) => {
-    if (!window.confirm("Jeste li sigurni da je šetnja završena?")) {
-      return;
-    }
-
-    try {
-      const response = await api.markWalkDone(reservationId);
-      if (response.success) {
-        alert("Šetnja označena kao završena!");
-        loadAppointments();
-      } else {
-        alert(response.message || "Failed to mark walk as done");
-      }
-    } catch (err) {
-      alert(err.message || "An error occurred");
-    }
+  const handleEdit = (id) => {
+    navigate(`/profile/termini/uredi/${id}`);
   };
 
-  const handleChat = (reservationId) => {
-    navigate(`/chat?reservationId=${reservationId}`);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Obrisati termin?")) return;
+    await api.deleteWalk(id);
+    loadData();
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("hr-HR", {
+  const handleChat = (id) => {
+    navigate(`/chat?reservationId=${id}`);
+  };
+
+  const handleFinish = async (id) => {
+    if (!window.confirm("Označiti šetnju kao završenu?")) return;
+    await api.markWalkDone(id);
+    loadData();
+  };
+
+  const formatDate = (d) =>
+    new Date(d).toLocaleDateString("hr-HR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
-  };
 
-  const formatTime = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleTimeString("hr-HR", {
+  const formatTime = (d) =>
+    new Date(d).toLocaleTimeString("hr-HR", {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const formatDuration = (duration) => {
-    if (!duration) return "N/A";
-    // Duration is in format like "01:00:00" (HH:MM:SS) or timedelta string
-    if (typeof duration === 'string') {
-      const parts = duration.split(':');
-      if (parts.length >= 2) {
-        const hours = parseInt(parts[0]) || 0;
-        const minutes = parseInt(parts[1]) || 0;
-        if (hours > 0) {
-          return `${hours}h ${minutes}min`;
-        }
-        return `${minutes} min`;
-      }
-    }
-    return duration;
-  };
-
-  const getStatus = (reservation) => {
-    if (reservation.odradena) return "Završen";
-    return "Planiran";
-  };
 
   const getStatusClass = (status) => {
-    if (!status) return "";
     const s = status.toLowerCase();
-
     if (s.includes("zavr")) return "zavrsen";
-    if (s.includes("otkaz")) return "otkazan";
+    if (s.includes("rezerv")) return "aktivan";
     return "planiran";
   };
 
   if (loading) {
-    return (
-      <div className="app">
-        <main className="content">
-          <h1 className="page-title">Moji termini</h1>
-          <div style={{ padding: "40px", textAlign: "center" }}>Učitavanje...</div>
-        </main>
-      </div>
-    );
+    return <div className="loading">Učitavanje...</div>;
   }
 
   return (
     <div className="app">
-      <main className="content">
-        <h1 className="page-title">Moji termini</h1>
-
-        {error && (
-          <div style={{ padding: "12px", background: "#fee2e2", color: "#991b1b", marginBottom: "16px", borderRadius: "8px" }}>
-            {error}
-          </div>
-        )}
-
-        <div style={{ marginBottom: "16px", display: "flex", gap: "12px", alignItems: "center" }}>
-          <button
-            onClick={() => setShowAll(true)}
-            style={{
-              padding: "8px 16px",
-              background: showAll ? "#3b76ff" : "#f3f4f6",
-              color: showAll ? "white" : "#374151",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: showAll ? "600" : "400",
-            }}
-          >
-            Svi termini
-          </button>
-          <button
-            onClick={() => setShowAll(false)}
-            style={{
-              padding: "8px 16px",
-              background: !showAll ? "#3b76ff" : "#f3f4f6",
-              color: !showAll ? "white" : "#374151",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: !showAll ? "600" : "400",
-            }}
-          >
-            Rezervirani ({rezervacije.length})
-          </button>
-        </div>
+      <main className="Walk-Appointments-content">
+        <h1 className="Walk-Appointments-title">Moji termini</h1>
 
         <div className="Walk-Appointments">
           <div className="Walk-Appointments__inner">
-            {showAll ? (
-              // Show all created walks
-              walks.length === 0 ? (
-                <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-                  Nema kreiranih termina. Kliknite "Dodaj termin" za kreiranje novog termina.
-                </div>
-              ) : (
-                walks.map((walk) => {
-                  const walkDate = walk.terminSetnje
-                    ? formatDate(walk.terminSetnje)
-                    : "N/A";
-                  const walkTime = walk.terminSetnje
-                    ? formatTime(walk.terminSetnje)
-                    : "N/A";
-                  const isReserved = walk.is_reserved;
+            {items.map((item) => (
+              <div
+                key={`${item.type}-${item.id}`}
+                className="Walk-Appointment-card"
+              >
+                <div className="Walk-Appointment-left">
+                  <div className="Walk-calendar">
+                    <img src="/calendar.png" alt="calendar" />
+                  </div>
 
-                  return (
-                    <div key={walk.idSetnje} className="Walk-Appointment-card">
-                      <div className="Walk-Appointment-left">
-                        <div className="Walk-calendar">
-                          <img src="/calendar.png" alt="calendar" />
-                        </div>
-
-                        <div className="Walk-Appointment-text">
-                          <div className="Walk-Appointment-date">
-                            {walkDate} · {walkTime}
-                          </div>
-
-                          <div className="Walk-Appointment-info">
-                            Trajanje: {formatDuration(walk.trajanjeSetnje)}
-                          </div>
-
-                          {walk.cijenaSetnje && (
-                            <div className="Walk-Appointment-info">
-                              Cijena: {typeof walk.cijenaSetnje === 'number' ? walk.cijenaSetnje.toFixed(2) : parseFloat(walk.cijenaSetnje || 0).toFixed(2)} €
-                            </div>
-                          )}
-
-                          <div className="Walk-Appointment-info">
-                            Tip: {walk.tipSetnje === 1 ? "Individualna" : walk.tipSetnje === 2 ? "Grupna" : "N/A"}
-                          </div>
-
-                          {isReserved && (
-                            <div className="Walk-Appointment-info" style={{ color: "#10b981", fontWeight: "600" }}>
-                              ✓ Rezervirano
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="iconsWalk">
-                        <div className={`Walk-status-Appointment ${isReserved ? "aktivan" : "planiran"}`}>
-                          {isReserved ? "Rezervirano" : "Dostupno"}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )
-            ) : (
-              // Show only confirmed reservations
-              rezervacije.length === 0 ? (
-                <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-                  Nema rezerviranih termina
-                </div>
-              ) : (
-                rezervacije.map((r) => {
-                const status = getStatus(r);
-                const statusClass = getStatusClass(status);
-                const isDone = r.odradena;
-                const walkDate = r.walk_details?.terminSetnje
-                  ? formatDate(r.walk_details.terminSetnje)
-                  : "N/A";
-                const walkTime = r.walk_details?.terminSetnje
-                  ? formatTime(r.walk_details.terminSetnje)
-                  : "N/A";
-
-                return (
-                  <div key={r.idRezervacije} className="Walk-Appointment-card">
-                    <div className="Walk-Appointment-left">
-                      <div className="Walk-calendar">
-                        <img src="/calendar.png" alt="calendar" />
-                      </div>
-
-                      <div className="Walk-Appointment-text">
-                        <div className="Walk-Appointment-date">
-                          {walkDate} · {walkTime}
-                        </div>
-
-                        <div className="Walk-Appointment-info">
-                          Pas: {r.dog_name || `ID: ${r.idPsa}`}
-                        </div>
-
-                        <div className="Walk-Appointment-info">
-                          Vlasnik: {r.owner_name || "N/A"}
-                        </div>
-
-                        {r.walk_details?.trajanjeSetnje && (
-                          <div className="Walk-Appointment-info">
-                            Trajanje: {r.walk_details.trajanjeSetnje}
-                          </div>
-                        )}
-                      </div>
+                  <div className="Walk-Appointment-text">
+                    <div className="Walk-Appointment-date">
+                      {formatDate(item.date)} · {formatTime(item.date)}
                     </div>
 
-                    <div className="iconsWalk">
-                      <div className={`Walk-status-Appointment ${statusClass}`}>
-                        {status}
-                      </div>
+                    <div className="Walk-Appointment-info">
+                      {WALK_TYPE_LABELS[item.walkType] ?? "—"} · {item.town}
+                    </div>
 
-                      {!isDone && (
+                    {item.type === "reservation" && (
+                      <div className="Walk-Appointment-info">
+                        Pas: {item.dog} · {item.duration}
+                      </div>
+                    )}
+
+                    {item.type === "walk" && (
+                      <div className="Walk-Appointment-info">
+                        Trajanje: {item.duration} · {item.price} €
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="iconsWalk">
+                  <div
+                    className={`Walk-status-Appointment ${getStatusClass(
+                      item.status
+                    )}`}
+                  >
+                    {item.status}
+                  </div>
+
+                  {item.type === "walk" && (
+                    <>
+                      <button
+                        className="editAppointment-btn"
+                        onClick={() => handleEdit(item.id)}
+                      >
+                        <img src="/edit.png" alt="edit" />
+                        Uredi
+                      </button>
+
+                      <button
+                        className="deleteAppointment-btn"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        <img src="/bin.png" alt="trash" />
+                      </button>
+                    </>
+                  )}
+
+                  {item.type === "reservation" && (
+                    <>
+                      {!item.done && (
                         <button
-                          className="markDone-btn"
-                          onClick={() => handleMarkDone(r.idRezervacije)}
-                          style={{
-                            background: "#10b981",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "8px",
-                            padding: "8px 16px",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                            fontWeight: "500",
-                          }}
+                          className="editAppointment-btn"
+                          onClick={() => handleFinish(item.id)}
                         >
                           Završi
                         </button>
                       )}
 
                       <button
-                        className="chatAppointment-btn"
-                        onClick={() => handleChat(r.idRezervacije)}
-                        title="Otvori razgovor"
-                        style={{
-                          background: "#f0fdf4",
-                          border: "none",
-                          borderRadius: "8px",
-                          padding: "8px 12px",
-                          cursor: "pointer",
-                          fontSize: "18px",
-                        }}
+                        className="editAppointment-btn"
+                        onClick={() => handleChat(item.id)}
                       >
-                        💬
+                        💬 Chat
                       </button>
-                    </div>
-                  </div>
-                );
-              })
+                    </>
+                  )}
+                </div>
+              </div>
             ))}
 
-            <NavLink
-              to="/profile/termini/dodaj"
-              className="addAppointment-btn"
-            >
+            <NavLink to="/profile/termini/dodaj" className="addAppointment-btn">
               Dodaj termin <img src="/plus.png" alt="plus" />
             </NavLink>
           </div>

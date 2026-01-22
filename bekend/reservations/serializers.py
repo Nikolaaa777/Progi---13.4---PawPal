@@ -6,144 +6,110 @@ from walks.models import Setnja
 
 
 class RezervacijaSerializer(serializers.ModelSerializer):
+    # alias for frontend
+    city = serializers.CharField(
+        source="gradSetnje",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+
     dog_name = serializers.SerializerMethodField()
     walker_name = serializers.SerializerMethodField()
     walker_email = serializers.SerializerMethodField()
     owner_name = serializers.SerializerMethodField()
     walk_details = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Rezervacija
         fields = [
-            'idRezervacije', 
-            'idVlasnik', 
-            'idSetac', 
-            'idPsa', 
-            'potvrdeno', 
-            'odradena',
-            'dog_name',
-            'walker_name',
-            'walker_email',
-            'owner_name',
-            'walk_details',
+            "idRezervacije",
+            "idVlasnik",
+            "idSetac",
+            "idPsa",
+            "gradSetnje",
+            "city",
+            "potvrdeno",
+            "odradena",
+            "dog_name",
+            "walker_name",
+            "walker_email",
+            "owner_name",
+            "walk_details",
         ]
-        read_only_fields = ['idRezervacije', 'idVlasnik']
-        extra_kwargs = {
-            'idVlasnik': {'required': False},
-        }
+        read_only_fields = ["idRezervacije", "idVlasnik"]
+
+    # ---------- READ HELPERS ----------
 
     def get_dog_name(self, obj):
         try:
-            pas = Pas.objects.get(idPsa=obj.idPsa)
-            return pas.imePsa
+            return Pas.objects.get(idPsa=obj.idPsa).imePsa
         except Pas.DoesNotExist:
-            return f"Dog ID: {obj.idPsa}"
+            return None
 
     def get_walker_name(self, obj):
         try:
-            setac = Setac.objects.get(idSetac=obj.idSetac)
-            if setac.imeSetac and setac.prezimeSetac:
-                return f"{setac.imeSetac} {setac.prezimeSetac}"
-            return setac.usernameSetac or setac.emailSetac
+            s = Setac.objects.get(idSetac=obj.idSetac)
+            if s.imeSetac and s.prezimeSetac:
+                return f"{s.imeSetac} {s.prezimeSetac}"
+            return s.usernameSetac or s.emailSetac
         except Setac.DoesNotExist:
-            return "Unknown"
+            return None
 
     def get_walker_email(self, obj):
         try:
-            setac = Setac.objects.get(idSetac=obj.idSetac)
-            return setac.emailSetac
+            return Setac.objects.get(idSetac=obj.idSetac).emailSetac
         except Setac.DoesNotExist:
             return None
 
     def get_owner_name(self, obj):
         try:
-            vlasnik = Vlasnik.objects.get(idVlasnik=obj.idVlasnik)
-            if vlasnik.imeVlasnik and vlasnik.prezimeVlasnik:
-                return f"{vlasnik.imeVlasnik} {vlasnik.prezimeVlasnik}"
-            return vlasnik.emailVlasnik
+            v = Vlasnik.objects.get(idVlasnik=obj.idVlasnik)
+            if v.imeVlasnik and v.prezimeVlasnik:
+                return f"{v.imeVlasnik} {v.prezimeVlasnik}"
+            return v.emailVlasnik
         except Vlasnik.DoesNotExist:
-            return "Unknown"
+            return None
 
     def get_walk_details(self, obj):
-        # Try to find a walk (Setnja) for this walker
-        try:
-            walk = Setnja.objects.filter(idSetac=obj.idSetac).first()
-            if walk:
-                return {
-                    'idSetnje': walk.idSetnje,
-                    'terminSetnje': walk.terminSetnje,
-                    'cijenaSetnje': float(walk.cijenaSetnje) / 100.0 if walk.cijenaSetnje else None,
-                    'trajanjeSetnje': str(walk.trajanjeSetnje) if walk.trajanjeSetnje else None,
-                    'tipSetnje': walk.tipSetnje,
-                }
-        except:
-            pass
-        return None
+        walk = Setnja.objects.filter(idSetac=obj.idSetac).first()
+        if not walk:
+            return None
+
+        return {
+            "idSetnje": walk.idSetnje,
+            "terminSetnje": walk.terminSetnje,
+            "cijenaSetnje": float(walk.cijenaSetnje) / 100 if walk.cijenaSetnje else None,
+            "trajanjeSetnje": str(walk.trajanjeSetnje) if walk.trajanjeSetnje else None,
+            "tipSetnje": walk.tipSetnje,
+            "city": walk.gradSetnje,
+        }
+
+    # ---------- VALIDATION ----------
 
     def validate(self, data):
-        """
-        Validate that the dog belongs to the owner making the reservation.
-        """
-        vlasnik_obj = self.context.get('vlasnik')
-        pas_value = data.get('idPsa')
+        vlasnik = self.context.get("vlasnik")
+        if not vlasnik:
+            raise serializers.ValidationError("Owner context missing.")
 
-        if not vlasnik_obj:
-            raise serializers.ValidationError("Owner profile context is missing.")
+        pas_id = data.get("idPsa")
+        try:
+            pas = Pas.objects.get(idPsa=int(pas_id))
+        except (Pas.DoesNotExist, ValueError, TypeError):
+            raise serializers.ValidationError({"idPsa": "Pas nije pronađen."})
 
-        # idVlasnik is read-only and comes from context, so remove it from validation if present
-        data.pop('idVlasnik', None)
+        if pas.vlasnik.idVlasnik != vlasnik.idVlasnik:
+            raise serializers.ValidationError({"idPsa": "Ovaj pas ne pripada vama."})
 
-        # Handle both Pas object and integer ID
-        if isinstance(pas_value, Pas):
-            pas_obj = pas_value
-        elif isinstance(pas_value, (int, str)):
-            try:
-                pas_id = int(pas_value)
-                pas_obj = Pas.objects.get(idPsa=pas_id)
-            except (ValueError, Pas.DoesNotExist):
-                raise serializers.ValidationError({
-                    "idPsa": "Pas nije pronađen."
-                })
-        else:
-            raise serializers.ValidationError({
-                "idPsa": "Nevažeći format ID psa."
-            })
-
-        # Check if dog belongs to the owner
-        if pas_obj.vlasnik and pas_obj.vlasnik.idVlasnik != vlasnik_obj.idVlasnik:
-            raise serializers.ValidationError({
-                "idPsa": "Ovaj pas ne pripada vama."
-            })
-        
-        # Replace Pas object with ID for saving
-        data['idPsa'] = pas_obj.idPsa
+        data["idPsa"] = pas.idPsa
         return data
-    
+
+    # ---------- CREATE ----------
+
     def create(self, validated_data):
-        """
-        Create a new reservation with integer IDs.
-        """
-        # Get vlasnik from context or kwargs
-        vlasnik = self.context.get('vlasnik')
+        vlasnik = self.context.get("vlasnik")
         if not vlasnik:
-            # Try to get from validated_data if passed as kwarg
-            vlasnik = validated_data.pop('idVlasnik', None)
-        
-        if not vlasnik:
-            raise serializers.ValidationError("Owner (vlasnik) is required.")
-        
-        # Extract integer IDs
-        idVlasnik = vlasnik.idVlasnik if hasattr(vlasnik, 'idVlasnik') else vlasnik
-        idSetac = validated_data.get('idSetac')
-        idPsa = validated_data.get('idPsa')
-        
-        # Create reservation with integer IDs
-        reservation = Rezervacija.objects.create(
-            idVlasnik=idVlasnik,
-            idSetac=idSetac,
-            idPsa=idPsa,
-            potvrdeno=None,  # Pending
-            odradena=False
-        )
-        
-        return reservation
+            raise serializers.ValidationError("Owner missing.")
+
+        validated_data["idVlasnik"] = vlasnik.idVlasnik
+        return Rezervacija.objects.create(**validated_data)
