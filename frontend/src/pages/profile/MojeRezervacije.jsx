@@ -175,22 +175,22 @@ const MojeRezervacije = () => {
                         {status}
                       </div>
 
-                      {isConfirmed && (
-                        <button
-                          className="chatReservation-btn"
-                          onClick={() => handleChat(r.idRezervacije)}
-                          title="Otvori razgovor"
-                        >
-                          💬
-                        </button>
-                      )}
-
                       {isCompleted && r.walk_details?.cijenaSetnje && (
                         <button
                           className="payReservation-btn"
                           onClick={() => handlePayment(r)}
                         >
                           Plaćanje
+                        </button>
+                      )}
+
+                      {isConfirmed && (
+                        <button
+                          className="chatReservation-btn"
+                          onClick={() => handleChat(r.idRezervacije)}
+                          title="Otvori razgovor"
+                        >
+                          <img src="/msg.png" alt="msg" />
                         </button>
                       )}
 
