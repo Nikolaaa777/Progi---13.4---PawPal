@@ -10,6 +10,8 @@ class Rezervacija(models.Model):
     potvrdeno = models.BooleanField(null=True, blank=True, db_column="potvrdeno")
     odradena = models.BooleanField(null=True, blank=True, db_column="odradena")
     gradSetnje = models.CharField(max_length=20, null=True, blank=True, db_column="gradSetnje") # Dodano polje
+    idSetnje = models.BigIntegerField(null=True, blank=True, db_column="idSetnje")
+
 
     class Meta:
         managed = False

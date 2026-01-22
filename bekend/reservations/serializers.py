@@ -26,6 +26,7 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             "idRezervacije",
             "idVlasnik",
             "idSetac",
+            "idSetnje",
             "idPsa",
             "gradSetnje",
             "city",
@@ -72,7 +73,9 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             return None
 
     def get_walk_details(self, obj):
-        walk = Setnja.objects.filter(idSetac=obj.idSetac).first()
+        if not getattr(obj, "idSetnje", None):
+            return None
+        walk = Setnja.objects.filter(idSetnje=obj.idSetnje).first()
         if not walk:
             return None
 

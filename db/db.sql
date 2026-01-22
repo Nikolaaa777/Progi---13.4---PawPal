@@ -87,6 +87,7 @@ CREATE TABLE public."Rezervacija" (
     "idSetac" bigint NOT NULL,
     "idPsa" bigint NOT NULL,
     "gradSetnje" character varying(15),
+    "idSetnje" bigint NOT NULL,
     potvrdeno boolean,
     odradena boolean
 );

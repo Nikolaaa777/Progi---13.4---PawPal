@@ -7,6 +7,8 @@ from accounts.models import Vlasnik, Setac
 from accounts.authentication import CsrfExemptSessionAuthentication
 from .models import Rezervacija
 from .serializers import RezervacijaSerializer
+from datetime import timedelta
+from walks.models import Setnja
 
 @extend_schema(
     request=RezervacijaSerializer,
@@ -87,8 +89,11 @@ def delete_reservation(request, reservation_id):
         reservacija = Rezervacija.objects.get(idRezervacije=reservation_id)
         user_email = request.user.email
         
-        is_vlasnik = reservacija.idVlasnik.emailVlasnik == user_email
-        is_setac = reservacija.idSetac.emailSetac == user_email
+        vlasnik = Vlasnik.objects.filter(emailVlasnik=user_email).first()
+        setac = Setac.objects.filter(emailSetac=user_email).first()
+        
+        is_vlasnik = vlasnik and reservacija.idVlasnik == vlasnik.idVlasnik
+        is_setac = setac and reservacija.idSetac == setac.idSetac
         
         if not (is_vlasnik or is_setac):
             return Response({
@@ -260,37 +265,11 @@ def create_reservation_from_walk(request, walk_id):
     except Vlasnik.DoesNotExist:
         return Response({"success": 0, "message": "Samo vlasnici mogu kreirati rezervacije."}, status=404)
     
-    # Get the walk
-    from walks.models import Setnja
     try:
         walk = Setnja.objects.get(idSetnje=walk_id)
     except Setnja.DoesNotExist:
         return Response({"success": 0, "message": "Šetnja nije pronađena."}, status=404)
     
-    # Check if walker already has a confirmed reservation at this time
-    # Note: Since reservations don't have walk_id, we check by walker and time overlap
-    # This is a simplified check - in a real system you might want to add walk_id to reservations
-    if walk.terminSetnje:
-        from django.utils import timezone
-        from datetime import timedelta
-        
-        # Check for reservations around the same time (within walk duration)
-        walk_start = walk.terminSetnje
-        walk_duration = walk.trajanjeSetnje or timedelta(hours=1)
-        walk_end = walk_start + walk_duration
-        
-        overlapping_reservations = Rezervacija.objects.filter(
-            idSetac=walk.idSetac,
-            potvrdeno=True
-        )
-        
-        # If there's any confirmed reservation for this walker, we consider the slot taken
-        # This is a simplified approach - ideally we'd check time overlap
-        if overlapping_reservations.exists():
-            return Response({
-                "success": 0,
-                "message": "Šetač već ima potvrđenu rezervaciju u ovom terminu."
-            }, status=status.HTTP_400_BAD_REQUEST)
     
     # Get the dog object
     from dogs.models import Pas
@@ -309,22 +288,34 @@ def create_reservation_from_walk(request, walk_id):
     except (ValueError, TypeError):
         return Response({"success": 0, "message": "Nevažeći ID psa."}, status=400)
     
-    # Check if walk is already reserved (by checking if there's a pending or confirmed reservation for this walker)
-    # Since Rezervacija doesn't have idSetnje, we check by walker and time overlap
-    existing_reservations = Rezervacija.objects.filter(
-        idSetac=walk.idSetac,
-        potvrdeno__isnull=False
-    )
-    if existing_reservations.exists():
-        # For now, we'll allow multiple reservations per walker
-        # In a production system, you'd want to check time overlap
-        pass
     
-    # Create reservation data - pass integer IDs, serializer will validate
-    # idSetac is a BigIntegerField in Setnja model, so it's always an integer
+    if walk.terminSetnje:
+        start_new = walk.terminSetnje
+        end_new = walk.terminSetnje + (walk.trajanjeSetnje or timedelta(hours=1))
+    
+        confirmed = Rezervacija.objects.filter(
+            idSetac=walk.idSetac,
+            potvrdeno=True
+        ).exclude(idSetnje=walk.idSetnje)  # safety
+    
+        for r in confirmed:
+            other = Setnja.objects.filter(idSetnje=r.idSetnje).first()
+            if not other or not other.terminSetnje:
+                continue
+            
+            start_old = other.terminSetnje
+            end_old = other.terminSetnje + (other.trajanjeSetnje or timedelta(hours=1))
+    
+            if start_new < end_old and end_new > start_old:
+                return Response(
+                    {"success": 0, "message": "Šetač već ima potvrđenu rezervaciju u tom terminu."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+    
     reservation_data = {
+        "idSetnje": walk.idSetnje,
         'idSetac': walk.idSetac,
-        'idPsa': pas.idPsa,  # Pass integer ID, serializer will validate ownership
+        'idPsa': pas.idPsa,  
     }
     
     serializer = RezervacijaSerializer(data=reservation_data, context={'vlasnik': vlasnik})
