@@ -27,31 +27,30 @@ const MojiTermini = () => {
         api.getMyReservations(),
       ]);
 
-      const walks =
-        (walksRes.data || []).map((w) => ({
-          id: w.idSetnje,
-          type: "walk",
-          date: w.terminSetnje,
-          duration: w.trajanjeSetnje,
-          price: w.cijenaSetnje,
-          walkType: w.tipSetnje,
-          town: w.city,
-          status: "Planiran",
-        })) || [];
+      const walks = (walksRes.data || []).map((w) => ({
+        id: w.idSetnje,
+        type: "walk",
+        date: w.terminSetnje,
+        duration: w.trajanjeSetnje,
+        price: w.cijenaSetnje,
+        walkType: w.tipSetnje,
+        town: w.city,
+        status: "Planiran",
+      }));
 
-      const reservations =
-        (reservationsRes.data || [])
-          .filter((r) => r.potvrdeno)
-          .map((r) => ({
-            id: r.idRezervacije,
-            type: "reservation",
-            date: r.walk_details.terminSetnje,
-            dog: r.dog_name,
-            duration: r.walk_details.trajanjeSetnje,
-            walkType: r.walk_details.tipSetnje,
-            town: r.walk_details.city,
-            status: r.odradena ? "Završen" : "Rezerviran",
-          })) || [];
+      const reservations = (reservationsRes.data || [])
+        .filter((r) => r.potvrdeno)
+        .map((r) => ({
+          id: r.idRezervacije,
+          type: "reservation",
+          date: r.walk_details.terminSetnje,
+          dog: r.dog_name,
+          duration: r.walk_details.trajanjeSetnje,
+          walkType: r.walk_details.tipSetnje,
+          town: r.walk_details.city,
+          status: r.odradena ? "Završen" : "Rezerviran",
+          done: r.odradena,
+        }));
 
       const merged = [...walks, ...reservations].sort(
         (a, b) => new Date(a.date) - new Date(b.date)
@@ -80,6 +79,12 @@ const MojiTermini = () => {
     navigate(`/chat?reservationId=${id}`);
   };
 
+  const handleFinish = async (id) => {
+    if (!window.confirm("Označiti šetnju kao završenu?")) return;
+    await api.markWalkDone(id);
+    loadData();
+  };
+
   const formatDate = (d) =>
     new Date(d).toLocaleDateString("hr-HR", {
       day: "2-digit",
@@ -94,12 +99,10 @@ const MojiTermini = () => {
     });
 
   const getStatusClass = (status) => {
-    if (!status) return "";
     const s = status.toLowerCase();
     if (s.includes("zavr")) return "zavrsen";
     if (s.includes("rezerv")) return "aktivan";
-    if (s.includes("plan")) return "planiran";
-    return "";
+    return "planiran";
   };
 
   if (loading) {
@@ -175,12 +178,23 @@ const MojiTermini = () => {
                   )}
 
                   {item.type === "reservation" && (
-                    <button
-                      className="editAppointment-btn"
-                      onClick={() => handleChat(item.id)}
-                    >
-                      💬 Chat
-                    </button>
+                    <>
+                      {!item.done && (
+                        <button
+                          className="editAppointment-btn"
+                          onClick={() => handleFinish(item.id)}
+                        >
+                          Završi
+                        </button>
+                      )}
+
+                      <button
+                        className="editAppointment-btn"
+                        onClick={() => handleChat(item.id)}
+                      >
+                        💬 Chat
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
