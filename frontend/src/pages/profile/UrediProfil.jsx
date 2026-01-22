@@ -11,6 +11,7 @@ export default function UrediProfil() {
 		last_name: "",
 		email: "",
 		phone: "",
+		city: "",
 	});
 
 	useEffect(() => {
@@ -20,6 +21,7 @@ export default function UrediProfil() {
 				last_name: me.last_name || "",
 				email: me.email || "",
 				phone: me.phone || "",
+				city: me.city || "",
 			});
 		});
 	}, []);
@@ -89,6 +91,17 @@ export default function UrediProfil() {
 							value={form.phone}
 							onChange={(e) =>
 								setForm((f) => ({ ...f, phone: e.target.value }))
+							}
+						/>
+					</label>
+
+					<label className="field">
+						<span>Grad</span>
+						<input
+							placeholder="Grad"
+							value={form.city}
+							onChange={(e) =>
+								setForm((f) => ({ ...f, city: e.target.value }))
 							}
 						/>
 					</label>

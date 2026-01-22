@@ -93,7 +93,7 @@ const DodajTermin = () => {
             
             {/* LOKACIJA - Optional field for future use */}
             <div className="form-group">
-              <label>Lokacija (opcionalno)</label>
+              <label>Lokacija (upiši grad)</label>
               <input
                 type="text"
                 placeholder="Unesite lokaciju"

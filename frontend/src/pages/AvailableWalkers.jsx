@@ -21,6 +21,7 @@ export default function AvailableWalkers() {
       .then((res) => res.json())
       .then((data) => {
         setWalkers(data);
+        console.log("walkers from API:", data);
         setLoading(false);
       })
       .catch(() => {
@@ -30,11 +31,22 @@ export default function AvailableWalkers() {
   }, []);
 
   // FILTERI (frontend)
+  const norm = (s) => (s || "").trim().toLowerCase();
+
   const filteredWalkers = walkers.filter(
     (w) =>
-      (!filters.city || w.city === filters.city) &&
-      (!filters.rating || w.rating >= Number(filters.rating)),
+      (!filters.city || norm(w.city) === norm(filters.city)) &&
+      (!filters.rating || (w.rating ?? 0) >= Number(filters.rating)),
   );
+
+  const cities = Array.from(
+    new Set(
+      walkers
+        .map((w) => (w.city || "").trim())
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+
 
   return (
     <div className="availableWalkers">
@@ -57,8 +69,12 @@ export default function AvailableWalkers() {
           onChange={(e) => setFilters({ ...filters, city: e.target.value })}
         >
           <option value="">Sve</option>
-          <option value="Zagreb">Zagreb</option>
-          <option value="Split">Split</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+
         </select>
 
         <label>Minimalna ocjena</label>

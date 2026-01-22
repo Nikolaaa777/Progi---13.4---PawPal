@@ -110,6 +110,15 @@ def me(request):
         ser = MeUpdateSerializer(data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.update(user, ser.validated_data)
+        city = request.data.get("city")
+        if city is not None:
+            city = (city or "").strip() or None
+            profile.city = city
+            profile.save(update_fields=["city"])
+
+            if profile.is_walker and city:
+                Setac.objects.filter(emailSetac__iexact=user.email).update(gradSetac=city)
+
         profile, _ = Profile.objects.get_or_create(user=user)
 
     if user.is_staff or user.is_superuser:
@@ -128,6 +137,7 @@ def me(request):
         "has_notifications_on": profile.has_notifications_on,
         "role": role,
         "phone": request.data.get("phone", ""),
+        "city": profile.city,
     }, status=status.HTTP_200_OK)
 
 @extend_schema(
@@ -170,7 +180,10 @@ def enable_walker(request):
 
     with transaction.atomic():
         profile, _ = Profile.objects.get_or_create(user=request.user)
-        setac = ensure_setac_row(
+        city = (request.data.get("city") or "").strip() or None
+        if not city:
+            city = (profile.city or "").strip() or None
+        setac = ensure_setac_row(   
             request.user,
             payload=SetacPayload(
             email=request.user.email,
@@ -180,8 +193,11 @@ def enable_walker(request):
             phone=phone,
             idClanarine=None,
             idProfilne=None,
+            city = city,
             ),
         )
+        if city:
+            Setac.objects.filter(idSetac=setac.idSetac).update(gradSetac=city)
         profile.is_walker = True
         profile.save(update_fields=["is_walker"])
 
@@ -212,8 +228,7 @@ def available_walkers(request):
             "name": f"{s.imeSetac or ''} {s.prezimeSetac or ''}".strip(),
             "rating": float(s.avgOcjena) if s.avgOcjena else None,
 
-            # dok nemamo stvarne tablice
-            "city": "Zagreb",
+            "city": s.gradSetac,
             "price": 10,
         })
 
