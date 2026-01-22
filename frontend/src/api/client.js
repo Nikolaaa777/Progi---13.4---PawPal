@@ -158,4 +158,12 @@ export const api = {
 	confirmStripePayment: (payload) => post("/api/payments/stripe/confirm/", payload),
 	getPaymentStatus: (paymentId) => get(`/api/payments/${paymentId}/`),
 	getUserPayments: () => get("/api/payments/user/"),
+
+		// ADMIN
+	adminUsersList: () => get("/api/admin/users/"),
+	adminUserDisable: (userId) => patch(`/api/admin/users/${userId}/disable/`, {}),
+	adminUserEnable: (userId) => patch(`/api/admin/users/${userId}/enable/`, {}),
+	adminClanarinaGet: () => get("/api/admin/clanarina/"),
+	adminClanarinaUpdate: (iznos) => patch("/api/admin/clanarina/update/", { iznos }),
+
 };

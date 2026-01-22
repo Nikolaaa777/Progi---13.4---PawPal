@@ -25,6 +25,7 @@ import AdminKomentari from "./pages/admin/AdminKom";
 import AdminKor from "./pages/admin/AdminKorisnici";
 import ChatPage from "./pages/chat/ChatPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import AdminPanel from "./pages/admin/AdminPanel";
 
 export default function App() {
 	const [user, setUser] = useState(null);
@@ -58,7 +59,10 @@ export default function App() {
 				<Route path="zahtjevi" element={<ZahtjeviZaSetnju />} />
 				<Route path="clanarina" element={<Clanarina />} />
 			</Route>
-			<Route path="/admin" element={<AdminHome />} />
+
+
+			<Route path="/admin" element={<AdminPanel />} />
+
 			<Route path="/adminKom" element={<AdminKomentari />} />
 			<Route path="/adminKorisnici" element={<AdminKor />} />
       		<Route path="/payment-success" element={<PaymentSuccess />} />
