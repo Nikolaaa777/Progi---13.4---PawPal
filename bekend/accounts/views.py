@@ -147,8 +147,7 @@ def me(request):
 @permission_classes([AllowAny])
 def google_login_url(request):
     # naziv rute "google_login" dolazi iz allauth-a
-    url = request.build_absolute_uri(reverse("google_login"))
-    return Response({"url": url})
+    return JsonResponse({"url": reverse("google_login")})
 
 
 @extend_schema(

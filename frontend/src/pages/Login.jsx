@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 
+
+
 export default function Login() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -21,9 +23,18 @@ export default function Login() {
 
 	async function handleGoogleLogin() {
 		try {
-			const url = await api.googleLoginUrl();
-			window.location.href = url;
-		} catch {
+			setErr("");
+
+			const res = await api.googleLoginUrl(); // očekujemo { url: "/accounts/..." } ili string
+			const path = typeof res === "string" ? res : res.url;
+
+			const base = import.meta.env.VITE_API_BASE_URL;
+			if (!base) throw new Error("Missing VITE_API_BASE_URL");
+			if (!path) throw new Error("Missing google login path");
+
+			window.location.assign(`${base}${path}`);
+		} catch (e) {
+			console.error(e);
 			setErr("Google prijava trenutno nije dostupna.");
 		}
 	}
