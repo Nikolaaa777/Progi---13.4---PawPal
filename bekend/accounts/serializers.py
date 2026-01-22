@@ -12,6 +12,7 @@ class RegisterSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=15, required=False, allow_blank=True)
     password = serializers.CharField(write_only=True, min_length=8)
     is_walker = serializers.BooleanField(default=False)
+    city = serializers.CharField(required=False, allow_blank=True)
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
@@ -35,9 +36,12 @@ class RegisterSerializer(serializers.Serializer):
             password=validated_data["password"],
             is_active=True,
         )
+        city = (validated_data.get("city") or "").strip() or None
 
         profile, _ = Profile.objects.get_or_create(user=user)
         profile.is_walker = is_walker
+        if city is not None:
+            profile.city = city
         profile.save()
 
         # VLASNIK: upiši u domensku tablicu
@@ -61,6 +65,7 @@ class RegisterSerializer(serializers.Serializer):
         first_name=user.first_name or None,
         last_name=user.last_name or None,
         phone=phone,
+        city=city, 
         idClanarine=None,
         idProfilne=None,
     )
