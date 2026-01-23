@@ -1,23 +1,30 @@
-const BASE = "";
-const json = (res) => {
-	if (!res.ok) throw res;
-	return res.json().catch(() => ({}));
+// src/api/client.js
+
+const BASE =
+	import.meta.env.VITE_API_BASE_URL ||
+	"https://progi-13-4-pawpal-3.onrender.com";
+
+// CSRF token cache (cross-domain safe because we read it from JSON)
+let CSRF_TOKEN = null;
+
+const json = async (res) => {
+	const data = await res.json().catch(() => ({}));
+	if (!res.ok) throw { res, data };
+	return data;
 };
 
-function getCookie(name) {
-	return document.cookie
-		.split("; ")
-		.find((r) => r.startsWith(name + "="))
-		?.split("=")[1];
-}
-
 export async function ensureCsrf() {
-	await fetch(`${BASE}/api/auth/csrf/`, { credentials: "include" });
+	if (CSRF_TOKEN) return CSRF_TOKEN;
+
+	const res = await fetch(`${BASE}/api/auth/csrf/`, { credentials: "include" });
+	const data = await res.json().catch(() => ({}));
+	CSRF_TOKEN = data.csrfToken || null;
+
+	return CSRF_TOKEN;
 }
 
 async function post(path, body) {
-	await ensureCsrf();
-	const csrf = getCookie("csrftoken");
+	const csrf = await ensureCsrf();
 	return json(
 		await fetch(`${BASE}${path}`, {
 			method: "POST",
@@ -29,8 +36,7 @@ async function post(path, body) {
 }
 
 async function patch(path, body) {
-	await ensureCsrf();
-	const csrf = getCookie("csrftoken");
+	const csrf = await ensureCsrf();
 	return json(
 		await fetch(`${BASE}${path}`, {
 			method: "PATCH",
@@ -45,11 +51,23 @@ async function patch(path, body) {
 }
 
 async function get(path) {
-	await ensureCsrf();
+	// CSRF not required for GET
 	return json(await fetch(`${BASE}${path}`, { credentials: "include" }));
 }
 
+async function del(path) {
+	const csrf = await ensureCsrf();
+	return json(
+		await fetch(`${BASE}${path}`, {
+			method: "DELETE",
+			credentials: "include",
+			headers: { "X-CSRFToken": csrf },
+		}),
+	);
+}
+
 export const api = {
+	// AUTH
 	me: () => get("/api/auth/me/"),
 	updateMe: (data) => patch("/api/auth/me/", data),
 	login: (email, password) => post("/api/auth/login/", { email, password }),
@@ -63,6 +81,7 @@ export const api = {
 			is_walker,
 		}),
 	toggleNotifications: () => post("/api/notifications/toggle/", {}),
+
 	getNotificationEvents: (afterId) => {
 		const params = afterId ? `?after_id=${afterId}` : "";
 		return get(`/api/notifications/events${params}`);
@@ -72,64 +91,31 @@ export const api = {
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
 			credentials: "include",
 		});
-		try {
-			const { url } = await res.json();
-			return url;
-		} catch {
-			return res.url;
-		}
+		const data = await res.json().catch(() => null);
+		if (data && data.url) return data.url;
+		return res.url;
 	},
 
 	// DOGS
 	dogs: () => get("/api/dogs/"),
 	dog: (idPsa) => get(`/api/dogs/${idPsa}/`),
 	createDog: (payload) => post("/api/dogs/create/", payload),
-	updateDog: async (idPsa, payload) => {
-		await ensureCsrf();
-		const csrf = getCookie("csrftoken");
-		return json(
-			await fetch(`${BASE}/api/dogs/${idPsa}/update/`, {
-				method: "PATCH",
-				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-					"X-CSRFToken": csrf,
-				},
-				body: JSON.stringify(payload),
-			}),
-		);
-	},
-
-	deleteDog: async (idPsa) => {
-		await ensureCsrf();
-		const csrf = getCookie("csrftoken");
-		return json(
-			await fetch(`${BASE}/api/dogs/${idPsa}/delete/`, {
-				method: "DELETE",
-				credentials: "include",
-				headers: { "X-CSRFToken": csrf },
-			}),
-		);
-	},
+	updateDog: (idPsa, payload) => patch(`/api/dogs/${idPsa}/update/`, payload),
+	deleteDog: (idPsa) => del(`/api/dogs/${idPsa}/delete/`),
 
 	// RESERVATIONS
 	getMyReservations: () => get("/api/reservations/my-reservations/"),
 	createReservation: (payload) => post("/api/reservations/create/", payload),
-	createReservationFromWalk: (walkId, payload) => post(`/api/reservations/create-from-walk/${walkId}/`, payload),
-	acceptReservation: (reservationId) => post(`/api/reservations/accept/${reservationId}/`, {}),
-	rejectReservation: (reservationId) => post(`/api/reservations/reject/${reservationId}/`, {}),
-	markWalkDone: (reservationId) => post(`/api/reservations/mark-done/${reservationId}/`, {}),
-	deleteReservation: async (reservationId) => {
-		await ensureCsrf();
-		const csrf = getCookie("csrftoken");
-		return json(
-			await fetch(`${BASE}/api/reservations/delete/${reservationId}/`, {
-				method: "DELETE",
-				credentials: "include",
-				headers: { "X-CSRFToken": csrf },
-			}),
-		);
-	},
+	createReservationFromWalk: (walkId, payload) =>
+		post(`/api/reservations/create-from-walk/${walkId}/`, payload),
+	acceptReservation: (reservationId) =>
+		post(`/api/reservations/accept/${reservationId}/`, {}),
+	rejectReservation: (reservationId) =>
+		post(`/api/reservations/reject/${reservationId}/`, {}),
+	markWalkDone: (reservationId) =>
+		post(`/api/reservations/mark-done/${reservationId}/`, {}),
+	deleteReservation: (reservationId) =>
+		del(`/api/reservations/delete/${reservationId}/`),
 
 	// WALKS
 	walk: (walkId) => get(`/api/walks/${walkId}/`),
@@ -137,38 +123,36 @@ export const api = {
 	getAvailableWalks: () => get("/api/walks/available/"),
 	getAllWalks: () => get("/api/walks/fromAllWalkers/"),
 	createWalk: (payload) => post("/api/walks/create/", payload),
-	updateWalk: (walkId, payload) => patch(`/api/walks/${walkId}/update/`, payload),
-	deleteWalk: async (walkId) => {
-		await ensureCsrf();
-		const csrf = getCookie("csrftoken");
-		return json(
-			await fetch(`${BASE}/api/walks/${walkId}/delete/`, {
-				method: "DELETE",
-				credentials: "include",
-				headers: { "X-CSRFToken": csrf },
-			}),
-		);
-	},
+	updateWalk: (walkId, payload) =>
+		patch(`/api/walks/${walkId}/update/`, payload),
+	deleteWalk: (walkId) => del(`/api/walks/${walkId}/delete/`),
+
+	// WALKERS
+	availableWalkers: () => get("/api/walkers/"),
 
 	// CHAT
 	getConversations: () => get("/api/chat/conversations/"),
-	getConversation: (conversationId) => get(`/api/chat/conversations/${conversationId}/`),
+	getConversation: (conversationId) =>
+		get(`/api/chat/conversations/${conversationId}/`),
 	getOrCreateConversationFromReservation: (reservationId) =>
 		post(`/api/chat/conversations/reservation/${reservationId}/`, {}),
 	sendMessage: (payload) => post("/api/chat/messages/", payload),
 
 	// PAYMENTS
 	createPaymentIntent: (payload) => post("/api/payments/create/", payload),
-	confirmPayPalPayment: (payload) => post("/api/payments/paypal/confirm/", payload),
-	confirmStripePayment: (payload) => post("/api/payments/stripe/confirm/", payload),
+	confirmPayPalPayment: (payload) =>
+		post("/api/payments/paypal/confirm/", payload),
+	confirmStripePayment: (payload) =>
+		post("/api/payments/stripe/confirm/", payload),
 	getPaymentStatus: (paymentId) => get(`/api/payments/${paymentId}/`),
 	getUserPayments: () => get("/api/payments/user/"),
 
-		// ADMIN
+	// ADMIN
 	adminUsersList: () => get("/api/admin/users/"),
-	adminUserDisable: (userId) => patch(`/api/admin/users/${userId}/disable/`, {}),
+	adminUserDisable: (userId) =>
+		patch(`/api/admin/users/${userId}/disable/`, {}),
 	adminUserEnable: (userId) => patch(`/api/admin/users/${userId}/enable/`, {}),
 	adminClanarinaGet: () => get("/api/admin/clanarina/"),
-	adminClanarinaUpdate: (iznos) => patch("/api/admin/clanarina/update/", { iznos }),
-
+	adminClanarinaUpdate: (iznos) =>
+		patch("/api/admin/clanarina/update/", { iznos }),
 };
