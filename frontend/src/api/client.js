@@ -1,7 +1,10 @@
-const BASE = import.meta.env.VITE_API_BASE_URL || "https://progi-13-4-pawpal-3.onrender.com";
+// src/api/client.js
 
+const BASE =
+	import.meta.env.VITE_API_BASE_URL ||
+	"https://progi-13-4-pawpal-3.onrender.com";
 
-// CSRF token cache (works cross-domain because we read it from JSON, not cookies)
+// CSRF token cache (cross-domain safe because we read it from JSON)
 let CSRF_TOKEN = null;
 
 const json = async (res) => {
@@ -84,7 +87,6 @@ export const api = {
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
 			credentials: "include",
 		});
-		// response might be JSON { url: "..." } or redirect URL
 		const data = await res.json().catch(() => null);
 		if (data && data.url) return data.url;
 		return res.url;
@@ -119,6 +121,9 @@ export const api = {
 	createWalk: (payload) => post("/api/walks/create/", payload),
 	updateWalk: (walkId, payload) => patch(`/api/walks/${walkId}/update/`, payload),
 	deleteWalk: (walkId) => del(`/api/walks/${walkId}/delete/`),
+
+	// WALKERS
+	availableWalkers: () => get("/api/walkers/"),
 
 	// CHAT
 	getConversations: () => get("/api/chat/conversations/"),
