@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
+from drf_spectacular.utils import extend_schema
 
 from accounts.models import Vlasnik, Setac
 from walks.models import Setnja
