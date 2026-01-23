@@ -162,6 +162,13 @@ export const api = {
 	getPaymentStatus: (paymentId) => get(`/api/payments/${paymentId}/`),
 	getUserPayments: () => get("/api/payments/user/"),
 
+
+			// MEMBERSHIP
+	membershipFee: () => get("/api/membership/fee/"),
+	membershipStatus: () => get("/api/membership/status/"),
+	createMembershipPayPal: () => post("/api/membership/paypal/create/", {}),
+	confirmMembershipPayPal: (payload) => post("/api/membership/paypal/confirm/", payload),
+
 	// ADMIN
 	adminUsersList: () => get("/api/admin/users/"),
 	adminUserDisable: (userId) => patch(`/api/admin/users/${userId}/disable/`, {}),
@@ -169,4 +176,6 @@ export const api = {
 	adminClanarinaGet: () => get("/api/admin/clanarina/"),
 	adminClanarinaUpdate: (iznos) =>
 		patch("/api/admin/clanarina/update/", { iznos }),
+
+
 };

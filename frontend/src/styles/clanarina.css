@@ -119,3 +119,27 @@
     flex-direction: column;
   }
 }
+
+
+.inactive {
+  color: #c62828;
+}
+
+.clanarina-error {
+  background: #ffe9e9;
+  border: 1px solid #ffb5b5;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.clanarina-note {
+  margin-top: 14px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.clanarina-pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
