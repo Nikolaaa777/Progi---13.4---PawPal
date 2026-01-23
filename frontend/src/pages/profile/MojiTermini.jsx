@@ -67,8 +67,8 @@ const MojiTermini = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/profile/termini/uredi/${id}`);
-  };
+  navigate(`/profile/termini/${id}/uredi`);
+};
 
   const handleDelete = async (id) => {
     if (!window.confirm("Obrisati termin?")) return;

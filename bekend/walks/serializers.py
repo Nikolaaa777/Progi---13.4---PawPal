@@ -20,6 +20,7 @@ class SetnjaSerializer(serializers.ModelSerializer):
             "cijenaSetnje",
             "trajanjeSetnje",
             "idSetac",
+            "gradSetnje",
             "walker_name",
             "walker_email",
             "is_reserved",

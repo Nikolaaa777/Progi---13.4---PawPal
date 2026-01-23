@@ -128,6 +128,7 @@ export const api = {
 	},
 
 	// WALKS
+	walk: (walkId) => get(`/api/walks/${walkId}/`),
 	walks: () => get("/api/walks/"),
 	getAvailableWalks: () => get("/api/walks/available/"),
 	getAllWalks: () => get("/api/walks/fromAllWalkers/"),
