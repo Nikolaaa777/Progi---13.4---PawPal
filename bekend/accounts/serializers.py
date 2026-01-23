@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.db import transaction
 from .models import Profile
 from .models import Vlasnik, Setac
 from .domain_sync import ensure_vlasnik_row, ensure_setac_row, VlasnikPayload, SetacPayload
@@ -28,51 +29,53 @@ class RegisterSerializer(serializers.Serializer):
         phone = validated_data.pop("phone", "")
         username = validated_data["email"]
 
-        user = User.objects.create_user(
-            username=username,
-            email=validated_data["email"],
-            first_name=validated_data["first_name"],
-            last_name=validated_data["last_name"],
-            password=validated_data["password"],
-            is_active=True,
-        )
-        city = (validated_data.get("city") or "").strip() or None
-
-        profile, _ = Profile.objects.get_or_create(user=user)
-        profile.is_walker = is_walker
-        if city is not None:
-            profile.city = city
-        profile.save()
-
-        # VLASNIK: upiši u domensku tablicu
-        ensure_vlasnik_row(
-                user,
-                payload=VlasnikPayload(
-                    email=user.email,
-                    first_name=user.first_name or None,
-                    last_name=user.last_name or None,
-                    phone=(phone or None) if (phone and phone.strip()) else None,
-                ),
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username,
+                email=validated_data["email"],
+                first_name=validated_data["first_name"],
+                last_name=validated_data["last_name"],
+                password=validated_data["password"],
+                is_active=True,
             )
-        
-        # ako je šetač -> upiši i setaca
-        if is_walker:
-            ensure_setac_row(
-    user,
-    payload=SetacPayload(
-        email=user.email,
-        username=None,  # neka se generira
-        first_name=user.first_name or None,
-        last_name=user.last_name or None,
-        phone=phone,
-        city=city, 
-        idClanarine=None,
-        idProfilne=None,
+            city = (validated_data.get("city") or "").strip() or None
+
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.is_walker = is_walker
+            if city is not None:
+                profile.city = city
+            profile.save()
+
+            # VLASNIK: upiši u domensku tablicu
+            ensure_vlasnik_row(
+                    user,
+                    payload=VlasnikPayload(
+                        email=user.email,
+                        first_name=user.first_name or None,
+                        last_name=user.last_name or None,
+                        phone=(phone or None) if (phone and phone.strip()) else None,
+                    ),
+                )
+            
+            # ako je šetač -> upiši i setaca
+            if is_walker:
+                ensure_setac_row(
+        user,
+        payload=SetacPayload(
+            email=user.email,
+            username=None,  # neka se generira
+            first_name=user.first_name or None,
+            last_name=user.last_name or None,
+            phone=phone,
+            city=city, 
+            idClanarine=None,
+            idProfilne=None,
+        )
     )
-)
-            # Create walker registration event for notifications
-            from .models import WalkerRegistrationEvent
-            WalkerRegistrationEvent.objects.create(walker=user)
+                # Create walker registration event for notifications (only if not already exists)
+                from .models import WalkerRegistrationEvent
+                if not WalkerRegistrationEvent.objects.filter(walker=user).exists():
+                    WalkerRegistrationEvent.objects.create(walker=user)
         return user
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

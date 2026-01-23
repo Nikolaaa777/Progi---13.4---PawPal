@@ -150,12 +150,15 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
     else:
         username_candidate = _generate_unique_username(email_norm.split("@")[0])
 
+    # Normalize phone: empty string -> None to avoid unique constraint violations
+    phone_normalized = (payload.phone or "").strip() or None
+    
     defaults = {
         "emailSetac": email_norm,
         "usernameSetac": username_candidate,
         "imeSetac": payload.first_name,
         "prezimeSetac": payload.last_name,
-        "telefonSetac": payload.phone,
+        "telefonSetac": phone_normalized,
         "gradSetac": payload.city,
         "datRegSetac": date.today(),
         "idClanarine": payload.idClanarine,
@@ -185,7 +188,9 @@ def ensure_setac_row(user: User, payload: Optional[SetacPayload] = None) -> Seta
             setac.prezimeSetac = payload.last_name
             changed = True
         if payload.phone and not setac.telefonSetac:
-            setac.telefonSetac = payload.phone
+            # Normalize phone: empty string -> None
+            phone_normalized = (payload.phone or "").strip() or None
+            setac.telefonSetac = phone_normalized
             changed = True
         if payload.city and not setac.gradSetac:
             setac.gradSetac = payload.city
