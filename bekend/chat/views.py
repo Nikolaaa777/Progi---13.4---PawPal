@@ -1,9 +1,5 @@
 from accounts.authentication import CsrfExemptSessionAuthentication
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-    authentication_classes,
-)
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,18 +19,43 @@ from reservations.models import Rezervacija
 from accounts.models import Vlasnik, Setac
 
 
+def _as_int(x):
+    """
+    Normalizira vrijednost u int.
+    - ako je FK objekt, izvuče njegov PK
+    - ako je string broj, pretvori u int
+    - ako je None/"" ostavi None
+    """
+    if x is None:
+        return None
+
+    # FK objekti (ako ikad budu)
+    if hasattr(x, "idVlasnik"):
+        x = x.idVlasnik
+    if hasattr(x, "idSetac"):
+        x = x.idSetac
+
+    if isinstance(x, str):
+        x = x.strip()
+        if x == "":
+            return None
+
+    try:
+        return int(x)
+    except (TypeError, ValueError):
+        return x
+
+
 @extend_schema(responses={200: OpenApiResponse(description="List of conversations")})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_conversations(request):
-    """Get all conversations for the current user"""
     user = request.user
     conversations = (
         Conversation.objects.filter(Q(participant1=user) | Q(participant2=user))
         .annotate(last_message_time=Max("messages__created_at"))
         .order_by("-updated_at")
     )
-
     serializer = ConversationSerializer(conversations, many=True, context={"request": request})
     return Response(serializer.data)
 
@@ -43,7 +64,6 @@ def list_conversations(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_conversation(request, conversation_id):
-    """Get a specific conversation with its messages"""
     try:
         conversation = Conversation.objects.get(
             Q(id=conversation_id)
@@ -52,7 +72,6 @@ def get_conversation(request, conversation_id):
     except Conversation.DoesNotExist:
         return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Mark messages as read
     Message.objects.filter(
         conversation=conversation,
         sender__id=conversation.get_other_participant(request.user).id,
@@ -72,7 +91,6 @@ def get_conversation(request, conversation_id):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation(request, user_id):
-    """Get or create a conversation with another user"""
     try:
         other_user = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -91,13 +109,9 @@ def get_or_create_conversation(request, user_id):
 
     if not conversation:
         if request.user.id < other_user.id:
-            conversation = Conversation.objects.create(
-                participant1=request.user, participant2=other_user
-            )
+            conversation = Conversation.objects.create(participant1=request.user, participant2=other_user)
         else:
-            conversation = Conversation.objects.create(
-                participant1=other_user, participant2=request.user
-            )
+            conversation = Conversation.objects.create(participant1=other_user, participant2=request.user)
 
     serializer = ConversationSerializer(conversation, context={"request": request})
     return Response(serializer.data)
@@ -112,7 +126,6 @@ def get_or_create_conversation(request, user_id):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def send_message(request):
-    """Send a message in a conversation"""
     serializer = CreateMessageSerializer(data=request.data)
     if not serializer.is_valid():
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -121,10 +134,7 @@ def send_message(request):
     content = serializer.validated_data["content"]
 
     if not conversation_id:
-        return Response(
-            {"error": "conversation_id is required"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "conversation_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         conversation = Conversation.objects.get(
@@ -134,12 +144,7 @@ def send_message(request):
     except Conversation.DoesNotExist:
         return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    message = Message.objects.create(
-        conversation=conversation,
-        sender=request.user,
-        content=content,
-    )
-
+    message = Message.objects.create(conversation=conversation, sender=request.user, content=content)
     conversation.save()
 
     serializer_response = MessageSerializer(message)
@@ -150,7 +155,6 @@ def send_message(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_users(request):
-    """Get list of users (excluding current user)"""
     users = User.objects.exclude(id=request.user.id)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
@@ -164,7 +168,6 @@ def list_users(request):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation_from_reservation(request, reservation_id):
-    """Get or create a conversation from a reservation (only if confirmed)"""
     try:
         reservation = Rezervacija.objects.get(idRezervacije=reservation_id)
     except Rezervacija.DoesNotExist:
@@ -178,49 +181,53 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
 
     current_user_email = (request.user.email or "").strip()
 
-    # Normalize reservation ids (works for int OR FK objects)
-    res_vlasnik_id = getattr(reservation.idVlasnik, "idVlasnik", reservation.idVlasnik)
-    res_setac_id = getattr(reservation.idSetac, "idSetac", reservation.idSetac)
+    # rezervacija ID-evi iz baze mogu biti int, bigint, str, ili FK objekt -> normaliziraj
+    res_vlasnik_id = _as_int(reservation.idVlasnik)
+    res_setac_id = _as_int(reservation.idSetac)
 
-    # Find domain profiles (case-insensitive)
+    # tko je trenutni user u "domeni"
     vlasnik = Vlasnik.objects.filter(emailVlasnik__iexact=current_user_email).first()
     setac = Setac.objects.filter(emailSetac__iexact=current_user_email).first()
 
     if not vlasnik and not setac:
         return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    is_vlasnik = bool(vlasnik)
-
-    # Verify membership in reservation
-    if is_vlasnik:
-        if res_vlasnik_id != vlasnik.idVlasnik:
+    if vlasnik:
+        # vlasnik mora odgovarati rezervaciji
+        if res_vlasnik_id != _as_int(vlasnik.idVlasnik):
             return Response(
                 {"error": "You are not authorized to access this reservation"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
         other_setac = Setac.objects.filter(idSetac=res_setac_id).first()
         if not other_setac:
             return Response({"error": "Walker not found"}, status=status.HTTP_404_NOT_FOUND)
+
         other_user_email = other_setac.emailSetac
+
     else:
-        # If reservation doesn't have walker assigned, walker can't access it
-        if res_setac_id in (None, "", 0, "0"):
+        # šetač mora biti dodijeljen i mora odgovarati rezervaciji
+        if res_setac_id in (None, 0):
             return Response(
                 {"error": "Reservation has no walker assigned"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if res_setac_id != setac.idSetac:
+
+        if res_setac_id != _as_int(setac.idSetac):
             return Response(
                 {"error": "You are not authorized to access this reservation"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
         other_vlasnik = Vlasnik.objects.filter(idVlasnik=res_vlasnik_id).first()
         if not other_vlasnik:
             return Response({"error": "Owner not found"}, status=status.HTTP_404_NOT_FOUND)
+
         other_user_email = other_vlasnik.emailVlasnik
 
-    # Find Django auth user for the other side (case-insensitive)
-    other_user = User.objects.filter(email__iexact=other_user_email).first()
+    # nađi Django auth user druge strane
+    other_user = User.objects.filter(email__iexact=(other_user_email or "").strip()).first()
     if not other_user:
         return Response({"error": "Other user not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -231,13 +238,9 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
 
     if not conversation:
         if request.user.id < other_user.id:
-            conversation = Conversation.objects.create(
-                participant1=request.user, participant2=other_user
-            )
+            conversation = Conversation.objects.create(participant1=request.user, participant2=other_user)
         else:
-            conversation = Conversation.objects.create(
-                participant1=other_user, participant2=request.user
-            )
+            conversation = Conversation.objects.create(participant1=other_user, participant2=request.user)
 
     serializer = ConversationSerializer(conversation, context={"request": request})
     return Response(serializer.data)
