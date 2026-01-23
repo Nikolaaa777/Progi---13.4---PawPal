@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_BASE_URL || "";
+const BASE = import.meta.env.VITE_API_BASE_URL || "https://progi-13-4-pawpal-3.onrender.com";
+
 
 // CSRF token cache (works cross-domain because we read it from JSON, not cookies)
 let CSRF_TOKEN = null;
