@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { api } from "../api/client";
 import "../styles/paymentModal.css";
 
@@ -6,15 +6,19 @@ const PaymentModal = ({ isOpen, onClose, reservationId, amount, onSuccess }) => 
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [stripeInstance, setStripeInstance] = useState(null);
-  const [cardElement, setCardElement] = useState(null);
-  const [paymentId, setPaymentId] = useState(null);
-  const [stripeClientSecret, setStripeClientSecret] = useState(null);
-  const [stripePublishableKey, setStripePublishableKey] = useState(null);
 
+  const [stripe, setStripe] = useState(null);
+  const [cardElement, setCardElement] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [paymentId, setPaymentId] = useState(null);
+
+  const cardMounted = useRef(false);
+
+  /* ---------- LOAD STRIPE ---------- */
   useEffect(() => {
-    if (paymentMethod === "stripe" && !window.Stripe) {
-      // Load Stripe.js
+    if (paymentMethod !== "stripe") return;
+
+    if (!window.Stripe) {
       const script = document.createElement("script");
       script.src = "https://js.stripe.com/v3/";
       script.async = true;
@@ -22,236 +26,155 @@ const PaymentModal = ({ isOpen, onClose, reservationId, amount, onSuccess }) => 
     }
   }, [paymentMethod]);
 
+  /* ---------- CLEANUP ---------- */
+  useEffect(() => {
+    return () => {
+      if (cardElement) {
+        cardElement.unmount();
+        cardMounted.current = false;
+      }
+    };
+  }, [cardElement]);
+
+  /* ---------- CREATE PAYMENT ---------- */
+  const handlePayment = async () => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await api.createPaymentIntent({
+        reservation_id: reservationId,
+        amount: amount.toString(),
+        payment_method: paymentMethod,
+      });
+
+      if (!res.success) {
+        setError(res.error || "Payment failed");
+        setLoading(false);
+        return;
+      }
+
+      if (paymentMethod === "cash") {
+        onSuccess(res);
+        onClose();
+        return;
+      }
+
+      if (paymentMethod === "paypal") {
+        localStorage.setItem("payment_id", res.payment_id);
+        window.location.href = res.approval_url;
+        return;
+      }
+
+      if (paymentMethod === "stripe") {
+        if (!res.publishable_key) {
+          setError("Stripe not configured");
+          setLoading(false);
+          return;
+        }
+
+        setClientSecret(res.client_secret);
+        setPaymentId(res.payment_id);
+
+        const waitForStripe = setInterval(() => {
+          if (window.Stripe && !cardMounted.current) {
+            clearInterval(waitForStripe);
+
+            const stripeInstance = window.Stripe(res.publishable_key);
+            const elements = stripeInstance.elements();
+            const card = elements.create("card");
+
+            card.mount("#card-element");
+
+            cardMounted.current = true;
+            setStripe(stripeInstance);
+            setCardElement(card);
+            setLoading(false);
+          }
+        }, 100);
+      }
+    } catch (err) {
+      setError("Payment error");
+      setLoading(false);
+    }
+  };
+
+  /* ---------- STRIPE CONFIRM ---------- */
   const handleStripeSubmit = async (e) => {
     e.preventDefault();
-    if (!stripeInstance || !cardElement || !stripeClientSecret || !paymentId) {
-      setError("Stripe not initialized");
+    if (!stripe || !cardElement || !clientSecret) return;
+
+    setLoading(true);
+
+    const { error, paymentIntent } = await stripe.confirmCardPayment(
+      clientSecret,
+      { payment_method: { card: cardElement } }
+    );
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    if (paymentIntent.status === "succeeded") {
+      const confirm = await api.confirmStripePayment({
+        payment_intent_id: paymentIntent.id,
+        payment_id: paymentId,
+      });
 
-    try {
-      const { error: stripeError, paymentIntent } =
-        await stripeInstance.confirmCardPayment(stripeClientSecret, {
-          payment_method: {
-            card: cardElement,
-          },
-        });
-
-      if (stripeError) {
-        setError(stripeError.message);
-        setLoading(false);
-      } else if (paymentIntent.status === "succeeded") {
-        // Confirm payment with backend
-        const confirmResponse = await api.confirmStripePayment({
-          payment_intent_id: paymentIntent.id,
-          payment_id: paymentId,
-        });
-
-        if (confirmResponse.success) {
-          onSuccess(confirmResponse);
-          onClose();
-        } else {
-          setError(confirmResponse.error || "Payment confirmation failed");
-          setLoading(false);
-        }
+      if (confirm.success) {
+        onSuccess(confirm);
+        onClose();
+      } else {
+        setError("Stripe confirmation failed");
       }
-    } catch (err) {
-      setError(err.message || "An error occurred");
-      setLoading(false);
     }
+
+    setLoading(false);
   };
-
-  const handlePayment = async () => {
-    if (!reservationId || !amount) {
-      setError("Missing reservation ID or amount");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (paymentMethod === "cash") {
-        // Cash payment - directly create and complete
-        const response = await api.createPaymentIntent({
-          reservation_id: reservationId,
-          amount: amount.toString(),
-          payment_method: "cash",
-        });
-
-        if (response.success) {
-          onSuccess(response);
-          onClose();
-        } else {
-          setError(response.error || "Payment failed");
-        }
-      } else if (paymentMethod === "paypal") {
-        // PayPal payment
-        const response = await api.createPaymentIntent({
-          reservation_id: reservationId,
-          amount: amount.toString(),
-          payment_method: "paypal",
-        });
-
-        if (response.success && response.approval_url) {
-          setPaymentId(response.payment_id);
-          // Redirect to PayPal
-          window.location.href = response.approval_url;
-        } else {
-          setError(response.error || "Failed to create PayPal payment");
-        }
-      } else if (paymentMethod === "stripe") {
-        // Stripe payment
-        const response = await api.createPaymentIntent({
-          reservation_id: reservationId,
-          amount: amount.toString(),
-          payment_method: "stripe",
-        });
-
-        if (response.success && response.client_secret) {
-          setPaymentId(response.payment_id);
-          setStripeClientSecret(response.client_secret);
-          setStripePublishableKey(response.publishable_key);
-
-          // Initialize Stripe after a short delay to ensure script is loaded
-          setTimeout(() => {
-            if (window.Stripe) {
-              const stripe = window.Stripe(response.publishable_key);
-              setStripeInstance(stripe);
-
-              const elements = stripe.elements();
-              const card = elements.create("card");
-              card.mount("#card-element");
-              setCardElement(card);
-            } else {
-              setError("Stripe.js not loaded. Please refresh the page.");
-            }
-          }, 100);
-        } else {
-          setError(response.error || "Failed to create Stripe payment");
-        }
-      }
-    } catch (err) {
-      setError(err.message || "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle PayPal return
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-    const paymentIdParam = urlParams.get("payment_id");
-
-    if (token && paymentIdParam && isOpen) {
-      const confirmPayPal = async () => {
-        try {
-          const response = await api.confirmPayPalPayment({
-            order_id: token,
-            payment_id: parseInt(paymentIdParam),
-          });
-
-          if (response.success) {
-            onSuccess(response);
-            onClose();
-            // Clean URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-          } else {
-            setError(response.error || "Payment confirmation failed");
-          }
-        } catch (err) {
-          setError(err.message || "An error occurred");
-        }
-      };
-
-      confirmPayPal();
-    }
-  }, [isOpen, onSuccess, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="payment-modal-overlay" onClick={onClose}>
+    <div className="payment-overlay" onClick={onClose}>
       <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="payment-modal-header">
-          <h2>Odaberi način plaćanja</h2>
-          <button className="payment-modal-close" onClick={onClose}>
-            ×
+        <h2>Odaberi način plaćanja</h2>
+
+        {error && <div className="payment-error">{error}</div>}
+        <div className="payment-amount">Iznos: {amount} €</div>
+
+        <div className="payment-methods">
+          {["cash", "paypal", "stripe"].map((m) => (
+            <label key={m} className="payment-method">
+              <input
+                type="radio"
+                checked={paymentMethod === m}
+                onChange={() => setPaymentMethod(m)}
+              />
+              {m === "cash" ? "Gotovina" : m === "paypal" ? "PayPal" : "Kartica"}
+            </label>
+          ))}
+        </div>
+
+        {paymentMethod === "stripe" && clientSecret && (
+          <form className="stripe-form" onSubmit={handleStripeSubmit}>
+            <div id="card-element" />
+            <button className="btn primary" disabled={loading}>
+              {loading ? "Plaćanje..." : "Plati karticom"}
+            </button>
+          </form>
+        )}
+
+        {paymentMethod !== "stripe" && (
+          <button className="btn primary" onClick={handlePayment} disabled={loading}>
+            {loading ? "Učitavanje..." : "Plati"}
           </button>
-        </div>
+        )}
 
-        <div className="payment-modal-body">
-          {error && <div className="payment-error">{error}</div>}
-
-          <div className="payment-amount">
-            <strong>Iznos: {amount} €</strong>
-          </div>
-
-          <div className="payment-methods">
-            <label className="payment-method-option">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cash"
-                checked={paymentMethod === "cash"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>Gotovina</span>
-            </label>
-
-            <label className="payment-method-option">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="paypal"
-                checked={paymentMethod === "paypal"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>PayPal</span>
-            </label>
-
-            <label className="payment-method-option">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="stripe"
-                checked={paymentMethod === "stripe"}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <span>Kartica</span>
-            </label>
-          </div>
-
-          {paymentMethod === "stripe" && (
-            <form className="stripe-payment-form" id="stripe-payment-form" onSubmit={handleStripeSubmit}>
-              <div id="card-element"></div>
-              <div id="card-errors" role="alert"></div>
-            </form>
-          )}
-
-          <div className="payment-modal-actions">
-            <button
-              className="payment-cancel-btn"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Odustani
-            </button>
-            <button
-              className="payment-submit-btn"
-              onClick={paymentMethod === "stripe" ? undefined : handlePayment}
-              type={paymentMethod === "stripe" ? "submit" : "button"}
-              form={paymentMethod === "stripe" ? "stripe-payment-form" : undefined}
-              disabled={loading}
-            >
-              {loading ? "Učitavanje..." : "Plati"}
-            </button>
-          </div>
-        </div>
+        <button className="btn secondary" onClick={onClose}>
+          Odustani
+        </button>
       </div>
     </div>
   );

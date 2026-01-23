@@ -180,3 +180,19 @@ LOGGING = {
 
 #da odmah ode na google login, a ne na potvrdu prvo
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
+if not STRIPE_SECRET_KEY:
+    print(" STRIPE_SECRET_KEY is missing")
+
+
+PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+PAYPAL_MODE = os.getenv("PAYPAL_MODE", "sandbox")
+
+if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
+    print(" PAYPAL KEYS ARE MISSING")
+else:
+    print(" PAYPAL MODE:", PAYPAL_MODE)
