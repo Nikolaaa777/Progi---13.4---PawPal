@@ -70,6 +70,9 @@ class RegisterSerializer(serializers.Serializer):
         idProfilne=None,
     )
 )
+            # Create walker registration event for notifications
+            from .models import WalkerRegistrationEvent
+            WalkerRegistrationEvent.objects.create(walker=user)
         return user
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()

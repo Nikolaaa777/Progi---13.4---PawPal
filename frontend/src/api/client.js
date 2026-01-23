@@ -63,6 +63,10 @@ export const api = {
 			is_walker,
 		}),
 	toggleNotifications: () => post("/api/notifications/toggle/", {}),
+	getNotificationEvents: (afterId) => {
+		const params = afterId ? `?after_id=${afterId}` : "";
+		return get(`/api/notifications/events${params}`);
+	},
 	googleLoginUrl: async () => {
 		await ensureCsrf();
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {

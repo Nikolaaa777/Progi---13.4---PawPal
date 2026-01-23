@@ -27,6 +27,7 @@ import ChatPage from "./pages/chat/ChatPage";
 import PaymentSuccess from "./pages/PayPalSuccess";
 import AdminPanel from "./pages/admin/AdminPanel";
 import PayPalSuccess from "./pages/PayPalSuccess";
+import Inbox from "./pages/Inbox";
 
 
 export default function App() {
@@ -71,6 +72,7 @@ export default function App() {
 			<Route path="/wallet/paypal-success" element={<PayPalSuccess />} />
       		<Route path="/paypal-success" element={<PayPalSuccess />} />
 			<Route path="/chat" element={<ChatPage user={user} setUser={setUser} />} />
+			<Route path="/inbox" element={<Inbox />} />
 		</Routes>
 	);
 }

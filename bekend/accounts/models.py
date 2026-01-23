@@ -58,9 +58,23 @@ class Setac(models.Model):
         return f"Setac<{self.idSetac}> {self.usernameSetac}"
 
 
+class WalkerRegistrationEvent(models.Model):
+    """Tracks when a new walker registers for notification purposes"""
+    walker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="registration_events")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Walker registration: {self.walker.email} at {self.created_at}"
+
+
 
 #AUTOMATSKA KREACIJA PROFILE-A ZA SVAKI NOVI USER
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+

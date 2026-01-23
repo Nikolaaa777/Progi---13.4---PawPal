@@ -15,7 +15,9 @@ from .models import Profile
 from .serializers import EnableWalkerSerializer
 from .domain_sync import ensure_setac_row, SetacPayload
 from .serializers import MeUpdateSerializer
-from .models import Setac
+from .models import Setac, WalkerRegistrationEvent
+from django.utils import timezone
+from datetime import timedelta
 
 
 
@@ -199,6 +201,11 @@ def enable_walker(request):
             Setac.objects.filter(idSetac=setac.idSetac).update(gradSetac=city)
         profile.is_walker = True
         profile.save(update_fields=["is_walker"])
+        
+        # Create walker registration event for notifications (only if not already exists)
+        from .models import WalkerRegistrationEvent
+        if not WalkerRegistrationEvent.objects.filter(walker=request.user).exists():
+            WalkerRegistrationEvent.objects.create(walker=request.user)
 
     return Response({
         "success": 1,
@@ -232,3 +239,57 @@ def available_walkers(request):
         })
 
     return Response(data)
+
+
+@extend_schema(
+    responses={200: OpenApiResponse(description='Walker registration events')},
+    parameters=[
+        OpenApiParameter(
+            name='after_id',
+            type=int,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description='Return events with ID greater than this'
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def notification_events(request):
+    """Poll endpoint for walker registration events"""
+    after_id = request.GET.get('after_id')
+    
+    # Get events newer than after_id
+    events_qs = WalkerRegistrationEvent.objects.all()
+    if after_id:
+        try:
+            after_id = int(after_id)
+            events_qs = events_qs.filter(id__gt=after_id)
+        except (ValueError, TypeError):
+            pass
+    
+    # Limit to recent events (last 7 days) to avoid huge responses
+    cutoff = timezone.now() - timedelta(days=7)
+    events_qs = events_qs.filter(created_at__gte=cutoff)
+    
+    # Order by ID ascending (oldest first)
+    events_qs = events_qs.order_by('id')
+    
+    events = []
+    for event in events_qs:
+        events.append({
+            'id': event.id,
+            'walker_id': event.walker.id,
+            'first_name': event.walker.first_name or '',
+            'last_name': event.walker.last_name or '',
+            'created_at': event.created_at.isoformat(),
+        })
+    
+    latest_id = int(after_id) if after_id else 0
+    if len(events) > 0:
+        latest_id = events[-1]['id']
+    
+    return Response({
+        'events': events,
+        'latest_id': latest_id
+    })

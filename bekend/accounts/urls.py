@@ -11,6 +11,7 @@ urlpatterns = [
     path("auth/me/", views.me, name="me"),
     path("auth/google/login-url/", google_login_url, name="google_login_url"),
     path("notifications/toggle/", toggle_notifications),
+    path("notifications/events/", views.notification_events, name="notification_events"),
     path("walker/enable/", views.enable_walker, name="enable_walker"),
     path("walkers/", views.available_walkers),
 ]

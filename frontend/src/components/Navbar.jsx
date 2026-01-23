@@ -54,35 +54,13 @@ export default function Navbar() {
     }
   }
 
-  async function handleBell() {
+  function handleBell() {
     if (!user) {
       alert("Prijavi se za obavijesti.");
       nav("/login");
       return;
     }
-
-    try {
-      if (!notifOn) {
-        const perm = await Notification.requestPermission();
-        if (perm !== "granted") {
-          alert("Obavijesti su onemogućene u pregledniku.");
-          return;
-        }
-      }
-
-      const data = await api.toggleNotifications();
-      const on = !!data.has_notifications_on;
-      setNotifOn(on);
-
-      if (on) {
-        alert("Obavijesti su uključene.");
-      } else {
-        alert("Obavijesti su isključene.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Došlo je do greške pri spremanju obavijesti.");
-    }
+    nav("/inbox");
   }
 
   return (
