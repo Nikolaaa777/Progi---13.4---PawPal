@@ -84,14 +84,12 @@ def get_or_create_conversation(request, user_id):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Try to find existing conversation (order doesn't matter)
     conversation = Conversation.objects.filter(
         (Q(participant1=request.user) & Q(participant2=other_user))
         | (Q(participant1=other_user) & Q(participant2=request.user))
     ).first()
 
     if not conversation:
-        # Create new conversation (ensure consistent ordering)
         if request.user.id < other_user.id:
             conversation = Conversation.objects.create(
                 participant1=request.user, participant2=other_user
@@ -123,7 +121,10 @@ def send_message(request):
     content = serializer.validated_data["content"]
 
     if not conversation_id:
-        return Response({"error": "conversation_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "conversation_id is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
         conversation = Conversation.objects.get(
@@ -139,7 +140,6 @@ def send_message(request):
         content=content,
     )
 
-    # Update conversation's updated_at timestamp
     conversation.save()
 
     serializer_response = MessageSerializer(message)
@@ -170,72 +170,66 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
     except Rezervacija.DoesNotExist:
         return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Check if reservation is confirmed
     if not reservation.potvrdeno:
         return Response(
             {"error": "Reservation must be confirmed before starting a conversation"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    current_user_email = request.user.email
+    current_user_email = (request.user.email or "").strip()
 
-    # Determine if current user is vlasnik or setac by email (case-insensitive)
-    try:
-        vlasnik = Vlasnik.objects.get(emailVlasnik__iexact=current_user_email)
-        is_vlasnik = True
-        other_id = reservation.idSetac
-    except Vlasnik.DoesNotExist:
-        try:
-            setac = Setac.objects.get(emailSetac__iexact=current_user_email)
-            is_vlasnik = False
-            other_id = reservation.idVlasnik
-        except Setac.DoesNotExist:
-            return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    # Normalize reservation ids in case they are FK objects
+    # Normalize reservation ids (works for int OR FK objects)
     res_vlasnik_id = getattr(reservation.idVlasnik, "idVlasnik", reservation.idVlasnik)
     res_setac_id = getattr(reservation.idSetac, "idSetac", reservation.idSetac)
 
-    # Verify user is part of this reservation
-    if is_vlasnik and res_vlasnik_id != vlasnik.idVlasnik:
-        return Response(
-            {"error": "You are not authorized to access this reservation"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
-    if (not is_vlasnik) and res_setac_id != setac.idSetac:
-        return Response(
-            {"error": "You are not authorized to access this reservation"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+    # Find domain profiles (case-insensitive)
+    vlasnik = Vlasnik.objects.filter(emailVlasnik__iexact=current_user_email).first()
+    setac = Setac.objects.filter(emailSetac__iexact=current_user_email).first()
 
-    # Get the other user's email
+    if not vlasnik and not setac:
+        return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    is_vlasnik = bool(vlasnik)
+
+    # Verify membership in reservation
     if is_vlasnik:
-        try:
-            other_setac = Setac.objects.get(idSetac=other_id)
-            other_user_email = other_setac.emailSetac
-        except Setac.DoesNotExist:
+        if res_vlasnik_id != vlasnik.idVlasnik:
+            return Response(
+                {"error": "You are not authorized to access this reservation"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        other_setac = Setac.objects.filter(idSetac=res_setac_id).first()
+        if not other_setac:
             return Response({"error": "Walker not found"}, status=status.HTTP_404_NOT_FOUND)
+        other_user_email = other_setac.emailSetac
     else:
-        try:
-            other_vlasnik = Vlasnik.objects.get(idVlasnik=other_id)
-            other_user_email = other_vlasnik.emailVlasnik
-        except Vlasnik.DoesNotExist:
+        # If reservation doesn't have walker assigned, walker can't access it
+        if res_setac_id in (None, "", 0, "0"):
+            return Response(
+                {"error": "Reservation has no walker assigned"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if res_setac_id != setac.idSetac:
+            return Response(
+                {"error": "You are not authorized to access this reservation"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        other_vlasnik = Vlasnik.objects.filter(idVlasnik=res_vlasnik_id).first()
+        if not other_vlasnik:
             return Response({"error": "Owner not found"}, status=status.HTTP_404_NOT_FOUND)
+        other_user_email = other_vlasnik.emailVlasnik
 
-    # Get the other user (Django auth User)
-    try:
-        other_user = User.objects.get(email=other_user_email)
-    except User.DoesNotExist:
+    # Find Django auth user for the other side (case-insensitive)
+    other_user = User.objects.filter(email__iexact=other_user_email).first()
+    if not other_user:
         return Response({"error": "Other user not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Get or create conversation
     conversation = Conversation.objects.filter(
         (Q(participant1=request.user) & Q(participant2=other_user))
         | (Q(participant1=other_user) & Q(participant2=request.user))
     ).first()
 
     if not conversation:
-        # Create new conversation (ensure consistent ordering)
         if request.user.id < other_user.id:
             conversation = Conversation.objects.create(
                 participant1=request.user, participant2=other_user
