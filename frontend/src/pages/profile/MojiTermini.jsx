@@ -68,15 +68,15 @@ const MojiTermini = () => {
 
 	const formatDate = (iso) => {
 		if (!iso) return "";
-		const [d] = String(iso).split("T"); // "YYYY-MM-DD"
+		const [d] = String(iso).split("T");
 		const [y, m, day] = d.split("-");
 		return `${day}. ${m}. ${y}.`;
 	};
 
 	const formatTime = (iso) => {
 		if (!iso) return "";
-		const [, t = ""] = String(iso).split("T"); // "HH:MM:SSZ..."
-		return t.slice(0, 5); // "HH:MM"
+		const [, t = ""] = String(iso).split("T");
+		return t.slice(0, 5);
 	};
 
 	const getStatusClass = (status) => {
@@ -116,17 +116,9 @@ const MojiTermini = () => {
 											{WALK_TYPE_LABELS[item.walkType] ?? "—"} · {item.town}
 										</div>
 
-										{item.type === "reservation" && (
-											<div className="Walk-Appointment-info">
-												Pas: {item.dog} · {item.duration}
-											</div>
-										)}
-
-										{item.type === "walk" && (
-											<div className="Walk-Appointment-info">
-												Trajanje: {item.duration} · {item.price} €
-											</div>
-										)}
+										<div className="Walk-Appointment-info">
+											Trajanje: {item.duration} · {item.price} €
+										</div>
 									</div>
 								</div>
 
@@ -139,44 +131,29 @@ const MojiTermini = () => {
 										{item.status}
 									</div>
 
-									{item.type === "walk" && (
-										<>
-											<button
-												className="editAppointment-btn"
-												onClick={() => handleEdit(item.id)}
-											>
-												<img src="/edit.png" alt="edit" />
-												Uredi
-											</button>
-
-											<button
-												className="deleteAppointment-btn"
-												onClick={() => handleDelete(item.id)}
-											>
-												<img src="/bin.png" alt="trash" />
-											</button>
-										</>
+									{item.type === "walk" && item.status === "Planiran" && (
+										<button
+											className="editAppointment-btn"
+											onClick={() => handleFinish(item.id)}
+										>
+											Završi
+										</button>
 									)}
 
-									{item.type === "reservation" && (
-										<>
-											{!item.done && (
-												<button
-													className="editAppointment-btn"
-													onClick={() => handleFinish(item.id)}
-												>
-													Završi
-												</button>
-											)}
+									<button
+										className="editAppointment-btn"
+										onClick={() => handleEdit(item.id)}
+									>
+										<img src="/edit.png" alt="edit" />
+										Uredi
+									</button>
 
-											<button
-												className="editAppointment-btn"
-												onClick={() => handleChat(item.id)}
-											>
-												💬 Chat
-											</button>
-										</>
-									)}
+									<button
+										className="deleteAppointment-btn"
+										onClick={() => handleDelete(item.id)}
+									>
+										<img src="/bin.png" alt="trash" />
+									</button>
 								</div>
 							</div>
 						))}
