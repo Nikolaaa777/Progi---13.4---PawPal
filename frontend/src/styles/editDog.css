@@ -1,0 +1,251 @@
+/* Page wrapper */
+.edit-dog-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+/* Modal */
+.edit-dog-modal {
+	width: 560px;
+	border-radius: 28px;
+	padding: 28px;
+	background: white;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	backdrop-filter: blur(18px);
+	box-shadow:
+		0 30px 70px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	position: relative;
+	animation: fadeUp 0.35s ease;
+}
+
+/* Back button */
+.edit-dog-back {
+	font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
+	position: absolute;
+	top: 18px;
+	left: 18px;
+	margin-bottom: 0;
+	z-index: 2;
+}
+
+.edit-dog-back:hover {
+	background: #2f55ff;
+	color: #ffffff;
+}
+/* Title */
+.edit-dog-title {
+	text-align: center;
+	color: #111;
+	font-size: 28px;
+	font-weight: 900;
+	margin: 6px 0 22px;
+	letter-spacing: -0.5px;
+}
+
+/* Top section */
+.edit-dog-top {
+	display: flex;
+	gap: 18px;
+	align-items: center;
+	margin-bottom: 18px;
+}
+
+/* Photo button */
+.edit-dog-photo {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	background: linear-gradient(145deg, #e0e7ff, #c7d2fe);
+	border: 2px dashed rgba(0, 0, 0, 0.15);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.edit-dog-photo:hover {
+	transform: scale(1.05);
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.edit-dog-photo-ico {
+	font-size: 30px;
+	color: #1e3a8a;
+}
+
+/* Top fields */
+.edit-dog-top-fields {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.edit-dog-label {
+	color: #1e293b;
+	font-weight: 700;
+	font-size: 14px;
+}
+
+.edit-dog-input {
+	margin-top: 6px;
+	width: 100%;
+	height: 46px;
+	border-radius: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: rgba(255, 255, 255, 0.75);
+	color: #111;
+	padding: 0 14px;
+	outline: none;
+	transition: border 0.2s, box-shadow 0.2s;
+}
+
+.edit-dog-input:focus {
+	border-color: #4f46e5;
+	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* Rows */
+.edit-dog-rows {
+	margin-top: 14px;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.edit-dog-row {
+	display: flex;
+	gap: 14px;
+	padding: 16px 0;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.edit-dog-row-ico {
+	width: 36px;
+	height: 36px;
+	border-radius: 14px;
+	background: #e0e7ff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #1e3a8a;
+}
+
+.edit-dog-row-body {
+	flex: 1;
+}
+
+.edit-dog-row-title {
+	color: #111;
+	font-weight: 800;
+}
+
+.edit-dog-row-input {
+	margin-top: 6px;
+	width: 100%;
+	border: 0;
+	background: transparent;
+	color: #334155;
+	outline: none;
+	font-size: 15px;
+}
+
+/* Actions */
+.edit-dog-actions {
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+	margin-top: 22px;
+}
+
+.edit-dog-save,
+.edit-dog-cancel {
+	height: 46px;
+	padding: 0 22px;
+	border-radius: 16px;
+	border: 0;
+	cursor: pointer;
+	font-weight: 800;
+	font-size: 15px;
+	transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.edit-dog-save {
+	background: linear-gradient(135deg, #4f46e5, #3b82f6);
+	color: #fff;
+	box-shadow: 0 12px 26px rgba(79, 70, 229, 0.35);
+}
+
+.edit-dog-save:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 36px rgba(79, 70, 229, 0.45);
+}
+
+.edit-dog-cancel {
+	background: rgba(0, 0, 0, 0.08);
+	color: #111;
+}
+
+.edit-dog-cancel:hover {
+	background: rgba(0, 0, 0, 0.14);
+}
+
+.edit-dog-range {
+	width: 100%;
+	margin-top: 10px;
+	appearance: none;
+	height: 6px;
+	border-radius: 999px;
+	background: linear-gradient(90deg, #4f46e5, #3b82f6);
+	outline: none;
+	cursor: pointer;
+}
+
+.edit-dog-range::-webkit-slider-thumb {
+	appearance: none;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	border: 3px solid #4f46e5;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.edit-dog-range::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	border: 3px solid #4f46e5;
+}
+
+.edit-dog-range-value {
+	margin-left: 8px;
+	font-weight: 900;
+	color: #4f46e5;
+}
+
+
+/* Animation */
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

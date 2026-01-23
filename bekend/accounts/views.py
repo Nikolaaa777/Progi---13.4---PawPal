@@ -14,6 +14,11 @@ from django.http import JsonResponse
 from .models import Profile 
 from .serializers import EnableWalkerSerializer
 from .domain_sync import ensure_setac_row, SetacPayload
+from .serializers import MeUpdateSerializer
+from .models import Setac, WalkerRegistrationEvent
+from django.utils import timezone
+from datetime import timedelta
+
 
 
 
@@ -98,11 +103,33 @@ def logout_view(request):
 
 @csrf_exempt
 @extend_schema(responses={200: OpenApiResponse(description='Current user info')})
-@api_view(["GET"])
+@api_view(["GET", "PATCH"])
 @permission_classes([IsAuthenticated])
 def me(request):
     user = request.user
-    profile, _ = Profile.objects.get_or_create(user=user)
+    profile, _ = Profile.objects.get_or_create(user=user) 
+    if request.method == "PATCH":
+        ser = MeUpdateSerializer(data=request.data, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.update(user, ser.validated_data)
+        city = request.data.get("city")
+        if city is not None:
+            city = (city or "").strip() or None
+            profile.city = city
+            profile.save(update_fields=["city"])
+
+            if profile.is_walker and city:
+                Setac.objects.filter(emailSetac__iexact=user.email).update(gradSetac=city)
+
+        profile, _ = Profile.objects.get_or_create(user=user)
+
+    if user.is_staff or user.is_superuser:
+        role = "ADMIN"
+    elif profile.is_walker:
+        role = "WALKER"
+    else:
+        role = "OWNER"
+
     return Response({
         "id": user.id,
         "email": user.email,
@@ -110,6 +137,9 @@ def me(request):
         "last_name": user.last_name,
         "is_walker": profile.is_walker,
         "has_notifications_on": profile.has_notifications_on,
+        "role": role,
+        "phone": request.data.get("phone", ""),
+        "city": profile.city,
     }, status=status.HTTP_200_OK)
 
 @extend_schema(
@@ -119,8 +149,7 @@ def me(request):
 @permission_classes([AllowAny])
 def google_login_url(request):
     # naziv rute "google_login" dolazi iz allauth-a
-    url = request.build_absolute_uri(reverse("google_login"))
-    return Response({"url": url})
+    return JsonResponse({"url": reverse("google_login")})
 
 
 @extend_schema(
@@ -152,7 +181,10 @@ def enable_walker(request):
 
     with transaction.atomic():
         profile, _ = Profile.objects.get_or_create(user=request.user)
-        setac = ensure_setac_row(
+        city = (request.data.get("city") or "").strip() or None
+        if not city:
+            city = (profile.city or "").strip() or None
+        setac = ensure_setac_row(   
             request.user,
             payload=SetacPayload(
             email=request.user.email,
@@ -162,10 +194,18 @@ def enable_walker(request):
             phone=phone,
             idClanarine=None,
             idProfilne=None,
+            city = city,
             ),
         )
+        if city:
+            Setac.objects.filter(idSetac=setac.idSetac).update(gradSetac=city)
         profile.is_walker = True
         profile.save(update_fields=["is_walker"])
+        
+        # Create walker registration event for notifications (only if not already exists)
+        from .models import WalkerRegistrationEvent
+        if not WalkerRegistrationEvent.objects.filter(walker=request.user).exists():
+            WalkerRegistrationEvent.objects.create(walker=request.user)
 
     return Response({
         "success": 1,
@@ -174,3 +214,82 @@ def enable_walker(request):
         "idSetac": setac.idSetac,
         "usernameSetac": setac.usernameSetac,
     }, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([CsrfExemptSessionAuthentication])
+@permission_classes([IsAuthenticated])
+def available_walkers(request):
+    qs = Setac.objects.all()
+
+    # FILTER: ocjena
+    min_rating = request.GET.get("rating")
+    if min_rating:
+        qs = qs.filter(avgOcjena__gte=min_rating)
+
+    data = []
+    for s in qs:
+        data.append({
+            "id": s.idSetac,
+            "name": f"{s.imeSetac or ''} {s.prezimeSetac or ''}".strip(),
+            "rating": float(s.avgOcjena) if s.avgOcjena else None,
+
+            "city": s.gradSetac,
+            "price": 10,
+        })
+
+    return Response(data)
+
+
+@extend_schema(
+    responses={200: OpenApiResponse(description='Walker registration events')},
+    parameters=[
+        OpenApiParameter(
+            name='after_id',
+            type=int,
+            location=OpenApiParameter.QUERY,
+            required=False,
+            description='Return events with ID greater than this'
+        ),
+    ]
+)
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def notification_events(request):
+    """Poll endpoint for walker registration events"""
+    after_id = request.GET.get('after_id')
+    
+    # Get events newer than after_id
+    events_qs = WalkerRegistrationEvent.objects.all()
+    if after_id:
+        try:
+            after_id = int(after_id)
+            events_qs = events_qs.filter(id__gt=after_id)
+        except (ValueError, TypeError):
+            pass
+    
+    # Limit to recent events (last 7 days) to avoid huge responses
+    cutoff = timezone.now() - timedelta(days=7)
+    events_qs = events_qs.filter(created_at__gte=cutoff)
+    
+    # Order by ID ascending (oldest first)
+    events_qs = events_qs.order_by('id')
+    
+    events = []
+    for event in events_qs:
+        events.append({
+            'id': event.id,
+            'walker_id': event.walker.id,
+            'first_name': event.walker.first_name or '',
+            'last_name': event.walker.last_name or '',
+            'created_at': event.created_at.isoformat(),
+        })
+    
+    latest_id = int(after_id) if after_id else 0
+    if len(events) > 0:
+        latest_id = events[-1]['id']
+    
+    return Response({
+        'events': events,
+        'latest_id': latest_id
+    })

@@ -1,0 +1,174 @@
+
+/* ===== ROOT ===== */
+.appComments {
+	display: flex;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #eef2ff, #c7d2fe);
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebarComments {
+	width: 260px;
+	padding: 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+	background: rgba(255, 255, 255, 0.35);
+	backdrop-filter: blur(18px);
+	border-right: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+}
+
+/* Back */
+.backComments {
+	font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
+}
+
+.backComments:hover {
+	background: #2f55ff;
+	color: #ffffff;
+}
+
+
+/* Profile */
+.profileComments {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding-top: 10px;
+}
+
+.avatarComments {
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.profileComments strong {
+	font-size: 15px;
+	color: #111;
+}
+
+/* Menu */
+.menuComments {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.menuComments a {
+	text-decoration: none;
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-weight: 700;
+	color: #334155;
+	transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.menuComments a:hover {
+	background: rgba(0, 0, 0, 0.06);
+	transform: translateX(2px);
+}
+
+.menuComments a.active {
+	background: green;
+	color: #fff;
+	box-shadow: 0 10px 22px rgba(79, 70, 229, 0.35);
+}
+
+/* ===== CONTENT ===== */
+.contentComments {
+	flex: 1;
+	padding: 36px 44px;
+	display: flex;
+	flex-direction: column;
+	gap: 26px;
+}
+
+/* Title */
+.titleComments {
+	font-size: 28px;
+	font-weight: 900;
+	color: #111;
+	margin: 0;
+}
+
+/* ===== COMMENTS LIST ===== */
+.commentsComments {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+/* Single comment */
+.commentComments {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 18px;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.6);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.commentComments:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.commentComments span {
+	font-size: 15px;
+	color: #1e293b;
+	font-weight: 600;
+}
+
+/* Delete button */
+.deleteComments {
+	width: 36px;
+	height: 36px;
+	border-radius: 12px;
+	border: 0;
+	background: rgba(239, 68, 68, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.2s;
+}
+
+.deleteComments:hover {
+	background: rgba(239, 68, 68, 0.2);
+	transform: scale(1.05);
+}
+
+.deleteComments img {
+	width: 16px;
+	height: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+	.sidebarComments {
+		width: 210px;
+	}
+
+	.contentComments {
+		padding: 28px;
+	}
+}

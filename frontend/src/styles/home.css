@@ -57,7 +57,7 @@ body {
 	object-fit: contain;
 	border-radius: 60px;
 	background-color: #0b79f7;
-	border: 2px solid #000;
+	border: 2px solid white;
 	padding: 2px;
 }
 .brand span {
@@ -90,12 +90,12 @@ body {
 }
 
 .icon-btn {
-	width: 32px;
-	height: 32px;
+	width: 36px;
+	height: 36px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: none;
+	border: 1.5px solid #000;
 	border-radius: 50%;
 	background: transparent;
 	padding: 0;
@@ -104,6 +104,7 @@ body {
 .icon-btn:hover {
 	background: rgba(0, 0, 0, 0.06);
 }
+
 .bell-icon svg {
 	width: 18px;
 	height: 18px;
@@ -126,11 +127,20 @@ body {
 	right: -8px;
 	height: 14px;
 }
+
+.chat-icon {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	display: block;
+}
+
 .user-icon {
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
 	display: block;
+	padding-top: 5px;
 }
 
 .user-menu {
@@ -232,7 +242,9 @@ body {
 	color: #fff;
 	text-decoration: none;
 	font-weight: 600;
-	transition: background 0.25s ease, transform 0.2s ease;
+	transition:
+		background 0.25s ease,
+		transform 0.2s ease;
 }
 .btn-primary:hover {
 	opacity: 0.9;
@@ -251,7 +263,9 @@ body {
 	text-decoration: none;
 	color: #111;
 	font-weight: 600;
-	transition: background 0.25s ease, transform 0.2s ease;
+	transition:
+		background 0.25s ease,
+		transform 0.2s ease;
 }
 .btn-ghost:hover {
 	opacity: 0.9;

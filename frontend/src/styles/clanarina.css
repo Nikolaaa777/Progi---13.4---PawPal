@@ -1,0 +1,121 @@
+/* ---------- Page ---------- */
+
+.clanarina-content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ---------- Card ---------- */
+
+.clanarina-card {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Title ---------- */
+
+.clanarina-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* ---------- Status ---------- */
+
+.clanarina-status {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.clanarina-status div {
+  background: #f8f9ff;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.clanarina-status span {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.clanarina-status strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.clanarina-status .active {
+  color: #2e7d32;
+}
+
+/* ---------- Form ---------- */
+
+.clanarina-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clanarina-form h2 {
+  margin-bottom: 16px;
+}
+
+.clanarina-form input {
+    width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.clanarina-card-row {
+    width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+/* ---------- Actions ---------- */
+
+.clanarina-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  align-items: center;
+}
+
+.clanarina-pay-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #2f55ff;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.clanarina-pay-btn:hover {
+  background: #1f3fff;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+  .clanarina-status {
+    grid-template-columns: 1fr;
+  }
+
+  .clanarina-actions {
+    flex-direction: column;
+  }
+}

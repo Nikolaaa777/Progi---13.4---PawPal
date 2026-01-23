@@ -1,0 +1,281 @@
+
+body {
+	background-color: #f4f6fb;
+	margin: 0;
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		sans-serif;
+}
+
+.appRezervacije {
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+}
+
+.Walk-Reservations {
+	width: 97%;
+	height: 87%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	background: transparent;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 0;
+	overflow: hidden;
+}
+
+/* Scrollable inner list */
+.Walk-Reservations__inner {
+	max-height: calc(100vh - 100px);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 10px;
+	box-sizing: border-box;
+}
+
+/* Appointment card */
+.Walk-Reservation-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #ffffff;
+	border-radius: 14px;
+	padding: 20px 24px;
+	border: 1px solid rgba(15, 23, 42, 0.06);
+	transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.Walk-Reservation-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+}
+
+/* Left side */
+.Walk-Reservation-left {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+/* Calendar icon */
+.Walk-calendar {
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	background: rgba(59, 108, 255, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+}
+
+.Walk-calendar img {
+	width: 20px;
+	height: 20px;
+}
+
+/* Text */
+.Walk-Reservation-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.Walk-Reservation-date {
+	font-size: 20px;
+	font-weight: 700;
+	color: #0f172a;
+}
+
+.Walk-Reservation-info {
+	font-size: 16px;
+	opacity: 0.75;
+	margin-top: 4px;
+}
+
+.Walk-location {
+	opacity: 0.75;
+}
+
+/* Right side icons */
+.iconsWalk {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex: 0 0 auto;
+}
+
+.payReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: black;
+	transition: background 0.2s;
+}
+
+.payReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.chatReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+}
+
+.chatReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.chatReservation-btn img {
+	width: 16px;
+	height: 16px;
+}
+
+.finishReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #2563eb;
+	transition: background 0.2s;
+}
+
+.finishReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.reviewReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #2563eb;
+	transition: background 0.2s;
+}
+
+.reviewReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.payReservation-btn img {
+	width: 16px;
+	height: 16px;
+}
+
+/* Status badge */
+.Walk-status-reservation {
+	padding: 8px 14px;
+	border-radius: 999px;
+	font-weight: 700;
+	font-size: 14px;
+	border: none;
+	white-space: nowrap;
+	color: #ffffff;
+}
+
+.Walk-status-reservation.zavrsena {
+	background: #10b981;
+}
+
+.Walk-status-reservation.aktivna {
+	background: #3b82f6;
+}
+
+.Walk-status-reservation.otkazana {
+	background: #ef4444;
+}
+
+.Walk-status-reservation.planirana {
+	background: #f59e0b;
+}
+
+/* Edit button */
+.editReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #2563eb;
+}
+
+.editReservation-btn img {
+	width: 16px;
+	height: 16px;
+}
+
+.editReservation-btn.zavrsena {
+	display: none;
+}
+
+/* Delete button */
+.deleteReservation-btn {
+	background: #fee2e2;
+	border: none;
+	border-radius: 14px;
+	padding: 10px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.deleteReservation-btn img {
+	width: 16px;
+	height: 16px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+	.Walk-Reservation-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.iconsWalk {
+		justify-content: flex-start;
+		flex-wrap: wrap;
+	}
+
+	.Walk-Reservations__inner {
+		max-height: none;
+		overflow: visible;
+		padding-right: 0;
+	}
+}

@@ -1,0 +1,249 @@
+/* =======================
+   Layout
+======================= */
+.availableWalkers {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  padding: 32px;
+  min-height: 100vh;
+  background: #f6f7f9;
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* =======================
+   Filters Card
+======================= */
+.availableWalkers__filters {
+  position: sticky;
+  top: 32px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  background: linear-gradient(180deg, #ffffff, #f9faff);
+  padding: 24px;
+  border-radius: 22px;
+
+  border: 1px solid #eef0f6;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  height: fit-content;
+}
+
+/* =======================
+   Back Arrow
+======================= */
+.availableWalkers__back {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+
+  color: #2f55ff;
+  background: #eef2ff;
+  transition: all 0.2s ease;
+}
+
+.availableWalkers__back:hover {
+  background: #2f55ff;
+  color: #ffffff;
+}
+
+.availableWalkers__back:active {
+  transform: scale(0.95);
+}
+
+/* =======================
+   Filter Text
+======================= */
+.availableWalkers__filters h3 {
+  text-align: center;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.availableWalkers__filters label {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.availableWalkers__filters select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 14px;
+
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.availableWalkers__filters select:hover {
+  border-color: #c7d2fe;
+}
+
+.availableWalkers__filters select:focus {
+  outline: none;
+  border-color: #5b8cff;
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.15);
+}
+
+/* =======================
+   Walkers List (VERTICAL)
+======================= */
+.availableWalkers__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.availableWalkers__title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* =======================
+   Walker Card (LIST)
+======================= */
+.availableWalkers__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 20px;
+
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.availableWalkers__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+}
+
+/* =======================
+   Card Content
+======================= */
+.availableWalkers__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.availableWalkers__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffb347, #ffcc33);
+  flex-shrink: 0;
+}
+
+.availableWalkers__name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.availableWalkers__info {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* =======================
+   Card Actions
+======================= */
+.availableWalkers__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.availableWalkers__rating {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff6e5;
+  color: #ff9800;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =======================
+   Button
+======================= */
+.availableWalkers__btn {
+  padding: 10px 18px;
+  border-radius: 14px;
+
+  background: #5b8cff;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.availableWalkers__btn:hover {
+  background: #4a7bff;
+}
+
+.availableWalkers__btn:active {
+  transform: scale(0.96);
+}
+
+/* =======================
+   Empty State
+======================= */
+.availableWalkers__empty {
+  margin-top: 24px;
+  font-size: 15px;
+  color: #777;
+  text-align: center;
+}
+
+/* =======================
+   Responsive
+======================= */
+@media (max-width: 900px) {
+  .availableWalkers {
+    grid-template-columns: 1fr;
+  }
+
+  .availableWalkers__filters {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .availableWalkers__card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .availableWalkers__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

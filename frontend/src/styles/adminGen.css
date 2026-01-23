@@ -1,0 +1,234 @@
+/* =========================
+   Root layout
+========================= */
+.appAdmin {
+	display: flex;
+	min-height: 100vh;
+	background: linear-gradient(135deg, #eef2ff, #c7d2fe);
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* =========================
+   Sidebar
+========================= */
+.sidebarAdmin {
+	width: 260px;
+	background: rgba(255, 255, 255, 0.35);
+	backdrop-filter: blur(18px);
+	border-right: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 24px;
+	padding: 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+
+/* Back button */
+.backAdmin {
+	font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
+}
+
+.backAdmin:hover {
+	background: #2f55ff;
+	color: #ffffff;
+}
+
+/* Profile */
+.profileAdmin {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding-top: 10px;
+}
+
+.avatarAdmin {
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.profileAdmin strong {
+	font-size: 15px;
+	color: #111;
+}
+
+/* =========================
+   Menu
+========================= */
+.menuAdmin {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.menuAdmin a {
+	text-decoration: none;
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-weight: 700;
+	color: #334155;
+	transition: background 0.2s, color 0.2s;
+}
+
+.menuAdmin a:hover {
+	background: rgba(0, 0, 0, 0.06);
+}
+
+.menuAdmin a.active {
+	background: green;
+	color: #fff;
+	box-shadow: 0 10px 22px rgba(79, 70, 229, 0.35);
+}
+
+/* =========================
+   Main content
+========================= */
+.contentAdmin {
+	flex: 1;
+	padding: 36px 44px;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+
+/* Header */
+.headerAdmin h1 {
+	font-size: 28px;
+	font-weight: 900;
+	color: #111;
+	margin: 0;
+}
+
+.headerAdmin h2 {
+	font-size: 13px;
+	letter-spacing: 1.2px;
+	color: #64748b;
+	margin-top: 4px;
+}
+
+/* Center helpers */
+.centerAdmin {
+	display: flex;
+	justify-content: center;
+}
+
+/* =========================
+   Cards
+========================= */
+.cardAdmin {
+	background: rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(18px);
+	border-radius: 18px;
+	padding: 22px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.cardAdmin h2 {
+    text-align: center;
+	margin: 0;
+	font-size: 16px;
+	font-weight: 800;
+	color: #1e293b;
+}
+
+/* =========================
+   Inputs & Textarea
+========================= */
+.inputAdmin,
+.textareaAdmin {
+	width: 100%;
+	padding: 14px 16px;
+	border-radius: 14px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	background: rgba(255, 255, 255, 0.75);
+	backdrop-filter: blur(10px);
+	font-size: 15px;
+	color: #111;
+	font-weight: 500;
+	outline: none;
+	transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s;
+}
+
+.textareaAdmin {
+	resize: vertical;
+	min-height: 120px;
+	line-height: 1.5;
+}
+
+.inputAdmin:focus,
+.textareaAdmin:focus {
+	border-color: #4f46e5;
+	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+	background: #ffffff;
+}
+
+.inputAdmin::placeholder,
+.textareaAdmin::placeholder {
+	color: #94a3b8;
+	font-weight: 500;
+}
+
+/* =========================
+   Buttons
+========================= */
+.subscription-btn,
+.notification-btn {
+	height: 46px;
+	padding: 0 26px;
+	border-radius: 16px;
+	border: none;
+	cursor: pointer;
+	font-weight: 800;
+	font-size: 15px;
+	transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+/* Subscription button */
+.subscription-btn {
+	background: linear-gradient(135deg, #4f46e5, #6366f1);
+	color: #fff;
+	box-shadow: 0 12px 26px rgba(79, 70, 229, 0.35);
+}
+
+.subscription-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 36px rgba(79, 70, 229, 0.45);
+}
+
+/* Notification button */
+.notification-btn {
+	background: linear-gradient(135deg, #16a34a, #22c55e);
+	color: #fff;
+	box-shadow: 0 12px 26px rgba(22, 163, 74, 0.35);
+}
+
+.notification-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 18px 36px rgba(22, 163, 74, 0.45);
+}
+
+
+@media (max-width: 900px) {
+	.sidebarAdmin {
+		width: 210px;
+	}
+
+	.contentAdmin {
+		padding: 28px;
+	}
+}

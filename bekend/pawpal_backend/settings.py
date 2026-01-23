@@ -7,16 +7,9 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = config("SECRET_KEY")
-DEBUG = config("DEBUG", cast = bool)
-#ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "progi-13-4-pawpal.onrender.com",
-    "pawpal-front.onrender.com",
-]
-
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-in-production")
+DEBUG = config("DEBUG", default=True, cast=bool)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0,backend").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -38,10 +31,16 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
-     # - moje app
+    # - moje app
     "accounts.apps.AccountsConfig",
     "dogs",
     "walks",
+    "reservations",
+    "payments",
+    "chat",
+    "admin_api",
+    "membership",
+    "reviews",
 ]
 
 MIDDLEWARE = [
@@ -49,7 +48,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
 
@@ -85,13 +83,16 @@ DATABASES = {
         "NAME": "pawpal_db",
         "USER": "pawpal_user",
         "PASSWORD": "jaka_lozinka",
-        "HOST": "127.0.0.1",
+        "HOST": "db",  # Changed to 'db' for Docker Compose service name
         "PORT": "5432",
         "OPTIONS": {"options": "-c search_path=pawpal,public"},
     }
 }
 
-DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
+# Override with DATABASE_URL if provided
+database_url = config("DATABASE_URL", default="")
+if database_url:
+    DATABASES["default"] = dj_database_url.parse(database_url)
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -108,20 +109,11 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = [
-    "https://pawpal-front.onrender.com",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
-    "http://127.0.0.1:8000", "https://progi-13-4-pawpal.onrender.com", "https://pawpal-front.onrender.com",]
-SESSION_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+    "http://127.0.0.1:8000"]
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -188,3 +180,19 @@ LOGGING = {
 
 #da odmah ode na google login, a ne na potvrdu prvo
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
+if not STRIPE_SECRET_KEY:
+    print(" STRIPE_SECRET_KEY is missing")
+
+
+PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+PAYPAL_MODE = os.getenv("PAYPAL_MODE", "sandbox")
+
+if not PAYPAL_CLIENT_ID or not PAYPAL_CLIENT_SECRET:
+    print(" PAYPAL KEYS ARE MISSING")
+else:
+    print(" PAYPAL MODE:", PAYPAL_MODE)

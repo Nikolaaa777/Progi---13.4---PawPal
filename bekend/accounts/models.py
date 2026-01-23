@@ -8,6 +8,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     is_walker = models.BooleanField(default=False)  # True=šetač pasa, False=vlasnik
     has_notifications_on = models.BooleanField(default=False)  # da li je pretplaćen na obavijesti
+    city = models.CharField(max_length=20, blank=True, default="")
 
     def __str__(self):
         return f"{self.user.email} | walker={self.is_walker} | notif={self.has_notifications_on}"
@@ -40,6 +41,8 @@ class Setac(models.Model):
     prezimeSetac = models.CharField(max_length=20, null=True, blank=True, db_column="prezimeSetac")
     telefonSetac = models.CharField(max_length=15, null=True, blank=True, db_column="telefonSetac")
 
+    gradSetac = models.CharField(max_length=20, null=True, blank=True, db_column="gradSetac")
+
     usernameSetac = models.CharField(max_length=20, db_column="usernameSetac")
     emailSetac = models.CharField(max_length=50, db_column="emailSetac")
 
@@ -55,9 +58,23 @@ class Setac(models.Model):
         return f"Setac<{self.idSetac}> {self.usernameSetac}"
 
 
+class WalkerRegistrationEvent(models.Model):
+    """Tracks when a new walker registers for notification purposes"""
+    walker = models.ForeignKey(User, on_delete=models.CASCADE, related_name="registration_events")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Walker registration: {self.walker.email} at {self.created_at}"
+
+
 
 #AUTOMATSKA KREACIJA PROFILE-A ZA SVAKI NOVI USER
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+

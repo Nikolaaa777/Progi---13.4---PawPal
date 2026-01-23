@@ -1,0 +1,246 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+/* App layout */
+.chat-app {
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* Sidebar */
+.chat-sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #111827;
+}
+
+.back {
+  font-size: 22px;
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	color: #2f55ff;
+	background: #eef2ff;
+	transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back:hover {
+  background: #2f55ff;
+	color: #ffffff;
+}
+
+/* Chat list */
+.chat-list {
+  list-style: none;
+  margin-top: 10px;
+}
+
+.chat-list li {
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.chat-list li:hover {
+  background: #f1f5ff;
+  transform: translateX(2px);
+}
+
+.chat-list li.active {
+  background: linear-gradient(135deg, #e8efff, #dbeafe);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* Chat content */
+.chat-content {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Messages */
+.messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Scrollbar */
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: #dbeafe;
+  border-radius: 10px;
+}
+
+/* Message bubbles */
+.message {
+  border-radius: 16px;
+  padding: 14px 16px;
+  max-width: 60%;
+  font-size: 15px;
+  line-height: 1.4;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.left {
+  align-self: flex-start;
+  background: #f1f5f9;
+  color: #1f2937;
+  border-bottom-left-radius: 6px;
+}
+
+.message.right {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  border-bottom-right-radius: 6px;
+}
+
+/* Input */
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.chat-input input {
+  flex: 1;
+  height: 48px;
+  border-radius: 14px;
+  border: none;
+  background: #f1f5f9;
+  padding: 0 16px;
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.chat-input input:focus {
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+
+.chat-input input::placeholder {
+  color: #9ca3af;
+}
+
+.send-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.send-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.send-btn:active {
+  transform: scale(0.96);
+}
+
+.send-btn img {
+  height: 20px ;
+  width: 20px;
+}
+
+/* Unread badge */
+.unread-badge {
+  display: inline-block;
+  background: #ef4444;
+  color: white;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Chat header */
+.chat-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Message content and time */
+.message-content {
+  margin-bottom: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 4px;
+}

@@ -1,0 +1,255 @@
+/* =========================
+   Base
+========================= */
+body {
+  background-color: #f4f6fb;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  font-size: 18px;
+  color: #475569;
+}
+
+/* =========================
+   Page layout
+========================= */
+.Walk-Appointments-content {
+  width: 80%;
+  margin: 0 auto;
+  padding-top: 32px;
+}
+
+.Walk-Appointments-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #0f172a;
+}
+
+/* =========================
+   Appointments wrapper
+========================= */
+.Walk-Appointments {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Walk-Appointments__inner {
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+/* =========================
+   Appointment card
+========================= */
+.Walk-Appointment-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.Walk-Appointment-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+}
+
+.Walk-Appointment-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* =========================
+   Calendar icon
+========================= */
+.Walk-calendar {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(59, 108, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.Walk-calendar img {
+  width: 20px;
+  height: 20px;
+}
+
+/* =========================
+   Appointment text
+========================= */
+.Walk-Appointment-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.Walk-Appointment-date {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.Walk-Appointment-info {
+  font-size: 16px;
+  color: #475569;
+  opacity: 0.75;
+}
+
+/* =========================
+   Right side icons
+========================= */
+.iconsWalk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* =========================
+   Status pill
+========================= */
+.Walk-status-Appointment {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #ffffff;
+}
+
+.Walk-status-Appointment.planiran {
+  background: #f59e0b;
+}
+
+.Walk-status-Appointment.zavrsen {
+  background: #10b981;
+}
+
+.Walk-status-Appointment.otkazan {
+  background: #ef4444;
+}
+
+/* =========================
+   Edit / Done button
+========================= */
+.editAppointment-btn {
+  background: #eef2ff;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2563eb;
+  transition: background 0.2s ease;
+}
+
+.editAppointment-btn:hover {
+  background: #e0e7ff;
+}
+
+.editAppointment-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================
+   Delete button
+========================= */
+.deleteAppointment-btn {
+  background: #fee2e2;
+  border: none;
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.deleteAppointment-btn:hover {
+  background: #fecaca;
+}
+
+.deleteAppointment-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================
+   Add appointment button
+========================= */
+.addAppointment-btn {
+  align-self: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 190px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  color: #0f172a;
+}
+
+.addAppointment-btn:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.09);
+}
+
+.addAppointment-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* =========================
+   Mobile
+========================= */
+@media (max-width: 768px) {
+  .Walk-Appointments-content {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .Walk-Appointment-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .iconsWalk {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .Walk-Appointments__inner {
+    max-height: none;
+    overflow: visible;
+  }
+}

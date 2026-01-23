@@ -16,10 +16,9 @@ CREATE TABLE public."Admin" (
 --
 
 CREATE TABLE public."Clanarina" (
-    "idClanarine" bigint NOT NULL,
-    "idSetaca" bigint NOT NULL,
-    iznos bigint,
-    "datClanarine" date
+    id SERIAL PRIMARY KEY,
+    iznos NUMERIC(8,2) NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 
@@ -87,6 +86,8 @@ CREATE TABLE public."Rezervacija" (
     "idVlasnik" bigint NOT NULL,
     "idSetac" bigint NOT NULL,
     "idPsa" bigint NOT NULL,
+    "gradSetnje" character varying(15),
+    "idSetnje" bigint NOT NULL,
     potvrdeno boolean,
     odradena boolean
 );
@@ -105,7 +106,6 @@ CREATE TABLE public."Setac" (
     "usernameSetac" character varying(20) NOT NULL,
     "emailSetac" character varying(50) NOT NULL,
     "datRegSetac" date,
-    "idClanarine" bigint,
     "idProfilne" bigint
 );
 
@@ -120,7 +120,8 @@ CREATE TABLE public."Setnja" (
     "idSetac" bigint NOT NULL,
     "tipSetnje" bigint,
     "cijenaSetnje" bigint,
-    "trajanjeSetnje" interval
+    "trajanjeSetnje" interval,
+    "gradSetnje" character varying(15)
 );
 
 
@@ -138,14 +139,6 @@ CREATE TABLE public."Vlasnik" (
 );
 
 
-
-
---
--- Name: Clanarina Clanarina_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE  public."Clanarina"
-    ADD CONSTRAINT "Clanarina_pkey" PRIMARY KEY ("idClanarine", "idSetaca");
 
 
 --
@@ -212,6 +205,8 @@ ALTER TABLE public."Setac" ADD CONSTRAINT setac_phone_unique UNIQUE ("telefonSet
 
 ALTER TABLE public."Setnja"
   ADD CONSTRAINT setnja_setac_fk FOREIGN KEY ("idSetac") REFERENCES public."Setac" ("idSetac");
+
+
 
 ALTER TABLE  public."Vlasnik"
     ADD CONSTRAINT "Vlasnik_email_unique" UNIQUE ("emailVlasnik");
