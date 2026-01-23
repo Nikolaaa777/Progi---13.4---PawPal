@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/walkers.css";
 import { api } from "../api/client";
@@ -18,42 +18,48 @@ export default function AvailableWalkers() {
   useEffect(() => {
     let cancelled = false;
 
-    setLoading(true);
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await api.availableWalkers();
 
-    api.availableWalkers()
-      .then((data) => {
         if (cancelled) return;
+
+        // očekujemo array
         setWalkers(Array.isArray(data) ? data : []);
-        console.log("walkers from API:", data);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch (e) {
         if (cancelled) return;
         setWalkers([]);
-        setLoading(false);
-      });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  // FILTERI (frontend)
   const norm = (s) => (s || "").trim().toLowerCase();
 
-  const filteredWalkers = walkers.filter(
-    (w) =>
-      (!filters.city || norm(w.city) === norm(filters.city)) &&
-      (!filters.rating || (w.rating ?? 0) >= Number(filters.rating)),
-  );
+  const filteredWalkers = useMemo(() => {
+    const minRating = filters.rating ? Number(filters.rating) : null;
 
-  const cities = Array.from(
-    new Set(
-      walkers
-        .map((w) => (w.city || "").trim())
-        .filter(Boolean),
-    ),
-  ).sort((a, b) => a.localeCompare(b));
+    return walkers.filter((w) => {
+      const cityOk = !filters.city || norm(w.city) === norm(filters.city);
+
+      const r = w.rating == null ? null : Number(w.rating);
+      const ratingOk = !minRating || ((r ?? 0) >= minRating);
+
+      return cityOk && ratingOk;
+    });
+  }, [walkers, filters.city, filters.rating]);
+
+  const cities = useMemo(() => {
+    return Array.from(
+      new Set(walkers.map((w) => (w.city || "").trim()).filter(Boolean)),
+    ).sort((a, b) => a.localeCompare(b));
+  }, [walkers]);
 
   return (
     <div className="availableWalkers">
@@ -102,33 +108,37 @@ export default function AvailableWalkers() {
         {loading && <p>Učitavanje šetača...</p>}
 
         {!loading &&
-          filteredWalkers.map((w) => (
-            <div key={w.id} className="availableWalkers__card">
-              <div className="availableWalkers__left">
-                <div className="availableWalkers__avatar" />
+          filteredWalkers.map((w) => {
+            const id = w.id ?? w.idSetac; // fallback ako nekad dođe drugi naziv
 
-                <div>
-                  <div className="availableWalkers__name">{w.name}</div>
-                  <div className="availableWalkers__info">
-                    Lokacija: {w.city}
-                  </div>
-                  <div className="availableWalkers__info">
-                    Cijena: {w.price} €
+            return (
+              <div key={id} className="availableWalkers__card">
+                <div className="availableWalkers__left">
+                  <div className="availableWalkers__avatar" />
+
+                  <div>
+                    <div className="availableWalkers__name">{w.name}</div>
+                    <div className="availableWalkers__info">
+                      Lokacija: {w.city}
+                    </div>
+                    <div className="availableWalkers__info">
+                      Cijena: {w.price} €
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="availableWalkers__actions">
-                <span className="availableWalkers__rating">
-                  ⭐ {w.rating ?? "—"}
-                </span>
+                <div className="availableWalkers__actions">
+                  <span className="availableWalkers__rating">
+                    ⭐ {w.rating ?? "—"}
+                  </span>
 
-                <NavLink to={`/setac/${w.id}`} className="availableWalkers__btn">
-                  Profil
-                </NavLink>
+                  <NavLink to={`/setac/${id}`} className="availableWalkers__btn">
+                    Profil
+                  </NavLink>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
         {!loading && filteredWalkers.length === 0 && (
           <p className="availableWalkers__empty">

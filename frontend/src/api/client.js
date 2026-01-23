@@ -7,6 +7,10 @@ const BASE =
 // CSRF token cache (cross-domain safe because we read it from JSON)
 let CSRF_TOKEN = null;
 
+function resetCsrf() {
+	CSRF_TOKEN = null;
+}
+
 const json = async (res) => {
 	const data = await res.json().catch(() => ({}));
 	if (!res.ok) throw { res, data };
@@ -70,8 +74,21 @@ export const api = {
 	// AUTH
 	me: () => get("/api/auth/me/"),
 	updateMe: (data) => patch("/api/auth/me/", data),
-	login: (email, password) => post("/api/auth/login/", { email, password }),
-	logout: () => post("/api/auth/logout/", {}),
+
+	login: async (email, password) => {
+		// login can rotate session -> CSRF token can change
+		resetCsrf();
+		const res = await post("/api/auth/login/", { email, password });
+		resetCsrf();
+		return res;
+	},
+
+	logout: async () => {
+		const res = await post("/api/auth/logout/", {});
+		resetCsrf();
+		return res;
+	},
+
 	register: ({ email, first_name, last_name, password, is_walker }) =>
 		post("/api/auth/register/", {
 			email,
@@ -80,13 +97,18 @@ export const api = {
 			password,
 			is_walker,
 		}),
+
 	toggleNotifications: () => post("/api/notifications/toggle/", {}),
 
 	googleLoginUrl: async () => {
+		// safe to reset, because login redirect flow can change session/csrf
+		resetCsrf();
 		await ensureCsrf();
+
 		const res = await fetch(`${BASE}/api/auth/google/login-url/`, {
 			credentials: "include",
 		});
+
 		const data = await res.json().catch(() => null);
 		if (data && data.url) return data.url;
 		return res.url;
