@@ -128,11 +128,14 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
-    "http://127.0.0.1:8000", "https://progi-13-4-pawpal-3.onrender.com", "https://progi-13-4-pawpal-4.onrender.com",]
+    "http://127.0.0.1:8000", "https://progi-13-4-pawpal-4.onrender.com",]
 
 
-SESSION_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "None"
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
