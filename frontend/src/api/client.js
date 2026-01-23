@@ -1,4 +1,4 @@
-const BASE = "";
+const BASE = import.meta.env.VITE_API_BASE_URL || "";
 const json = (res) => {
 	if (!res.ok) throw res;
 	return res.json().catch(() => ({}));
