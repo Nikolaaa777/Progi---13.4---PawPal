@@ -13,10 +13,12 @@ const MojeRezervacije = () => {
 	const [showPaymentModal, setShowPaymentModal] = useState(false);
 	const [selectedReservation, setSelectedReservation] = useState(null);
 	const [dogs, setDogs] = useState({});
+	const [currentUser, setCurrentUser] = useState(null);
 
 	useEffect(() => {
 		loadReservations();
 		loadDogs();
+		loadCurrentUser();
 	}, []);
 
 	const loadReservations = async () => {
@@ -53,6 +55,15 @@ const MojeRezervacije = () => {
 		}
 	};
 
+	const loadCurrentUser = async () => {
+		try {
+			const user = await api.me();
+			setCurrentUser(user);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	const handleDelete = async (id) => {
 		if (!window.confirm("Jeste li sigurni?")) return;
 		await api.deleteReservation(id);
@@ -75,6 +86,17 @@ const MojeRezervacije = () => {
 
 	const handleChat = (id) => {
 		navigate(`/chat?reservationId=${id}`);
+	};
+
+	const handleFinish = async (id) => {
+		if (!window.confirm("Označiti šetnju kao završenu?")) return;
+		try {
+			await api.markWalkDone(id);
+			loadReservations();
+		} catch (err) {
+			console.error(err);
+			alert("Greška pri označavanju šetnje kao završene.");
+		}
 	};
 
 	const getStatus = (r) => {
@@ -108,6 +130,13 @@ const MojeRezervacije = () => {
 					const statusClass = getStatusClass(status);
 					const isCompleted = r.odradena;
 					const isPaid = r.payment_status === "COMPLETED";
+					// Only show finish button for walkers who are the walker for this specific reservation
+					const isWalker = currentUser?.role === "WALKER" || currentUser?.is_walker === true;
+					const isWalkerForThisReservation = isWalker && currentUser?.email === r.walker_email;
+					const canFinish = isWalkerForThisReservation && r.potvrdeno === true && !r.odradena;
+					// Only show payment button for owners (not walkers)
+					const isOwner = !isWalker;
+					const canPay = isOwner && isCompleted && !isPaid;
 
 					return (
 						<div key={r.idRezervacije} className="Walk-Reservation-card">
@@ -131,7 +160,7 @@ const MojeRezervacije = () => {
 									{status}
 								</div>
 
-								{isCompleted &&
+								{isCompleted && isOwner &&
 									(isPaid ? (
 										<button
 											className="reviewReservation-btn"
@@ -140,13 +169,24 @@ const MojeRezervacije = () => {
 											Ocijeni
 										</button>
 									) : (
-										<button
-											className="payReservation-btn"
-											onClick={() => handlePayment(r)}
-										>
-											Plati
-										</button>
+										canPay && (
+											<button
+												className="payReservation-btn"
+												onClick={() => handlePayment(r)}
+											>
+												Plati
+											</button>
+										)
 									))}
+
+								{canFinish && (
+									<button
+										className="finishReservation-btn"
+										onClick={() => handleFinish(r.idRezervacije)}
+									>
+										Završi
+									</button>
+								)}
 
 								{r.potvrdeno && (
 									<button

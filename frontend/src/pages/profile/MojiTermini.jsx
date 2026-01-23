@@ -22,18 +22,50 @@ const MojiTermini = () => {
 		try {
 			setLoading(true);
 
-			const walksRes = await api.walks();
+			const [walksRes, reservationsRes] = await Promise.all([
+				api.walks(),
+				api.getMyReservations(),
+			]);
 
-			const walks = (walksRes.data || []).map((w) => ({
-				id: w.idSetnje,
-				type: "walk",
-				date: w.terminSetnje,
-				duration: w.trajanjeSetnje,
-				price: w.cijenaSetnje,
-				walkType: w.tipSetnje,
-				town: w.city,
-				status: "Planiran",
-			}));
+			// Create a map of walk IDs to their completion status
+			const completedWalkIds = new Set();
+			if (reservationsRes.success && reservationsRes.data) {
+				reservationsRes.data
+					.filter((r) => r.odradena === true && r.idSetnje)
+					.forEach((r) => {
+						completedWalkIds.add(r.idSetnje);
+					});
+			}
+
+			// Create a map of walk IDs to their reservation status
+			const reservedWalkIds = new Set();
+			if (reservationsRes.success && reservationsRes.data) {
+				reservationsRes.data
+					.filter((r) => r.potvrdeno === true && r.idSetnje)
+					.forEach((r) => {
+						reservedWalkIds.add(r.idSetnje);
+					});
+			}
+
+			const walks = (walksRes.data || []).map((w) => {
+				let status = "Planiran";
+				if (completedWalkIds.has(w.idSetnje)) {
+					status = "Završen";
+				} else if (reservedWalkIds.has(w.idSetnje)) {
+					status = "Rezerviran";
+				}
+
+				return {
+					id: w.idSetnje,
+					type: "walk",
+					date: w.terminSetnje,
+					duration: w.trajanjeSetnje,
+					price: w.cijenaSetnje,
+					walkType: w.tipSetnje,
+					town: w.city,
+					status: status,
+				};
+			});
 
 			setItems(
 				walks.sort((a, b) => String(a.date).localeCompare(String(b.date))),
@@ -58,12 +90,6 @@ const MojiTermini = () => {
 
 	const handleChat = (id) => {
 		navigate(`/chat?reservationId=${id}`);
-	};
-
-	const handleFinish = async (id) => {
-		if (!window.confirm("Označiti šetnju kao završenu?")) return;
-		await api.markWalkDone(id);
-		loadData();
 	};
 
 	const formatDate = (iso) => {
@@ -130,15 +156,6 @@ const MojiTermini = () => {
 									>
 										{item.status}
 									</div>
-
-									{item.type === "walk" && item.status === "Planiran" && (
-										<button
-											className="editAppointment-btn"
-											onClick={() => handleFinish(item.id)}
-										>
-											Završi
-										</button>
-									)}
 
 									<button
 										className="editAppointment-btn"

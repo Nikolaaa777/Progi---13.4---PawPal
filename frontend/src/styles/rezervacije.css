@@ -150,6 +150,44 @@ body {
 	height: 16px;
 }
 
+.finishReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #2563eb;
+	transition: background 0.2s;
+}
+
+.finishReservation-btn:hover {
+	background: #dbeafe;
+}
+
+.reviewReservation-btn {
+	background: #eef2ff;
+	border: none;
+	border-radius: 14px;
+	padding: 10px 14px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #2563eb;
+	transition: background 0.2s;
+}
+
+.reviewReservation-btn:hover {
+	background: #dbeafe;
+}
+
 .payReservation-btn img {
 	width: 16px;
 	height: 16px;
