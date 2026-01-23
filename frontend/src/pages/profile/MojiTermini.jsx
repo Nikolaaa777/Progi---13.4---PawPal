@@ -35,7 +35,9 @@ const MojiTermini = () => {
 				status: "Planiran",
 			}));
 
-			setItems(walks.sort((a, b) => new Date(a.date) - new Date(b.date)));
+			setItems(
+				walks.sort((a, b) => String(a.date).localeCompare(String(b.date))),
+			);
 		} catch (err) {
 			console.error(err);
 			setItems([]);
@@ -64,18 +66,18 @@ const MojiTermini = () => {
 		loadData();
 	};
 
-	const formatDate = (d) =>
-		new Date(d).toLocaleDateString("hr-HR", {
-			day: "2-digit",
-			month: "2-digit",
-			year: "numeric",
-		});
+	const formatDate = (iso) => {
+		if (!iso) return "";
+		const [d] = String(iso).split("T"); // "YYYY-MM-DD"
+		const [y, m, day] = d.split("-");
+		return `${day}. ${m}. ${y}.`;
+	};
 
-	const formatTime = (d) =>
-		new Date(d).toLocaleTimeString("hr-HR", {
-			hour: "2-digit",
-			minute: "2-digit",
-		});
+	const formatTime = (iso) => {
+		if (!iso) return "";
+		const [, t = ""] = String(iso).split("T"); // "HH:MM:SSZ..."
+		return t.slice(0, 5); // "HH:MM"
+	};
 
 	const getStatusClass = (status) => {
 		const s = status.toLowerCase();
