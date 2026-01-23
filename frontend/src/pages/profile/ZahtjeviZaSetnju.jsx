@@ -17,17 +17,18 @@ const ZahtjeviZaSetnju = () => {
     try {
       setLoading(true);
       const response = await api.getMyReservations();
+
       if (response.success) {
-        // Filter only pending reservations (potvrdeno is null or false)
+        // ✅ PENDING = potvrdeno === null ONLY
         const pending = (response.data || []).filter(
-          (r) => r.potvrdeno === null || r.potvrdeno === false
+          (r) => r.potvrdeno === null
         );
         setZahtjevi(pending);
       } else {
-        setError(response.message || "Failed to load requests");
+        setError(response.message || "Neuspješno učitavanje zahtjeva.");
       }
     } catch (err) {
-      setError(err.message || "An error occurred");
+      setError(err.message || "Došlo je do greške.");
     } finally {
       setLoading(false);
     }
@@ -44,10 +45,10 @@ const ZahtjeviZaSetnju = () => {
         alert("Rezervacija prihvaćena!");
         loadRequests();
       } else {
-        alert(response.message || "Failed to accept reservation");
+        alert(response.message || "Neuspješno prihvaćanje.");
       }
     } catch (err) {
-      alert(err.message || "An error occurred");
+      alert(err.message || "Greška.");
     }
   };
 
@@ -62,17 +63,16 @@ const ZahtjeviZaSetnju = () => {
         alert("Rezervacija odbijena.");
         loadRequests();
       } else {
-        alert(response.message || "Failed to reject reservation");
+        alert(response.message || "Neuspješno odbijanje.");
       }
     } catch (err) {
-      alert(err.message || "An error occurred");
+      alert(err.message || "Greška.");
     }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("hr-HR", {
+    return new Date(dateString).toLocaleDateString("hr-HR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -81,8 +81,7 @@ const ZahtjeviZaSetnju = () => {
 
   const formatTime = (dateString) => {
     if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleTimeString("hr-HR", {
+    return new Date(dateString).toLocaleTimeString("hr-HR", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -93,7 +92,9 @@ const ZahtjeviZaSetnju = () => {
       <div className="app">
         <main className="content">
           <h1 className="page-title">Zahtjevi za šetnju</h1>
-          <div style={{ padding: "40px", textAlign: "center" }}>Učitavanje...</div>
+          <div style={{ padding: "40px", textAlign: "center" }}>
+            Učitavanje...
+          </div>
         </main>
       </div>
     );
@@ -105,7 +106,15 @@ const ZahtjeviZaSetnju = () => {
         <h1 className="page-title">Zahtjevi za šetnju</h1>
 
         {error && (
-          <div style={{ padding: "12px", background: "#fee2e2", color: "#991b1b", marginBottom: "16px", borderRadius: "8px" }}>
+          <div
+            style={{
+              padding: "12px",
+              background: "#fee2e2",
+              color: "#991b1b",
+              marginBottom: "16px",
+              borderRadius: "8px",
+            }}
+          >
             {error}
           </div>
         )}
@@ -113,17 +122,18 @@ const ZahtjeviZaSetnju = () => {
         <div className="Walk-Requests">
           <div className="Walk-Requests__inner">
             {zahtjevi.length === 0 ? (
-              <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
+              <div
+                style={{
+                  padding: "40px",
+                  textAlign: "center",
+                  color: "#6b7280",
+                }}
+              >
                 Nema zahtjeva za šetnju
               </div>
             ) : (
               zahtjevi.map((z) => {
-                const walkDate = z.walk_details?.terminSetnje
-                  ? formatDate(z.walk_details.terminSetnje)
-                  : "N/A";
-                const walkTime = z.walk_details?.terminSetnje
-                  ? formatTime(z.walk_details.terminSetnje)
-                  : "N/A";
+                const termin = z.walk_details?.terminSetnje;
 
                 return (
                   <div key={z.idRezervacije} className="Walk-Request-card">
@@ -134,19 +144,23 @@ const ZahtjeviZaSetnju = () => {
 
                       <div className="Walk-Request-text">
                         <div className="Walk-Request-date">
-                          {walkDate} · {walkTime}
+                          {formatDate(termin)} · {formatTime(termin)}
                         </div>
+
                         <div className="Walk-Request-info">
                           Pas: {z.dog_name || `ID: ${z.idPsa}`}
                         </div>
+
                         {z.walk_details?.trajanjeSetnje && (
                           <div className="Walk-Request-info">
                             Trajanje: {z.walk_details.trajanjeSetnje}
                           </div>
                         )}
+
                         <div className="Walk-Request-info">
                           Vlasnik: {z.owner_name || "N/A"}
                         </div>
+
                         {z.walk_details?.cijenaSetnje && (
                           <div className="Walk-Request-info">
                             Cijena: {z.walk_details.cijenaSetnje.toFixed(2)} €
@@ -179,4 +193,5 @@ const ZahtjeviZaSetnju = () => {
     </div>
   );
 };
+
 export default ZahtjeviZaSetnju;

@@ -38,9 +38,14 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             "owner_name",
             "walk_details",
         ]
-        read_only_fields = ["idRezervacije", "idVlasnik"]
+        read_only_fields = [
+            "idRezervacije",
+            "idVlasnik",
+            "potvrdeno",
+            "odradena",
+        ]
 
-    # ---------- READ HELPERS ----------
+    # ---------------- READ HELPERS ----------------
 
     def get_dog_name(self, obj):
         try:
@@ -73,8 +78,9 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             return None
 
     def get_walk_details(self, obj):
-        if not getattr(obj, "idSetnje", None):
+        if not obj.idSetnje:
             return None
+
         walk = Setnja.objects.filter(idSetnje=obj.idSetnje).first()
         if not walk:
             return None
@@ -88,7 +94,7 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             "city": walk.gradSetnje,
         }
 
-    # ---------- VALIDATION ----------
+    # ---------------- VALIDATION ----------------
 
     def validate(self, data):
         vlasnik = self.context.get("vlasnik")
@@ -107,7 +113,7 @@ class RezervacijaSerializer(serializers.ModelSerializer):
         data["idPsa"] = pas.idPsa
         return data
 
-    # ---------- CREATE ----------
+    # ---------------- CREATE ----------------
 
     def create(self, validated_data):
         vlasnik = self.context.get("vlasnik")
@@ -115,4 +121,19 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Owner missing.")
 
         validated_data["idVlasnik"] = vlasnik.idVlasnik
+
+        # 🔥 FORCE PENDING STATE
+        validated_data["potvrdeno"] = None
+        validated_data["odradena"] = None
+
         return Rezervacija.objects.create(**validated_data)
+
+
+# ==========================================================
+# Status serializer (ACCEPT / REJECT / COMPLETE)
+# ==========================================================
+
+class RezervacijaStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rezervacija
+        fields = ["potvrdeno", "odradena"]
