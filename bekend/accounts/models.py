@@ -12,8 +12,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.email} | walker={self.is_walker} | notif={self.has_notifications_on}"
-    
-    
+
 
 class Vlasnik(models.Model):
     idVlasnik = models.BigAutoField(primary_key=True, db_column="idVlasnik")
@@ -22,13 +21,13 @@ class Vlasnik(models.Model):
     idPretplate = models.BigIntegerField(null=True, blank=True, db_column="idPretplate")
     imeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="imeVlasnik")
     prezimeVlasnik = models.CharField(max_length=20, null=True, blank=True, db_column="prezimeVlasnik")
+
     class Meta:
         managed = True
         db_table = '"Vlasnik"'
 
     def __str__(self):
         return f"Vlasnik<{self.idVlasnik}> {self.emailVlasnik}"
-    
 
 
 class Setac(models.Model):
@@ -54,12 +53,17 @@ class Setac(models.Model):
         managed = True
         db_table = '"Setac"'
 
+    def save(self, *args, **kwargs):
+        # Prevent unique constraint issues by normalizing empty string -> NULL
+        if self.telefonSetac is not None and self.telefonSetac.strip() == "":
+            self.telefonSetac = None
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Setac<{self.idSetac}> {self.usernameSetac}"
 
 
-
-#AUTOMATSKA KREACIJA PROFILE-A ZA SVAKI NOVI USER
+# AUTOMATSKA KREACIJA PROFILE-A ZA SVAKI NOVI USER
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
