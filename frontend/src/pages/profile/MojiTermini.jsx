@@ -39,7 +39,7 @@ const MojiTermini = () => {
       }));
 
       const reservations = (reservationsRes.data || [])
-        .filter((r) => r.potvrdeno)
+        .filter((r) => r.potvrdeno && r.walk_details?.terminSetnje)
         .map((r) => ({
           id: r.idRezervacije,
           type: "reservation",
@@ -51,6 +51,7 @@ const MojiTermini = () => {
           status: r.odradena ? "Završen" : "Rezerviran",
           done: r.odradena,
         }));
+
 
       const merged = [...walks, ...reservations].sort(
         (a, b) => new Date(a.date) - new Date(b.date)
