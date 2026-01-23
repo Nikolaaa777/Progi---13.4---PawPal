@@ -13,9 +13,7 @@ from .utils import get_current_setac_id
 from reservations.models import Rezervacija
 
 
-# =========================
-# WALKER'S OWN WALKS
-# =========================
+
 
 @api_view(["GET"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -149,9 +147,6 @@ def walk_delete(request, walk_id: int):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# =========================
-# ADMIN / DEBUG
-# =========================
 
 @api_view(["GET"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -167,10 +162,6 @@ def get_AllWalks(request):
         status=status.HTTP_200_OK
     )
 
-
-# =========================
-# AVAILABLE WALKS (FIXED)
-# =========================
 
 @api_view(["GET"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -188,7 +179,7 @@ def get_available_walks(request):
         terminSetnje__gte=timezone.now()
     )
 
-    # Active reservations = pending (None) or accepted (True)
+
     active_reserved_walk_ids = Rezervacija.objects.filter(
         potvrdeno__in=[True, None]
     ).values_list(

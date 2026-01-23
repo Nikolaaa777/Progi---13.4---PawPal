@@ -29,9 +29,6 @@ from .serializers import (
     CreatePaymentIntentSerializer,
 )
 
-# =========================
-# CONFIG
-# =========================
 
 PAYPAL_CLIENT_ID = getattr(settings, "PAYPAL_CLIENT_ID", None)
 PAYPAL_CLIENT_SECRET = getattr(settings, "PAYPAL_CLIENT_SECRET", None)
@@ -50,9 +47,6 @@ stripe.api_key = STRIPE_SECRET_KEY
 
 print("PAYPAL MODE:", PAYPAL_MODE)
 
-# =========================
-# PAYPAL HELPER
-# =========================
 
 def get_paypal_access_token():
     response = requests.post(
@@ -66,9 +60,6 @@ def get_paypal_access_token():
     return None
 
 
-# =========================
-# CREATE PAYMENT
-# =========================
 
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -94,7 +85,7 @@ def create_payment_intent(request):
 
     amount_cents = int(amount * 100)
 
-    # ================= PAYPAL =================
+    # paypal
     if payment_method == "paypal":
         token = get_paypal_access_token()
         if not token:
@@ -152,7 +143,7 @@ def create_payment_intent(request):
             "approval_url": approval_url,
         })
 
-    # ================= STRIPE =================
+    # stripe
     if payment_method == "stripe":
         intent = stripe.PaymentIntent.create(
             amount=amount_cents,
@@ -181,7 +172,7 @@ def create_payment_intent(request):
             "publishable_key": STRIPE_PUBLISHABLE_KEY,
         })
 
-    # ================= CASH =================
+    # gotovina
     if payment_method == "cash":
         payment = PlacanjeSetnje.objects.create(
             tipPlacanja=PAYMENT_TYPE_CASH,
@@ -206,9 +197,6 @@ def create_payment_intent(request):
     return Response({"success": 0, "error": "Invalid payment method"}, status=400)
 
 
-# =========================
-# CONFIRM PAYPAL
-# =========================
 
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -240,10 +228,6 @@ def confirm_paypal_payment(request):
     return Response({"success": 1})
 
 
-# =========================
-# CONFIRM STRIPE
-# =========================
-
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -266,10 +250,6 @@ def confirm_stripe_payment(request):
     return Response({"success": 1})
 
 
-# =========================
-# GET PAYMENT STATUS
-# =========================
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_payment_status(request, payment_id):
@@ -282,9 +262,6 @@ def get_payment_status(request, payment_id):
     })
 
 
-# =========================
-# USER PAYMENTS
-# =========================
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

@@ -24,7 +24,6 @@ from accounts.models import Vlasnik, Setac
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_conversations(request):
-    """Get all conversations for the current user"""
     user = request.user
     conversations = Conversation.objects.filter(
         Q(participant1=user) | Q(participant2=user)
@@ -42,7 +41,6 @@ def list_conversations(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_conversation(request, conversation_id):
-    """Get a specific conversation with its messages"""
     try:
         conversation = Conversation.objects.get(
             Q(id=conversation_id) & (Q(participant1=request.user) | Q(participant2=request.user))
@@ -53,7 +51,6 @@ def get_conversation(request, conversation_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Mark messages as read
     Message.objects.filter(
         conversation=conversation,
         sender__id=conversation.get_other_participant(request.user).id,
@@ -77,7 +74,6 @@ def get_conversation(request, conversation_id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation(request, user_id):
-    """Get or create a conversation with another user"""
     try:
         other_user = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -92,14 +88,12 @@ def get_or_create_conversation(request, user_id):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # Try to find existing conversation (order doesn't matter)
     conversation = Conversation.objects.filter(
         (Q(participant1=request.user) & Q(participant2=other_user)) |
         (Q(participant1=other_user) & Q(participant2=request.user))
     ).first()
     
     if not conversation:
-        # Create new conversation (ensure consistent ordering)
         if request.user.id < other_user.id:
             conversation = Conversation.objects.create(
                 participant1=request.user,
@@ -123,7 +117,6 @@ def get_or_create_conversation(request, user_id):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def send_message(request):
-    """Send a message in a conversation"""
     serializer = CreateMessageSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(
@@ -156,7 +149,6 @@ def send_message(request):
         content=content
     )
     
-    # Update conversation's updated_at timestamp
     conversation.save()
     
     serializer_response = MessageSerializer(message)
@@ -169,7 +161,6 @@ def send_message(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_users(request):
-    """Get list of users (excluding current user)"""
     users = User.objects.exclude(id=request.user.id)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
@@ -182,7 +173,6 @@ def list_users(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation_from_reservation(request, reservation_id):
-    """Get or create a conversation from a reservation (only if confirmed)"""
     try:
         reservation = Rezervacija.objects.get(idRezervacije=reservation_id)
     except Rezervacija.DoesNotExist:
@@ -191,17 +181,14 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Check if reservation is confirmed
     if not reservation.potvrdeno:
         return Response(
             {"error": "Reservation must be confirmed before starting a conversation"}, 
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    # Get the other user (vlasnik or setac) based on current user
     current_user_email = request.user.email
     
-    # Determine if current user is vlasnik or setac
     try:
         vlasnik = Vlasnik.objects.get(emailVlasnik=current_user_email)
         is_vlasnik = True
@@ -217,7 +204,6 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
                 status=status.HTTP_404_NOT_FOUND
             )
     
-    # Verify user is part of this reservation
     if is_vlasnik and reservation.idVlasnik != vlasnik.idVlasnik:
         return Response(
             {"error": "You are not authorized to access this reservation"}, 
@@ -229,7 +215,6 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
             status=status.HTTP_403_FORBIDDEN
         )
     
-    # Get the other user's email
     if is_vlasnik:
         try:
             other_setac = Setac.objects.get(idSetac=other_id)
@@ -249,7 +234,6 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
                 status=status.HTTP_404_NOT_FOUND
             )
     
-    # Get the other user
     try:
         other_user = User.objects.get(email=other_user_email)
     except User.DoesNotExist:
@@ -258,14 +242,12 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
             status=status.HTTP_404_NOT_FOUND
         )
     
-    # Get or create conversation
     conversation = Conversation.objects.filter(
         (Q(participant1=request.user) & Q(participant2=other_user)) |
         (Q(participant1=other_user) & Q(participant2=request.user))
     ).first()
     
     if not conversation:
-        # Create new conversation (ensure consistent ordering)
         if request.user.id < other_user.id:
             conversation = Conversation.objects.create(
                 participant1=request.user,

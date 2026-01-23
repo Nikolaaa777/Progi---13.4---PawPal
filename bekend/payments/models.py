@@ -1,10 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Payment types: 1 = PayPal, 2 = Card (Stripe), 3 = Cash
+# Payment types: 1 = PayPal, 2 = Card (Stripe)
 PAYMENT_TYPE_PAYPAL = 1
 PAYMENT_TYPE_CARD = 2
-PAYMENT_TYPE_CASH = 3
 
 PAYMENT_STATUS_PENDING = 'pending'
 PAYMENT_STATUS_COMPLETED = 'completed'
@@ -13,12 +12,7 @@ PAYMENT_STATUS_CANCELLED = 'cancelled'
 
 
 class PlacanjeSetnje(models.Model):
-    """Payment model mapped to PlacanjeSetnje table
-    
-    Note: This model uses managed=False, so it maps to an existing database table.
-    Additional tracking fields (payment_status, payment_id, etc.) are stored
-    in a separate PaymentTracking model or can be added via migration.
-    """
+
     idPlacanja = models.BigAutoField(primary_key=True, db_column="idPlacanja")
     
     tipPlacanja = models.BigIntegerField(db_column="tipPlacanja")  # 1 = PayPal, 2 = Card
@@ -28,15 +22,14 @@ class PlacanjeSetnje(models.Model):
     idSetac = models.BigIntegerField(db_column="idSetac")
     
     class Meta:
-        managed = True
-        db_table = "PlacanjeSetnje"
+        managed = False
+        db_table = '"PlacanjeSetnje"'
     
     def __str__(self):
         return f"Payment<{self.idPlacanja}> type={self.tipPlacanja} amount={self.cijenaSetnje}"
 
 
 class PaymentTracking(models.Model):
-    """Additional payment tracking information stored separately"""
     payment = models.OneToOneField(
         PlacanjeSetnje, 
         on_delete=models.CASCADE, 

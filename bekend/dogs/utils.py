@@ -6,11 +6,7 @@ from accounts.domain_sync import ensure_vlasnik_row  # ako si ga dodao ranije
 
 
 def get_current_vlasnik(user: User) -> Vlasnik:
-    """
-    Vrati Vlasnik zapis za trenutno ulogiranog usera.
-    - Ako je user šetač -> zabrani (nema pasa)
-    - Ako vlasnik zapis ne postoji -> napravi ga (sigurno)
-    """
+
     profile, _ = Profile.objects.get_or_create(user=user)
     if profile.is_walker:
         raise PermissionDenied("Šetač ne može upravljati psima (samo vlasnik).")

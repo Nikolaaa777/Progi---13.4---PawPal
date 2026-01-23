@@ -6,7 +6,7 @@ from walks.models import Setnja
 
 
 class RezervacijaSerializer(serializers.ModelSerializer):
-    # alias for frontend
+    # alias za frontend
     city = serializers.CharField(
         source="gradSetnje",
         required=False,
@@ -45,7 +45,6 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             "odradena",
         ]
 
-    # ---------------- READ HELPERS ----------------
 
     def get_dog_name(self, obj):
         try:
@@ -94,7 +93,7 @@ class RezervacijaSerializer(serializers.ModelSerializer):
             "city": walk.gradSetnje,
         }
 
-    # ---------------- VALIDATION ----------------
+    # validacija
 
     def validate(self, data):
         vlasnik = self.context.get("vlasnik")
@@ -113,7 +112,7 @@ class RezervacijaSerializer(serializers.ModelSerializer):
         data["idPsa"] = pas.idPsa
         return data
 
-    # ---------------- CREATE ----------------
+    # create 
 
     def create(self, validated_data):
         vlasnik = self.context.get("vlasnik")
@@ -129,9 +128,6 @@ class RezervacijaSerializer(serializers.ModelSerializer):
         return Rezervacija.objects.create(**validated_data)
 
 
-# ==========================================================
-# Status serializer (ACCEPT / REJECT / COMPLETE)
-# ==========================================================
 
 class RezervacijaStatusSerializer(serializers.ModelSerializer):
     class Meta:

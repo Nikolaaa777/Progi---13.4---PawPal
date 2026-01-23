@@ -12,17 +12,11 @@ from .models import Rezervacija
 from .serializers import RezervacijaSerializer
 
 
-# --------------------------------------------------
-# CSRF EXEMPT AUTH (REQUIRED)
-# --------------------------------------------------
 class CsrfExemptSessionAuthentication(SessionAuthentication):
     def enforce_csrf(self, request):
         return
 
 
-# --------------------------------------------------
-# CREATE reservation (manual)
-# --------------------------------------------------
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -53,9 +47,6 @@ def create_reservation(request):
     )
 
 
-# --------------------------------------------------
-# CREATE reservation FROM WALK
-# --------------------------------------------------
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -101,7 +92,7 @@ def create_reservation_from_walk(request, walk_id):
     )
 
     if serializer.is_valid():
-        serializer.save(potvrdeno=None)  # PENDING
+        serializer.save(potvrdeno=None)  # pending
         return Response(
             {"success": 1, "data": serializer.data},
             status=status.HTTP_201_CREATED
@@ -113,9 +104,6 @@ def create_reservation_from_walk(request, walk_id):
     )
 
 
-# --------------------------------------------------
-# GET my reservations (OWNER or WALKER)
-# --------------------------------------------------
 @api_view(["GET"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -143,9 +131,6 @@ def get_my_reservations(request):
     return Response({"success": 1, "data": serializer.data})
 
 
-# --------------------------------------------------
-# ACCEPT reservation (WALKER ONLY)
-# --------------------------------------------------
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -175,9 +160,7 @@ def accept_reservation(request, reservation_id):
     return Response({"success": 1, "message": "Rezervacija prihvaćena."})
 
 
-# --------------------------------------------------
-# REJECT reservation (WALKER ONLY)
-# --------------------------------------------------
+
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -207,9 +190,7 @@ def reject_reservation(request, reservation_id):
     return Response({"success": 1, "message": "Rezervacija odbijena."})
 
 
-# --------------------------------------------------
-# MARK walk done (WALKER ONLY)
-# --------------------------------------------------
+
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
@@ -231,9 +212,6 @@ def mark_walk_done(request, reservation_id):
     return Response({"success": 1, "message": "Šetnja označena kao odrađena."})
 
 
-# --------------------------------------------------
-# DELETE reservation (OWNER or WALKER)
-# --------------------------------------------------
 @api_view(["DELETE"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])

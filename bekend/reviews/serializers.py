@@ -4,7 +4,7 @@ from .models import Recenzija
 class RecenzijaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recenzija
-        fields = ['idRecenzije', 'idVlasnik', 'idSetac', 'ocjena'] # Only keep these 4
+        fields = ['idRecenzije', 'idVlasnik', 'idSetac', 'ocjena'] 
         read_only_fields = ['idRecenzije', 'idVlasnik']
         
     def validate_ocjena(self, value):

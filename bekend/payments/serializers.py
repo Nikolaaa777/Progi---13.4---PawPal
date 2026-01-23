@@ -8,7 +8,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     payment_method = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
-    cijenaSetnje = serializers.SerializerMethodField()  # Convert from cents to decimal
+    cijenaSetnje = serializers.SerializerMethodField() 
     
     class Meta:
         model = PlacanjeSetnje
@@ -58,19 +58,16 @@ class PaymentSerializer(serializers.ModelSerializer):
             return None
     
     def get_cijenaSetnje(self, obj):
-        # Convert from cents (stored as bigint) to decimal
         return float(obj.cijenaSetnje) / 100.0
 
 
 class CreatePaymentIntentSerializer(serializers.Serializer):
-    """Serializer for creating a payment intent"""
     reservation_id = serializers.IntegerField()
     amount = serializers.DecimalField(max_digits=10, decimal_places=2)
     payment_method = serializers.ChoiceField(choices=['paypal', 'stripe', 'cash'])
 
 
 class ConfirmPaymentSerializer(serializers.Serializer):
-    """Serializer for confirming a payment"""
     payment_id = serializers.CharField()
     reservation_id = serializers.IntegerField()
     payment_method = serializers.ChoiceField(choices=['paypal', 'stripe'])

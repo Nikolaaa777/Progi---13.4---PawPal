@@ -31,7 +31,6 @@ class SetnjaSerializer(serializers.ModelSerializer):
     def validate_trajanjeSetnje(self, value):
         """Convert string duration to timedelta if needed"""
         if isinstance(value, str):
-            # Parse HH:MM:SS format
             try:
                 parts = value.split(':')
                 if len(parts) == 3:
@@ -60,7 +59,6 @@ class SetnjaSerializer(serializers.ModelSerializer):
             return None
     
     def get_is_reserved(self, obj):
-        # Check if there's a confirmed or pending reservation for this walk
         return Rezervacija.objects.filter(
             idSetac=obj.idSetac,
             potvrdeno__isnull=False
@@ -70,9 +68,7 @@ class SetnjaSerializer(serializers.ModelSerializer):
         """Override to convert cijenaSetnje from cents to decimal"""
         data = super().to_representation(instance)
         if data.get('cijenaSetnje') is not None:
-            # Convert from cents (stored as bigint) to decimal
             try:
-                # If it's already a float (from previous conversion), don't convert again
                 if isinstance(data['cijenaSetnje'], (int, str)):
                     data['cijenaSetnje'] = float(data['cijenaSetnje']) / 100.0
             except (ValueError, TypeError):
