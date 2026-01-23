@@ -1,5 +1,5 @@
 # PawPal
-## LIVE DEMO LINK: [PawPal](https://pawpal-front.onrender.com/) 
+## LIVE DEMO LINK: [PawPal](https://progi-13-4-pawpal-4.onrender.com/) 
 *(Server radi sporije nakon vremena neaktivnosti, zato molimo za strpljenje na početku.)*
 
 ## Pregled projekta
