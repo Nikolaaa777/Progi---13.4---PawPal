@@ -9,7 +9,18 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-in-production")
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1,0.0.0.0,backend").split(",")
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "progi-13-4-pawpal.onrender.com",
+    "pawpal-front.onrender.com",
+    "progi-13-4-pawpal-3.onrender.com",
+    "progi-13-4-pawpal-4.onrender.com",
+
+
+
+]
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -109,11 +120,22 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://progi-13-4-pawpal-4.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
+
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",
-    "http://127.0.0.1:8000"]
-SESSION_COOKIE_SAMESITE = "Lax"
-CSRF_COOKIE_SAMESITE = "Lax"
+    "http://127.0.0.1:8000", "https://progi-13-4-pawpal-4.onrender.com",]
+
+
+SESSION_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SAMESITE = "None"
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -165,8 +187,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # gdje se vraća nakon Google login-a
-LOGIN_REDIRECT_URL = "http://localhost:5173/"
-LOGOUT_REDIRECT_URL = "http://localhost:5173/"
+LOGIN_REDIRECT_URL = "https://progi-13-4-pawpal-4.onrender.com"
+LOGOUT_REDIRECT_URL = "https://progi-13-4-pawpal-4.onrender.com"
 
 LOGGING = {
     "version": 1,

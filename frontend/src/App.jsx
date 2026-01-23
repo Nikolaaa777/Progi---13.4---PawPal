@@ -24,11 +24,8 @@ import AdminHome from "./pages/admin/AdminHome";
 import AdminKomentari from "./pages/admin/AdminKom";
 import AdminKor from "./pages/admin/AdminKorisnici";
 import ChatPage from "./pages/chat/ChatPage";
-import PaymentSuccess from "./pages/PayPalSuccess";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import AdminPanel from "./pages/admin/AdminPanel";
-import PayPalSuccess from "./pages/PayPalSuccess";
-import Inbox from "./pages/Inbox";
-
 
 export default function App() {
 	const [user, setUser] = useState(null);
@@ -63,16 +60,15 @@ export default function App() {
 				<Route path="clanarina" element={<Clanarina />} />
 			</Route>
 
-
 			<Route path="/admin" element={<AdminPanel />} />
 
 			<Route path="/adminKom" element={<AdminKomentari />} />
 			<Route path="/adminKorisnici" element={<AdminKor />} />
-      		<Route path="/payment-success" element={<PaymentSuccess />} />
-			<Route path="/wallet/paypal-success" element={<PayPalSuccess />} />
-      		<Route path="/paypal-success" element={<PayPalSuccess />} />
-			<Route path="/chat" element={<ChatPage user={user} setUser={setUser} />} />
-			<Route path="/inbox" element={<Inbox />} />
+			<Route path="/payment-success" element={<PaymentSuccess />} />
+			<Route
+				path="/chat"
+				element={<ChatPage user={user} setUser={setUser} />}
+			/>
 		</Routes>
 	);
 }

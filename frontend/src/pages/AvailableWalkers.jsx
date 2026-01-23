@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "../styles/walkers.css";
+import { api } from "../api/client";
 
 export default function AvailableWalkers() {
   const navigate = useNavigate();
@@ -15,19 +16,26 @@ export default function AvailableWalkers() {
 
   // DOHVAT ŠETAČA IZ BACKENDA
   useEffect(() => {
+    let cancelled = false;
+
     setLoading(true);
 
-    fetch("/api/walkers/")
-      .then((res) => res.json())
+    api.availableWalkers()
       .then((data) => {
-        setWalkers(data);
+        if (cancelled) return;
+        setWalkers(Array.isArray(data) ? data : []);
         console.log("walkers from API:", data);
         setLoading(false);
       })
       .catch(() => {
+        if (cancelled) return;
         setWalkers([]);
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // FILTERI (frontend)
@@ -46,7 +54,6 @@ export default function AvailableWalkers() {
         .filter(Boolean),
     ),
   ).sort((a, b) => a.localeCompare(b));
-
 
   return (
     <div className="availableWalkers">
@@ -74,7 +81,6 @@ export default function AvailableWalkers() {
               {c}
             </option>
           ))}
-
         </select>
 
         <label>Minimalna ocjena</label>
