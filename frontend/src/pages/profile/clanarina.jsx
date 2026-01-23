@@ -14,7 +14,7 @@ const Clanarina = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [fee, setFee] = useState(null); // string "10.00"
-  const [status, setStatus] = useState({ is_active: false, valid_until: null });
+  const [status, setStatus] = useState({ is_active: false, valid_from: null, valid_until: null });
 
   const [loading, setLoading] = useState(true);
   const [payLoading, setPayLoading] = useState(false);
@@ -35,7 +35,7 @@ const Clanarina = () => {
   const refresh = async () => {
     const [feeRes, stRes] = await Promise.all([api.membershipFee(), api.membershipStatus()]);
     setFee(feeRes?.iznos ?? null);
-    setStatus(stRes ?? { is_active: false, valid_until: null });
+    setStatus(stRes ?? { is_active: false, valid_from: null, valid_until: null });
   };
 
   useEffect(() => {
@@ -124,6 +124,11 @@ const Clanarina = () => {
             <div>
               <span>Status</span>
               <strong className={activeClass}>{loading ? "..." : statusText}</strong>
+            </div>
+
+            <div>
+              <span>Vrijedi od</span>
+              <strong>{loading ? "..." : formatDate(status?.valid_from)}</strong>
             </div>
 
             <div>

@@ -104,10 +104,14 @@ def get_membership_fee(request):
 def get_membership_status(request):
     sub = MembershipSubscription.objects.filter(user=request.user).first()
     if not sub or sub.valid_until is None:
-        return Response({"is_active": False, "valid_until": None}, status=status.HTTP_200_OK)
+        return Response({"is_active": False, "valid_from": None, "valid_until": None}, status=status.HTTP_200_OK)
 
     return Response(
-        {"is_active": sub.valid_until >= timezone.now(), "valid_until": sub.valid_until.isoformat()},
+        {
+            "is_active": sub.valid_until >= timezone.now(),
+            "valid_from": sub.valid_from.isoformat() if sub.valid_from else None,
+            "valid_until": sub.valid_until.isoformat(),
+        },
         status=status.HTTP_200_OK,
     )
 
@@ -118,12 +122,8 @@ def get_membership_status(request):
 def create_membership_paypal_payment(request):
     amount = get_current_fee_amount()
 
-    # return_url uključuje payment_id, token će PayPal zamijeniti
     frontend = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 
-    # payment_id još nemamo dok ne napravimo local record -> napravimo prvo order pa record
-    # ali nama treba payment_id u return_url -> zato radimo:
-    # 1) kreiraj local placeholder record s dummy order_id pa updateaj
     with transaction.atomic():
         placeholder = MembershipPayment.objects.create(
             user=request.user,
@@ -192,12 +192,12 @@ def confirm_membership_paypal_payment(request):
                 "success": 1,
                 "message": "Already confirmed",
                 "is_active": sub.valid_until >= timezone.now() if sub and sub.valid_until else False,
+                "valid_from": sub.valid_from.isoformat() if sub and sub.valid_from else None,
                 "valid_until": sub.valid_until.isoformat() if sub and sub.valid_until else None,
             },
             status=status.HTTP_200_OK,
         )
 
-    # Capture order
     capture_data, err = capture_paypal_order(token)
     if err:
         payment.status = MEMBERSHIP_PAYMENT_STATUS_FAILED
@@ -209,14 +209,14 @@ def confirm_membership_paypal_payment(request):
         payment.save(update_fields=["status"])
         return Response({"success": 0, "error": "PayPal capture not completed"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Activate/extend subscription by 30 days
     with transaction.atomic():
         now = timezone.now()
         sub, _ = MembershipSubscription.objects.get_or_create(user=request.user)
 
-        base = sub.valid_until if (sub.valid_until and sub.valid_until > now) else now
-        sub.valid_until = base + timedelta(days=30)
-        sub.save(update_fields=["valid_until", "updated_at"])
+        base_end = sub.valid_until if (sub.valid_until and sub.valid_until > now) else now
+        sub.valid_from = now
+        sub.valid_until = base_end + timedelta(days=30)
+        sub.save(update_fields=["valid_from", "valid_until", "updated_at"])
 
         payment.status = MEMBERSHIP_PAYMENT_STATUS_COMPLETED
         payment.completed_at = now
@@ -226,6 +226,7 @@ def confirm_membership_paypal_payment(request):
         {
             "success": 1,
             "message": "Membership activated",
+            "valid_from": sub.valid_from.isoformat() if sub.valid_from else None,
             "valid_until": sub.valid_until.isoformat(),
             "is_active": True,
         },

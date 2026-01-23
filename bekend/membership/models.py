@@ -13,6 +13,8 @@ class Clanarina(models.Model):
 
 class MembershipSubscription(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="membership_subscription")
+    # When the subscription was last activated/renewed (i.e., the start of the latest paid period).
+    valid_from = models.DateTimeField(null=True, blank=True)
     valid_until = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -20,8 +22,9 @@ class MembershipSubscription(models.Model):
         return self.valid_until is not None and self.valid_until >= timezone.now()
 
     def __str__(self):
+        vf = self.valid_from.isoformat() if self.valid_from else "None"
         vu = self.valid_until.isoformat() if self.valid_until else "None"
-        return f"MembershipSubscription<{self.user.email}> valid_until={vu}"
+        return f"MembershipSubscription<{self.user.email}> valid_from={vf} valid_until={vu}"
 
 
 MEMBERSHIP_PAYMENT_STATUS_PENDING = "pending"
