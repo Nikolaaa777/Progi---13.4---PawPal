@@ -132,7 +132,7 @@ def create_membership_paypal_payment(request):
             status=MEMBERSHIP_PAYMENT_STATUS_PENDING,
         )
 
-        return_url = f"{frontend}/profile/clanarina?membership_payment_id={placeholder.id}&token={{token}}"
+        return_url = f"{frontend}/profile/clanarina?membership_payment_id={placeholder.id}"
         cancel_url = f"{frontend}/profile/clanarina?cancelled=1"
 
         order_data, err = create_paypal_order(amount, return_url, cancel_url)
