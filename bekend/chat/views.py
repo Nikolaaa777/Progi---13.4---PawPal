@@ -118,44 +118,58 @@ def get_or_create_conversation(request, user_id):
 
 
 @extend_schema(
+    responses={200: OpenApiResponse(description="Message sent successfully")},
     request=CreateMessageSerializer,
-    responses={201: OpenApiResponse(description="Message created")},
 )
 @csrf_exempt
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
-def send_message(request):
+def send_message(request, conversation_id):
     serializer = CreateMessageSerializer(data=request.data)
-    if not serializer.is_valid():
-        return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid():
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+        except Conversation.DoesNotExist:
+            return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    conversation_id = serializer.validated_data.get("conversation_id")
-    content = serializer.validated_data["content"]
+        if request.user != conversation.participant1 and request.user != conversation.participant2:
+            return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
 
-    if not conversation_id:
-        return Response({"error": "conversation_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        conversation = Conversation.objects.get(
-            Q(id=conversation_id)
-            & (Q(participant1=request.user) | Q(participant2=request.user))
+        message = Message.objects.create(
+            conversation=conversation,
+            sender=request.user,
+            content=serializer.validated_data["content"],
         )
+        conversation.save()
+
+        response_serializer = MessageSerializer(message)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(responses={200: OpenApiResponse(description="Mark messages as read")})
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def mark_messages_as_read(request, conversation_id):
+    try:
+        conversation = Conversation.objects.get(id=conversation_id)
     except Conversation.DoesNotExist:
         return Response({"error": "Conversation not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    message = Message.objects.create(conversation=conversation, sender=request.user, content=content)
-    conversation.save()
+    if request.user != conversation.participant1 and request.user != conversation.participant2:
+        return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
 
-    serializer_response = MessageSerializer(message)
-    return Response(serializer_response.data, status=status.HTTP_201_CREATED)
+    Message.objects.filter(conversation=conversation, receiver=request.user, read=False).update(read=True)
+    return Response({"status": "Messages marked as read"})
 
 
 @extend_schema(responses={200: OpenApiResponse(description="List of users")})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_users(request):
-    users = User.objects.exclude(id=request.user.id)
+    users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
@@ -164,7 +178,7 @@ def list_users(request):
     responses={200: OpenApiResponse(description="Conversation created or retrieved from reservation")}
 )
 @csrf_exempt
-@api_view(["POST"])
+@api_view(["GET", "POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_or_create_conversation_from_reservation(request, reservation_id):
@@ -192,22 +206,16 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
     if not vlasnik and not setac:
         return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if vlasnik:
-        # vlasnik mora odgovarati rezervaciji
-        if res_vlasnik_id != _as_int(vlasnik.idVlasnik):
-            return Response(
-                {"error": "You are not authorized to access this reservation"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+    # IMPORTANT:
+    # U registeru se kreira i Vlasnik red čak i za šetača, pa se
+    # uloga ne smije zaključivati samo po tome "postoji li Vlasnik".
+    is_walker = getattr(getattr(request.user, "profile", None), "is_walker", False)
 
-        other_setac = Setac.objects.filter(idSetac=res_setac_id).first()
-        if not other_setac:
-            return Response({"error": "Walker not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        other_user_email = other_setac.emailSetac
-
-    else:
+    if is_walker:
         # šetač mora biti dodijeljen i mora odgovarati rezervaciji
+        if not setac:
+            return Response({"error": "Walker profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
         if res_setac_id in (None, 0):
             return Response(
                 {"error": "Reservation has no walker assigned"},
@@ -225,6 +233,23 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
             return Response({"error": "Owner not found"}, status=status.HTTP_404_NOT_FOUND)
 
         other_user_email = other_vlasnik.emailVlasnik
+
+    else:
+        # vlasnik mora odgovarati rezervaciji
+        if not vlasnik:
+            return Response({"error": "Owner profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if res_vlasnik_id != _as_int(vlasnik.idVlasnik):
+            return Response(
+                {"error": "You are not authorized to access this reservation"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        other_setac = Setac.objects.filter(idSetac=res_setac_id).first()
+        if not other_setac:
+            return Response({"error": "Walker not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        other_user_email = other_setac.emailSetac
 
     # nađi Django auth user druge strane
     other_user = User.objects.filter(email__iexact=(other_user_email or "").strip()).first()
