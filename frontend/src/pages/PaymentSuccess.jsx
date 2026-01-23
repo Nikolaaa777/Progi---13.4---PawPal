@@ -27,7 +27,6 @@ const PaymentSuccess = () => {
 
         if (res?.success) {
           setMsg("Plaćanje uspješno! Preusmjeravam...");
-          // nakon 1s vrati na rezervacije
           setTimeout(() => {
             navigate("/profile/rezervacije");
           }, 900);

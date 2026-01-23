@@ -18,8 +18,6 @@ const PaymentModal = ({ isOpen, onClose, reservationId, amount }) => {
     setError(null);
 
     try {
-      // Kreiraj PayPal order (backend treba vratiti approval_url + payment_id)
-      // OVO je po tvom postojećem backend contractu:
       const response = await api.createPaymentIntent({
         reservation_id: reservationId,
         amount: amount.toString(),
@@ -27,9 +25,6 @@ const PaymentModal = ({ isOpen, onClose, reservationId, amount }) => {
       });
 
       if (response?.success && response?.approval_url) {
-        // Važno: payment_id spremamo u URL returna (kao što tvoj confirm očekuje)
-        // Backend već najčešće ima return_url koji vodi na /payment-success
-        // Ako backend ne dodaje payment_id u return_url, onda ćemo to riješiti backend-side.
         window.location.href = response.approval_url;
         return;
       }

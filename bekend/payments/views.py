@@ -88,19 +88,46 @@ def create_payment_intent(request):
         )
     
     if payment_method == 'paypal':
+        frontend_base = os.getenv('FRONTEND_URL', 'http://localhost:5173').rstrip('/')
+
+        # Create a local payment record FIRST so we can safely include payment_id in return_url
+        # (PayPal does NOT allow placeholders like {token} in return_url)
+        with transaction.atomic():
+            payment = PlacanjeSetnje.objects.create(
+                tipPlacanja=PAYMENT_TYPE_PAYPAL,
+                cijenaSetnje=int(float(amount) * 100),  # cents
+                idRezervacije=reservation_id,
+                idVlasnik=vlasnik.idVlasnik,
+                idSetac=setac_id,
+            )
+
+            tracking = PaymentTracking.objects.create(
+                payment=payment,
+                payment_status=PAYMENT_STATUS_PENDING,
+                transaction_id="PENDING",
+                payment_method='paypal'
+            )
+
         # Create PayPal order
         access_token = get_paypal_access_token()
         if not access_token:
+            tracking.payment_status = PAYMENT_STATUS_FAILED
+            tracking.save(update_fields=['payment_status', 'updated_at'])
             return Response(
                 {"success": 0, "error": "Failed to authenticate with PayPal"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
+
         url = f"{PAYPAL_BASE_URL}/v2/checkout/orders"
         headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {access_token}',
         }
+
+        # IMPORTANT: no {token} placeholder - PayPal will append token automatically on redirect back
+        return_url = f"{frontend_base}/payment-success?payment_id={payment.idPlacanja}"
+        cancel_url = f"{frontend_base}/payment-success?cancelled=1&payment_id={payment.idPlacanja}"
+
         data = {
             'intent': 'CAPTURE',
             'purchase_units': [{
@@ -111,34 +138,20 @@ def create_payment_intent(request):
                 'description': f'Payment for reservation {reservation_id}'
             }],
             'application_context': {
-                'return_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-success?token={{token}}",
-                'cancel_url': f"{os.getenv('FRONTEND_URL', 'http://localhost:5173')}/payment-cancelled",
+                'return_url': return_url,
+                'cancel_url': cancel_url,
             }
         }
-        
+
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 201:
             order_data = response.json()
             order_id = order_data['id']
-            
-            # Create payment record
-            # Note: cijenaSetnje is bigint in DB, so we'll store amount as integer (cents)
-            payment = PlacanjeSetnje.objects.create(
-                tipPlacanja=PAYMENT_TYPE_PAYPAL,
-                cijenaSetnje=int(float(amount) * 100),  # Convert to cents
-                idRezervacije=reservation_id,
-                idVlasnik=vlasnik.idVlasnik,
-                idSetac=setac_id,
-            )
-            
-            # Create tracking record
-            PaymentTracking.objects.create(
-                payment=payment,
-                payment_status=PAYMENT_STATUS_PENDING,
-                transaction_id=order_id,
-                payment_method='paypal'
-            )
-            
+
+            # Save PayPal order_id to our tracking record
+            tracking.transaction_id = order_id
+            tracking.save(update_fields=['transaction_id', 'updated_at'])
+
             # Get approval URL
             approval_url = None
             for link in order_data.get('links', []):
@@ -154,6 +167,8 @@ def create_payment_intent(request):
                 "payment_method": "paypal"
             }, status=status.HTTP_201_CREATED)
         else:
+            tracking.payment_status = PAYMENT_STATUS_FAILED
+            tracking.save(update_fields=['payment_status', 'updated_at'])
             return Response(
                 {"success": 0, "error": "Failed to create PayPal order", "details": response.text},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -164,29 +179,24 @@ def create_payment_intent(request):
         import stripe
         stripe.api_key = STRIPE_SECRET_KEY
         
-        if not stripe.api_key:
-            return Response(
-                {"success": 0, "error": "Stripe not configured"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        # Create payment record
+        payment = PlacanjeSetnje.objects.create(
+            tipPlacanja=PAYMENT_TYPE_CARD,
+            cijenaSetnje=int(float(amount) * 100),  # Convert to cents
+            idRezervacije=reservation_id,
+            idVlasnik=vlasnik.idVlasnik,
+            idSetac=setac_id,
+        )
         
         try:
+            # Create Stripe PaymentIntent
             intent = stripe.PaymentIntent.create(
                 amount=int(float(amount) * 100),  # Convert to cents
                 currency='usd',
                 metadata={
-                    'reservation_id': reservation_id,
-                    'user_id': request.user.id,
+                    'payment_id': payment.idPlacanja,
+                    'reservation_id': reservation_id
                 }
-            )
-            
-            # Create payment record
-            payment = PlacanjeSetnje.objects.create(
-                tipPlacanja=PAYMENT_TYPE_CARD,
-                cijenaSetnje=int(float(amount) * 100),  # Convert to cents
-                idRezervacije=reservation_id,
-                idVlasnik=vlasnik.idVlasnik,
-                idSetac=setac_id,
             )
             
             # Create tracking record
@@ -204,41 +214,46 @@ def create_payment_intent(request):
                 "publishable_key": STRIPE_PUBLISHABLE_KEY,
                 "payment_method": "stripe"
             }, status=status.HTTP_201_CREATED)
+            
         except Exception as e:
+            # Mark payment as failed
+            PaymentTracking.objects.create(
+                payment=payment,
+                payment_status=PAYMENT_STATUS_FAILED,
+                payment_method='stripe'
+            )
             return Response(
                 {"success": 0, "error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
     elif payment_method == 'cash':
-        # Create cash payment record (immediately completed)
+        # Cash payment - create and mark as completed
         payment = PlacanjeSetnje.objects.create(
             tipPlacanja=PAYMENT_TYPE_CASH,
-            cijenaSetnje=int(float(amount) * 100),  # Convert to cents
+            cijenaSetnje=int(float(amount) * 100),
             idRezervacije=reservation_id,
             idVlasnik=vlasnik.idVlasnik,
             idSetac=setac_id,
         )
         
-        # Create tracking record with completed status
         PaymentTracking.objects.create(
             payment=payment,
             payment_status=PAYMENT_STATUS_COMPLETED,
-            transaction_id=f"CASH-{payment.idPlacanja}",
             payment_method='cash'
         )
         
         return Response({
             "success": 1,
-            "payment_id": payment.idPlacanja,
-            "payment_method": "cash",
-            "message": "Cash payment recorded successfully"
+            "message": "Cash payment recorded",
+            "payment": PaymentSerializer(payment).data
         }, status=status.HTTP_201_CREATED)
     
-    return Response(
-        {"success": 0, "error": "Invalid payment method"},
-        status=status.HTTP_400_BAD_REQUEST
-    )
+    else:
+        return Response(
+            {"success": 0, "error": "Invalid payment method"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(['POST'])
@@ -322,7 +337,7 @@ def confirm_paypal_payment(request):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def confirm_stripe_payment(request):
-    """Confirm Stripe payment after card processing"""
+    """Confirm Stripe payment after successful client-side payment"""
     payment_intent_id = request.data.get('payment_intent_id')
     payment_id = request.data.get('payment_id')
     
@@ -341,12 +356,7 @@ def confirm_stripe_payment(request):
                 {"success": 0, "error": "Payment ID mismatch"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-    except PlacanjeSetnje.DoesNotExist:
-        return Response(
-            {"success": 0, "error": "Payment not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
-    except PaymentTracking.DoesNotExist:
+    except (PlacanjeSetnje.DoesNotExist, PaymentTracking.DoesNotExist):
         return Response(
             {"success": 0, "error": "Payment not found"},
             status=status.HTTP_404_NOT_FOUND
@@ -358,7 +368,6 @@ def confirm_stripe_payment(request):
     
     try:
         intent = stripe.PaymentIntent.retrieve(payment_intent_id)
-        
         if intent.status == 'succeeded':
             tracking.payment_status = PAYMENT_STATUS_COMPLETED
             tracking.save()
@@ -372,7 +381,7 @@ def confirm_stripe_payment(request):
             tracking.payment_status = PAYMENT_STATUS_FAILED
             tracking.save()
             return Response(
-                {"success": 0, "error": f"Payment not succeeded. Status: {intent.status}"},
+                {"success": 0, "error": "Payment not completed"},
                 status=status.HTTP_400_BAD_REQUEST
             )
     except Exception as e:
@@ -388,14 +397,16 @@ def confirm_stripe_payment(request):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_payment_status(request, payment_id):
-    """Get payment status"""
+    """Get status of a payment"""
     try:
         payment = PlacanjeSetnje.objects.get(idPlacanja=payment_id)
+        tracking = payment.tracking
+        
         return Response({
             "success": 1,
             "payment": PaymentSerializer(payment).data
         }, status=status.HTTP_200_OK)
-    except PlacanjeSetnje.DoesNotExist:
+    except (PlacanjeSetnje.DoesNotExist, PaymentTracking.DoesNotExist):
         return Response(
             {"success": 0, "error": "Payment not found"},
             status=status.HTTP_404_NOT_FOUND
@@ -406,9 +417,10 @@ def get_payment_status(request, payment_id):
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_payments(request):
-    """Get all payments for the current user"""
+    """Get all payments for current user"""
     vlasnik = get_current_vlasnik(request.user)
-    payments = PlacanjeSetnje.objects.filter(idVlasnik=vlasnik.idVlasnik).order_by('-created_at')
+    payments = PlacanjeSetnje.objects.filter(idVlasnik=vlasnik.idVlasnik).order_by('-idPlacanja')
+    
     return Response({
         "success": 1,
         "payments": PaymentSerializer(payments, many=True).data
