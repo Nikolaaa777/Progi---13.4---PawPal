@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Payment types: 1 = PayPal, 2 = Card (Stripe)
 PAYMENT_TYPE_PAYPAL = 1
 PAYMENT_TYPE_CARD = 2
+PAYMENT_TYPE_CASH = 3
 
 PAYMENT_STATUS_PENDING = 'pending'
 PAYMENT_STATUS_COMPLETED = 'completed'
