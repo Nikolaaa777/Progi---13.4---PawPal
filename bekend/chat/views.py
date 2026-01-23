@@ -23,9 +23,7 @@ from reservations.models import Rezervacija
 from accounts.models import Vlasnik, Setac
 
 
-@extend_schema(
-    responses={200: OpenApiResponse(description="List of conversations")}
-)
+@extend_schema(responses={200: OpenApiResponse(description="List of conversations")})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_conversations(request):
@@ -41,9 +39,7 @@ def list_conversations(request):
     return Response(serializer.data)
 
 
-@extend_schema(
-    responses={200: OpenApiResponse(description="Conversation details with messages")}
-)
+@extend_schema(responses={200: OpenApiResponse(description="Conversation details with messages")})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_conversation(request, conversation_id):
@@ -70,9 +66,7 @@ def get_conversation(request, conversation_id):
     return Response({"conversation": conversation_data, "messages": messages_data})
 
 
-@extend_schema(
-    responses={200: OpenApiResponse(description="Conversation created or retrieved")}
-)
+@extend_schema(responses={200: OpenApiResponse(description="Conversation created or retrieved")})
 @csrf_exempt
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
@@ -152,9 +146,7 @@ def send_message(request):
     return Response(serializer_response.data, status=status.HTTP_201_CREATED)
 
 
-@extend_schema(
-    responses={200: OpenApiResponse(description="List of users")}
-)
+@extend_schema(responses={200: OpenApiResponse(description="List of users")})
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_users(request):
@@ -185,28 +177,32 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Determine if current user is vlasnik or setac by email
     current_user_email = request.user.email
 
+    # Determine if current user is vlasnik or setac by email (case-insensitive)
     try:
-        vlasnik = Vlasnik.objects.get(emailVlasnik=current_user_email)
+        vlasnik = Vlasnik.objects.get(emailVlasnik__iexact=current_user_email)
         is_vlasnik = True
         other_id = reservation.idSetac
     except Vlasnik.DoesNotExist:
         try:
-            setac = Setac.objects.get(emailSetac=current_user_email)
+            setac = Setac.objects.get(emailSetac__iexact=current_user_email)
             is_vlasnik = False
             other_id = reservation.idVlasnik
         except Setac.DoesNotExist:
             return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
+    # Normalize reservation ids in case they are FK objects
+    res_vlasnik_id = getattr(reservation.idVlasnik, "idVlasnik", reservation.idVlasnik)
+    res_setac_id = getattr(reservation.idSetac, "idSetac", reservation.idSetac)
+
     # Verify user is part of this reservation
-    if is_vlasnik and reservation.idVlasnik != vlasnik.idVlasnik:
+    if is_vlasnik and res_vlasnik_id != vlasnik.idVlasnik:
         return Response(
             {"error": "You are not authorized to access this reservation"},
             status=status.HTTP_403_FORBIDDEN,
         )
-    if (not is_vlasnik) and reservation.idSetac != setac.idSetac:
+    if (not is_vlasnik) and res_setac_id != setac.idSetac:
         return Response(
             {"error": "You are not authorized to access this reservation"},
             status=status.HTTP_403_FORBIDDEN,
