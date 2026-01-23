@@ -125,7 +125,19 @@ def get_or_create_conversation(request, user_id):
 @api_view(["POST"])
 @authentication_classes([CsrfExemptSessionAuthentication])
 @permission_classes([IsAuthenticated])
-def send_message(request, conversation_id):
+def send_message(request, conversation_id=None):
+    """
+    Podržava oba slučaja:
+    1) POST /api/chat/messages/<conversation_id>/
+    2) POST /api/chat/messages/   + body mora sadržavati conversation_id (ili conversationId)
+    """
+    if conversation_id is None:
+        conv = request.data.get("conversation_id") or request.data.get("conversationId")
+        try:
+            conversation_id = int(conv)
+        except (TypeError, ValueError):
+            return Response({"error": "conversation_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = CreateMessageSerializer(data=request.data)
     if serializer.is_valid():
         try:
@@ -195,38 +207,27 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
 
     current_user_email = (request.user.email or "").strip()
 
-    # rezervacija ID-evi iz baze mogu biti int, bigint, str, ili FK objekt -> normaliziraj
     res_vlasnik_id = _as_int(reservation.idVlasnik)
     res_setac_id = _as_int(reservation.idSetac)
 
-    # tko je trenutni user u "domeni"
     vlasnik = Vlasnik.objects.filter(emailVlasnik__iexact=current_user_email).first()
     setac = Setac.objects.filter(emailSetac__iexact=current_user_email).first()
 
     if not vlasnik and not setac:
         return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # IMPORTANT:
-    # U registeru se kreira i Vlasnik red čak i za šetača, pa se
-    # uloga ne smije zaključivati samo po tome "postoji li Vlasnik".
+    # ne zaključuj ulogu po tome "postoji li Vlasnik", jer ga register kreira i za šetača
     is_walker = getattr(getattr(request.user, "profile", None), "is_walker", False)
 
     if is_walker:
-        # šetač mora biti dodijeljen i mora odgovarati rezervaciji
         if not setac:
             return Response({"error": "Walker profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if res_setac_id in (None, 0):
-            return Response(
-                {"error": "Reservation has no walker assigned"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            return Response({"error": "Reservation has no walker assigned"}, status=status.HTTP_403_FORBIDDEN)
 
         if res_setac_id != _as_int(setac.idSetac):
-            return Response(
-                {"error": "You are not authorized to access this reservation"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            return Response({"error": "You are not authorized to access this reservation"}, status=status.HTTP_403_FORBIDDEN)
 
         other_vlasnik = Vlasnik.objects.filter(idVlasnik=res_vlasnik_id).first()
         if not other_vlasnik:
@@ -235,15 +236,11 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
         other_user_email = other_vlasnik.emailVlasnik
 
     else:
-        # vlasnik mora odgovarati rezervaciji
         if not vlasnik:
             return Response({"error": "Owner profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if res_vlasnik_id != _as_int(vlasnik.idVlasnik):
-            return Response(
-                {"error": "You are not authorized to access this reservation"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            return Response({"error": "You are not authorized to access this reservation"}, status=status.HTTP_403_FORBIDDEN)
 
         other_setac = Setac.objects.filter(idSetac=res_setac_id).first()
         if not other_setac:
@@ -251,7 +248,6 @@ def get_or_create_conversation_from_reservation(request, reservation_id):
 
         other_user_email = other_setac.emailSetac
 
-    # nađi Django auth user druge strane
     other_user = User.objects.filter(email__iexact=(other_user_email or "").strip()).first()
     if not other_user:
         return Response({"error": "Other user not found"}, status=status.HTTP_404_NOT_FOUND)

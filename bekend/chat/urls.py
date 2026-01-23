@@ -8,4 +8,8 @@ urlpatterns = [
     path("chat/conversations/reservation/<int:reservation_id>/", views.get_or_create_conversation_from_reservation, name="get_or_create_conversation_from_reservation"),
     path("chat/messages/", views.send_message, name="send_message"),
     path("chat/users/", views.list_users, name="list_users"),
+
+    # NOVO
+    path("chat/messages/<int:conversation_id>/", views.send_message, name="send_message_with_id"),
+    path("chat/messages/", views.send_message, name="send_message"),
 ]
