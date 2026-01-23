@@ -2,6 +2,16 @@
 ## LIVE DEMO LINK: [PawPal](https://progi-13-4-pawpal-4.onrender.com/) 
 *(Server radi sporije nakon vremena neaktivnosti, zato molimo za strpljenje na početku.)*
 
+ZA PRIJAVU: 
+admin:
+email:admin@gmail.com
+pass:admin
+
+setac:
+email:marko2@gmail.com
+pass:tajna123
+
+
 ## Pregled projekta
 
 **PawPal** je web aplikacija koja povezuje vlasnike pasa sa pouzdanim šetačima te pojednostavljuje organizaciju šetnji, nadzor nad raspoloživosti i komunikaciju između korisnika. Platforma omogućava vlasnicima lako pronalaženje šetača prema lokaciji, cijeni, raspoloživosti i ocjenama, dok šetači mogu upravljati svojim uslugama, terminima i ponudama. Administratori nadziru rad sustava, korisnike i aktivnosti kako bi osigurali kvalitetno iskustvo za sve uključene.
